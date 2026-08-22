@@ -96,6 +96,7 @@ installs on first use.
 ## Next
 
 `PROPOSAL.md` §20 sequences the work. M1 still owes normalization lemmas on
-concrete context lattices. M2 is built; M3 opens the inverse problem: when a
-full pairwise defect field reconstructs `K` modulo gauge, and which sparse
-data suffices.
+concrete context lattices. M2 is built. M3 asks which restricted comparison
+families `S` satisfy `ker D_S = ker D`, and which explicit normalization makes
+`K ↦ ([K], N K)` injective. The order-separated higher observable exposed as
+missing by M2 remains open; raw mixed differences are not that object.

@@ -224,49 +224,71 @@ A central ambition of the project is to understand how much apparent “structur
 
 ______________________________________________________________________
 
-# 6. Higher interaction
+# 6. Raw differences and higher interaction
 
-Pairwise defect should not be presumed fundamental.
+Pairwise defect should not be presumed fundamental, but neither should an
+iterated difference be called an irreducible interaction merely because it has
+high order.
 
-It is only the first nontrivial layer.
-
-Given a suitable family of independent context changes, define higher mixed differences
-
-\[
-\\Delta\_{1}\\Delta\_{2}\\cdots\\Delta\_{k}K.
-\]
-
-Equivalently, on a (k)-dimensional comparison cube, take the signed alternating sum of (K) over its (2^k) vertices.
-
-The second-order case measures irreducible pairwise coupling.
-
-The third-order case measures information not reducible to the pairwise faces.
-
-Higher orders measure progressively more irreducible failures of factorization.
-
-The intended hierarchy is therefore
+On a join-semilattice, a context change in direction (a) defines
 
 \[
-K
-\\quad\\to\\quad
-D^{(2)}
-\\quad\\to\\quad
-D^{(3)}
-\\quad\\to\\quad
-D^{(4)}
-\\quad\\to\\cdots
+\\Delta_a K(c)=K(c\\vee a)-K(c).
 \]
 
-with each layer defined independently of the realizations it may eventually describe.
+Iterating these operators over a finite direction list gives a raw mixed
+difference
+
+\[
+\\Delta\_{a_1}\\Delta\_{a_2}\\cdots\\Delta\_{a_k}K,
+\]
+
+equivalently the signed alternating sum over the associated comparison cube.
+This calculus consumes only joins.
+
+Raw cubes are not order-separated. If directions are repeated or comparable,
+the cube degenerates and its nominal order-(k) difference can reduce to
+lower-order data. In particular, raw mixed differences need not descend
+through pairwise defect-equivalence. The three-element chain supplies a strict
+witness: pairwise defect identifies every field, while a degenerate raw
+order-2 difference retains a signed first-order difference.
+
+The formal development must therefore keep three objects distinct:
+
+\[
+\\text{iterated difference}
+\\neq
+\\text{irreducible higher interaction}
+\\neq
+\\text{pairwise observable}.
+\]
+
+On a lattice, pairwise defect is related to the raw join calculus by a
+canonical base-point choice:
+
+\[
+\\operatorname{mixedDiff}[a,b]K(a\\wedge b)=-D_K(a,b).
+\]
+
+Thus pairwise defect is a meet-normalized evaluation of the generic second
+mixed difference, not simply the second member of an already established
+interaction hierarchy.
+
+The higher observable remains an open mathematical object. Before an
+order-(k) construction earns that name, it must state its nondegeneracy or
+order-separation datum, characterize its gauge, prove descent through that
+gauge, and exhibit information not reducible to lower orders. No quotient or
+interaction terminology should be introduced before those theorems demand it.
 
 Questions include:
 
+- What condition separates a genuine order-(k) cube from lower-order
+  degeneracy?
 - When does vanishing above order (k) characterize a finite interaction order?
-- Which sign patterns are forced?
-- Which sign patterns are impossible?
-- How does the hierarchy transform under coarse-graining?
-- Which higher defects are determined by lower ones?
-- Which hierarchies can actually arise from concrete realizations?
+- Which sign patterns are forced or impossible after order separation?
+- How does an order-separated construction transform under coarse-graining?
+- Which higher observables are determined by lower ones?
+- Which order-separated hierarchies arise from concrete realizations?
 
 The last question is the higher-order **realizability problem**.
 
@@ -324,11 +346,11 @@ It creates two different research directions:
 
 ### Forward problem
 
-Given a realization, determine its defect hierarchy.
+Given a realization, determine its observable defect data.
 
 ### Inverse problem
 
-Given a defect hierarchy, determine which realizations could have produced it.
+Given observable defect data, determine which realizations could have produced it.
 
 The inverse problem is at least as important as the forward one.
 
@@ -376,12 +398,53 @@ Distinguish, for example:
 - one fixed-scale defect matrix;
 - one infinite row;
 - a finite collection of entries;
-- the full higher-order hierarchy;
-- the hierarchy plus asymptotic normalization.
+- the raw mixed-difference table;
+- an order-separated higher datum, once one has been defined;
+- either observable datum plus explicit normalization.
 
 Two inverse results consuming different data are different results even if their conclusions match.
 
 Sparse reconstruction should be treated as a first-class research problem.
+
+At the abstract pairwise level, complete observation is already understood:
+
+\[
+D_K=D\_{K'}
+\\quad\\Longleftrightarrow\\quad
+K-K'\\in\\ker D.
+\]
+
+The complete defect field therefore determines exactly ([K]) in the observable
+quotient. This is the gauge theorem, not a future reconstruction theorem.
+Restating it does not count as progress on the inverse problem.
+
+The generic inverse problem begins by restricting the observation. For
+(S\\subseteq R\\times R), let
+
+\[
+D_S(K)=D_K|\_S.
+\]
+
+The family (S) is **observationally complete** when
+
+\[
+\\ker D_S=\\ker D.
+\]
+
+This equality says precisely that observation on (S) distinguishes the same
+field classes as the complete pairwise defect. Rows, rays, chains, finite
+subfamilies, and structured index sets should be compared through this kernel
+criterion.
+
+Absolute reconstruction is a separate map. A normalization datum (N) is
+adequate when
+
+\[
+K\\longmapsto([K],N(K))
+\]
+
+is injective. Every normalization theorem must name (N), prove injectivity, and
+show by counterexample when a weaker datum fails.
 
 ______________________________________________________________________
 
@@ -401,7 +464,13 @@ For example:
 
 - scalar defect data may identify one quotient;
 - residue-refined data may distinguish more;
-- all higher mixed defects may distinguish more again.
+- a restricted defect family may or may not induce the full pairwise quotient.
+
+Raw mixed differences are not automatically observables for an existing
+quotient. In particular, the raw cube calculus does not descend through
+pairwise defect-equivalence: degenerate cubes can retain lower-order
+information that pairwise defect forgets. A cube construction may be called an
+observable only after its datum map and exact kernel are stated.
 
 The appropriate notion of “same system” should therefore be discovered from the inverse theory rather than imposed in advance.
 
@@ -599,6 +668,21 @@ The import graph is part of the model.
 
 Core must never import application or realization modules.
 
+The current mathematics exposes a conceptual stratification inside the core:
+
+\[
+\\text{raw join calculus}
+\\xrightarrow{\\text{evaluate at the meet base}}
+\\text{pairwise lattice defect}
+\\xrightarrow{\\text{quotient by its kernel}}
+\\text{pairwise observable}.
+\]
+
+The mixed-difference calculus belongs to the first layer and consumes a
+join-semilattice; pairwise defect belongs to the second and consumes a lattice.
+The missing order-separated higher observable should not receive a module or
+interface until its defining theorems are known.
+
 ______________________________________________________________________
 
 # 15. Core theorem discipline
@@ -632,7 +716,11 @@ For a defect operator:
 
 - relation between pairwise and cube defects;
 - inclusion-exclusion identities;
-- decomposition laws.
+- decomposition laws;
+- exact degeneration into lower-order data;
+- a stated nondegeneracy or order-separation datum;
+- gauge characterization and descent before observable terminology;
+- strict witnesses that do not use degenerate cubes as higher interaction.
 
 ### Inverse
 
@@ -864,7 +952,7 @@ ______________________________________________________________________
 
 ## M2 — Cubes
 
-Define higher mixed defects from finite comparison cubes.
+Define raw mixed differences from finite comparison cubes.
 
 Prove:
 
@@ -875,22 +963,42 @@ Prove:
 - inclusion-exclusion identities;
 - low-order examples.
 
-The goal is a carrier-free interaction hierarchy.
+Relate the raw join calculus to pairwise lattice defect by evaluating the
+second mixed difference at the meet base.
+
+The goal is a carrier-free calculus of finite changes together with an exact
+account of its degeneracies. It is not yet an irreducible interaction
+hierarchy. A degenerate raw cube may retain lower-order data and raw mixed
+differences need not descend through the pairwise gauge.
 
 ______________________________________________________________________
 
-## M3 — Reconstruction
+## M3 — Restricted observation and normalization
 
-Ask the generic inverse questions before introducing rich realizations.
+The complete pairwise defect already determines ([K]) by the gauge theorem of
+M1. Do not count that tautological quotient statement as reconstruction.
 
-Determine conditions under which:
+M3 is responsible for closing the concrete normalization debt left by M1.
+M1 remains partial until at least one context lattice has a sharp theorem
+identifying adequate normalization data.
 
-- a full pairwise defect field reconstructs (K) modulo gauge;
-- boundary data fixes a representative;
-- sparse rows or subfamilies suffice;
-- reconstruction is impossible.
+For a family of observed comparison squares (S), define the restricted defect
+map (D_S) and characterize its kernel.
 
-The project should seek explicit algorithms as well as existential statements.
+Prove:
+
+- observational completeness criteria (\\ker D_S=\\ker D);
+- complete and incomplete sparse families, with strict witnesses;
+- minimal normalization data for concrete context lattices;
+- injectivity of (K\\mapsto([K],N(K))) for each adequate normalization (N);
+- impossibility under weaker observation or normalization data.
+
+The order-separated higher observable exposed as missing by M2 remains a
+parallel open problem. M3 must preserve that problem explicitly and must not
+manufacture a quotient before a theorem identifies its datum and gauge.
+
+The project should seek explicit reconstruction algorithms as well as
+existential statements.
 
 ______________________________________________________________________
 
@@ -966,19 +1074,24 @@ For which context systems can the complete kernel of the pairwise defect operato
 
 ### Q2 — Reconstruction
 
-What is the weakest datum from which a field can be reconstructed modulo its defect gauge?
+What is the weakest restricted pairwise datum with the same kernel as complete
+defect observation, and what additional normalization reconstructs the field
+itself?
 
 ### Q3 — Sparse reconstruction
 
-Which rows, rays, chains, prime-indexed subsets, or finite samples determine the same information as the complete defect field?
+Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
+(\\ker D_S=\\ker D)?
 
 ### Q4 — Higher interaction
 
-When do higher mixed defects contain genuinely new information beyond pairwise data?
+What order-separation datum turns raw mixed differences into a
+gauge-respecting higher observable, and when does it contain information not
+reducible to lower orders?
 
 ### Q5 — Realizability
 
-Which abstract defect hierarchies arise from positive weighted realizations?
+Which order-separated defect hierarchies arise from positive weighted realizations?
 
 ### Q6 — Definiteness
 
@@ -1014,9 +1127,9 @@ It succeeds if it discovers a small interface with unexpectedly large deductive 
 Strong evidence of success would include several of the following:
 
 - the same abstract defect theorem has genuinely different realizations;
-- a complete defect field reconstructs a nontrivial object modulo a precisely characterized gauge;
-- sparse defect data is unexpectedly sufficient;
-- higher mixed defects expose interaction invisible pairwise;
+- a proper restriction of defect data is observationally complete;
+- a sharp normalization theorem recovers a representative from its gauge class;
+- order-separated higher observables expose information invisible pairwise;
 - realizability admits sharp necessary and sufficient conditions;
 - an apparently carrier-specific theorem becomes inevitable from the core interface;
 - geometric structure is derived canonically from defect data;
@@ -1038,7 +1151,7 @@ The project should contract or change direction if:
 
 - all nontrivial results require a single concrete carrier;
 - the abstract defect calculus produces only tautological identities;
-- higher differences carry no useful invariant information;
+- no order-separation of raw differences yields useful invariant information;
 - reconstruction requires essentially the full original model as input;
 - realizability is too unconstrained to support classification;
 - geometric interpretations require hand-inserted geometry;
@@ -1134,5 +1247,14 @@ what structure can be reconstructed?}
 Everything else is downstream.
 
 First determine the calculus of descriptions, the gauge they cannot resolve, the defects left by failed composition, and the information recoverable from those defects.
+
+Operationally:
+
+\[
+\\boxed{
+\\text{Which measurements survive gauge, which restricted families are complete,
+and when do genuinely new orders of information emerge?}
+}
+\]
 
 Then see what kinds of universes realize it.
