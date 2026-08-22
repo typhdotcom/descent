@@ -40,6 +40,9 @@ theorem Comparable.of_le [LE R] {a b : R} (h : a ≤ b) : Comparable a b :=
 theorem Comparable.of_ge [LE R] {a b : R} (h : b ≤ a) : Comparable a b :=
   Or.inr h
 
+instance [LE R] [DecidableLE R] (a b : R) : Decidable (Comparable a b) :=
+  inferInstanceAs (Decidable (a ≤ b ∨ b ≤ a))
+
 /-- On a comparable pair the comparison square collapses: its two new corners
 are the two old ones, in one order or the other. -/
 theorem Comparable.corners [Lattice R] {a b : R} (h : Comparable a b) :

@@ -39,8 +39,9 @@ fields have the same defect precisely when they differ by a gauge element, so
 pairwise defect data determines the class `[K]` in `Observable R A` and nothing
 finer. Fixing a representative needs normalization supplied separately.
 
-M1 is partial: it also asks for normalization lemmas on concrete context
-lattices, and none are built.
+M1 also asked for normalization lemmas on concrete context lattices; that
+debt is discharged by the sharp adequacy classifications on the chain and the
+square (see Normalization and Models).
 
 ## Cubes
 
@@ -66,6 +67,31 @@ to the bridge, the layer consumes only `⊔`: it is stated over
   arbitrary base the order-2 mixed difference is a translated pairwise defect
   plus a base-point correction that vanishes at the meet base.
 
+## Restricted observation
+
+Milestone M3, in `Descent/Reconstruction/Restricted.lean`:
+
+The gauge theorem settles complete observation, so the inverse problem starts
+by restricting it. For a family `S` of comparison squares, `defectOn S K` is
+the observed datum and `gaugeOn S A` is its kernel — the fields the observer
+cannot tell from `0`. `S` is observationally complete when
+`gaugeOn S A = gauge R A`, which happens exactly when the restricted datum is
+injective on the observable quotient: a complete family recovers `[K]`, and no
+family recovers more. Restriction always observes less than the full field,
+completeness survives enlarging the family, degenerate squares carry no datum,
+and the incomparable pairs carry all of it.
+
+## Normalization
+
+Milestone M3, in `Descent/Reconstruction/Normalization.lean`:
+
+Defect data determines at most `[K]`; recovering the field needs a named
+normalization datum. Here the datum is a value restriction: `T` is adequate
+when `K ↦ ([K], K|_T)` is injective, which happens exactly when no nonzero
+valuation vanishes on `T`. Adequacy is monotone and the full restriction is
+always adequate; everything sharper is lattice-specific and lives with the
+models.
+
 ## Models
 
 `Descent/Models/Chain.lean`: on a linearly ordered context system every field
@@ -78,6 +104,22 @@ is a retained signed first-order difference. The raw hierarchy is not
 order-separated: degenerate cubes keep lower-order data, so any claim of
 irreducible higher interaction must consume a nondegeneracy condition on the
 directions, never a raw list.
+
+For M3 the chain is the degenerate extreme: every family of squares is
+observationally complete (completeness is relative to the gauge, and the chain
+gauge forgets everything), and only the full value restriction is adequate —
+normalization must supply the whole field.
+
+`Descent/Models/Square.lean`: the four-element Boolean lattice `Bool × Bool`
+is the smallest context system whose defect sees anything, and on it
+everything is sharp. The valuation law is the single relation
+`K left + K right = K ⊥ + K ⊤`, with strict failures. A family of squares is
+complete exactly when it observes the one nondegenerate square in either
+order — the singleton `{(left, right)}` suffices, and no family of degenerate
+squares does. A value restriction is adequate exactly when it misses at most
+one context: three values determine the fourth through the valuation
+relation, two never do. Reconstruction is an explicit formula, not only an
+injectivity statement.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
@@ -95,8 +137,11 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M1 still owes normalization lemmas on
-concrete context lattices. M2 is built. M3 asks which restricted comparison
-families `S` satisfy `ker D_S = ker D`, and which explicit normalization makes
-`K ↦ ([K], N K)` injective. The order-separated higher observable exposed as
-missing by M2 remains open; raw mixed differences are not that object.
+`PROPOSAL.md` §20 sequences the work. M2 is built. M3 is built at this
+level: restricted observation with its kernel criterion, value-restriction
+normalization with its gauge characterization, and sharp classifications of
+both on the chain and the square, with explicit reconstruction on the square.
+Completeness and adequacy on richer context lattices remain open, as does the
+order-separated higher observable exposed as missing by M2 — raw mixed
+differences are not that object. M4 introduces the first weighted
+realization.

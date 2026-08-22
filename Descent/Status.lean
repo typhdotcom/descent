@@ -3,6 +3,9 @@ import Descent.Core.Cube
 import Descent.Core.Defect
 import Descent.Core.Gauge
 import Descent.Models.Chain
+import Descent.Models.Square
+import Descent.Reconstruction.Normalization
+import Descent.Reconstruction.Restricted
 
 /-!
 # Status manifest

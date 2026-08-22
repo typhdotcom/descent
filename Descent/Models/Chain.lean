@@ -1,5 +1,7 @@
 import Descent.Core.Cube
 import Descent.Core.Gauge
+import Descent.Reconstruction.Normalization
+import Descent.Reconstruction.Restricted
 import Mathlib.Order.Fin.Basic
 
 /-!
@@ -41,6 +43,40 @@ instance : Subsingleton (Observable R A) :=
   ⟨fun x y =>
     Quotient.inductionOn₂ x y fun K K' =>
       Observable.mk_eq_mk.mpr (defectEquiv_of_linearOrder K K')⟩
+
+/-- On a chain the gauge is everything. -/
+theorem gauge_eq_top_of_linearOrder : gauge R A = ⊤ :=
+  eq_top_iff.mpr fun K _ => mem_gauge_iff.mpr (isValuation_of_linearOrder K)
+
+/-- On a chain every family of comparison squares --- including `∅` --- is
+observationally complete: completeness is relative to the gauge, and the
+chain gauge forgets everything. -/
+theorem observationallyComplete_of_linearOrder (S : Set (R × R)) :
+    ObservationallyComplete S A := by
+  rw [ObservationallyComplete, gauge_eq_top_of_linearOrder, eq_top_iff]
+  exact fun K _ => mem_gaugeOn_iff.mpr fun p _ =>
+    isValuation_of_linearOrder K p.1 p.2
+
+/-- On a chain no proper value restriction is adequate: the class carries no
+information, so normalization must supply the whole field. -/
+theorem adequateOn_iff_of_linearOrder [Nontrivial A] {T : Set R} :
+    AdequateOn T A ↔ T = Set.univ := by
+  constructor
+  · intro h
+    by_contra hT
+    obtain ⟨t, ht⟩ := (Set.ne_univ_iff_exists_notMem T).mp hT
+    obtain ⟨e, he⟩ := exists_ne (0 : A)
+    classical
+    refine he ?_
+    have h0 := adequateOn_iff_eq_zero.mp h (Pi.single t e)
+      (isValuation_of_linearOrder _) ?_
+    · simpa using congrFun h0 t
+    · funext s
+      have hne : s.val ≠ t := fun hst => ht (hst ▸ s.property)
+      show (Pi.single t e : ContextField R A) s.val = 0
+      exact Pi.single_eq_of_ne (M := fun _ => A) hne e
+  · rintro rfl
+    exact adequateOn_univ
 
 namespace Chain
 
