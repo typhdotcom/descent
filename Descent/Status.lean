@@ -58,9 +58,9 @@ example {R' : Type*} [Lattice R'] (f : LatticeHom R R') (K : ContextField R' A) 
 
 /-! ## Gauge (milestone M1)
 
-The claims below correspond to the "Gauge" section of `README.md`. M1 also
-asks for normalization lemmas on concrete context lattices; those are not
-built yet, so no claim here covers them.
+The claims below correspond to the "Gauge" section of `README.md`. The
+normalization lemmas M1 also asked for are covered by the milestone M3
+sections below.
 -/
 
 /-- README: the gauge freedom is the kernel of the defect operator, and it is
@@ -184,5 +184,133 @@ example :
     mixedDiff [1, 2] Chain.height
       ≠ mixedDiff [1, 2] (0 : ContextField (Fin 3) ℤ) :=
   Chain.mixedDiff_height_ne
+
+/-! ## Restricted observation (milestone M3)
+
+The claims below correspond to the "Restricted observation" section of
+`README.md`.
+-/
+
+/-- README: the restricted kernel always contains the gauge. -/
+example (S : Set (R × R)) : gauge R A ≤ gaugeOn S A :=
+  gauge_le_gaugeOn S
+
+/-- README: shrinking the observed family enlarges the kernel. -/
+example {S T : Set (R × R)} (h : S ⊆ T) : gaugeOn T A ≤ gaugeOn S A :=
+  gaugeOn_antitone h
+
+/-- README: on a family of comparable pairs the restriction map is zero, so
+its kernel is everything. -/
+example {S : Set (R × R)} (h : ∀ p ∈ S, Comparable p.1 p.2) :
+    gaugeOn S A = ⊤ :=
+  gaugeOn_eq_top_of_comparable h
+
+/-- README: the defect field is carried entirely by the incomparable pairs. -/
+example {S : Set (R × R)} (h : {p : R × R | ¬Comparable p.1 p.2} ⊆ S) :
+    ObservationallyComplete S A :=
+  observationallyComplete_of_incomparable_subset h
+
+/-- README: a family is observationally complete exactly when its restricted
+datum is injective on the observable quotient --- it recovers `[K]`, and no
+family recovers more. -/
+example {S : Set (R × R)} :
+    ObservationallyComplete S A
+      ↔ Function.Injective (Observable.defectOn S : Observable R A → S → A) :=
+  observationallyComplete_iff_injective
+
+/-- README: completeness survives enlarging the family. -/
+example {S T : Set (R × R)} (hST : S ⊆ T) (h : ObservationallyComplete S A) :
+    ObservationallyComplete T A :=
+  h.mono hST
+
+/-! ## Normalization (milestone M3)
+
+The claims below correspond to the "Normalization" section of `README.md`.
+-/
+
+/-- README: `T` is adequate when class together with the values on `T`
+determines the field --- adequacy is stated as injectivity of a named
+datum. -/
+example {T : Set R} (h : AdequateOn T A) {K K' : ContextField R A}
+    (hcl : Observable.mk K = Observable.mk K')
+    (hres : T.domRestrict K = T.domRestrict K') : K = K' :=
+  h (Prod.ext hcl hres)
+
+/-- README: `T` is adequate exactly when no nonzero valuation vanishes on
+`T`. -/
+example {T : Set R} :
+    AdequateOn T A
+      ↔ ∀ K : ContextField R A, IsValuation K → T.domRestrict K = 0 → K = 0 :=
+  adequateOn_iff_eq_zero
+
+/-- README: enlarging the normalization datum preserves adequacy. -/
+example {T T' : Set R} (h : T ⊆ T') (hT : AdequateOn T A) : AdequateOn T' A :=
+  hT.mono h
+
+/-- README: the full value restriction is always adequate. -/
+example : AdequateOn (Set.univ : Set R) A :=
+  adequateOn_univ
+
+/-! ## Chain contexts under restriction (milestone M3) -/
+
+/-- README: on a chain every family of squares is observationally complete
+--- completeness is relative to the gauge, and the chain gauge forgets
+everything. -/
+example {R' : Type*} [LinearOrder R'] (S : Set (R' × R')) :
+    ObservationallyComplete S A :=
+  observationallyComplete_of_linearOrder S
+
+/-- README: on a chain, for a nontrivial target, only the full value
+restriction is adequate. -/
+example {R' : Type*} [LinearOrder R'] [Nontrivial A] {T : Set R'} :
+    AdequateOn T A ↔ T = Set.univ :=
+  adequateOn_iff_of_linearOrder
+
+/-! ## The square (milestone M3)
+
+The claims below correspond to the square paragraph of the "Models" section
+of `README.md`.
+-/
+
+/-- README: on the square the valuation law is one relation. -/
+example {K : ContextField Square A} :
+    IsValuation K ↔ K Square.left + K Square.right = K ⊥ + K ⊤ :=
+  Square.isValuation_iff
+
+/-- README: for a nontrivial target the valuation law has strict failures on
+the square. -/
+example [Nontrivial A] : ∃ K : ContextField Square A, ¬IsValuation K :=
+  Square.exists_not_isValuation
+
+/-- README: one square suffices --- the singleton family is complete, with no
+hypothesis on the target. -/
+example :
+    ObservationallyComplete
+      ({(Square.left, Square.right)} : Set (Square × Square)) A :=
+  Square.observationallyComplete_singleton
+
+/-- README: sharp completeness on the square, for a nontrivial target --- a
+family is complete exactly when it observes the one nondegenerate square, in
+either order. -/
+example [Nontrivial A] {S : Set (Square × Square)} :
+    ObservationallyComplete S A
+      ↔ (Square.left, Square.right) ∈ S ∨ (Square.right, Square.left) ∈ S :=
+  Square.observationallyComplete_iff
+
+/-- README: any single context may be left unnormalized. -/
+example (r : Square) : AdequateOn ({r}ᶜ : Set Square) A :=
+  Square.adequateOn_compl_singleton r
+
+/-- README: sharp normalization on the square, for a nontrivial target --- a
+value restriction is adequate exactly when it misses at most one context. -/
+example [Nontrivial A] {T : Set Square} :
+    AdequateOn T A ↔ Tᶜ.Subsingleton :=
+  Square.adequateOn_iff
+
+/-- README: reconstruction on the square is an explicit formula. -/
+example (K : ContextField Square A) :
+    Square.reconstruct (K ⊥) (K Square.left) (K Square.right)
+      (defect K Square.left Square.right) = K :=
+  Square.reconstruct_defect K
 
 end Descent.Status

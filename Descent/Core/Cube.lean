@@ -7,7 +7,7 @@ import Mathlib.Data.List.Sublists
 # Comparison cubes
 
 The pairwise defect measures failure of the valuation law on one comparison
-square. The higher layers measure failure of factorization on comparison
+square. The raw join calculus measures failure of factorization on comparison
 cubes: over a base context `c`, directions `a₁, …, aₖ` span the `2 ^ k`
 vertices `c ⊔ ⨆ᵢ∈ₛ aᵢ`, and the order-`k` mixed difference is the signed
 alternating sum of `K` over them, with `+` on the top vertex.

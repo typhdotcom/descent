@@ -6,10 +6,9 @@ import Descent.Core.Gauge
 The gauge theorem of `Descent.Core.Gauge` settles complete observation: the
 full pairwise defect field determines exactly the class `[K]`. The inverse
 problem proper begins when observation is restricted. For a family `S` of
-comparison squares, `defectOn S K` is the datum an observer of `S` receives,
-`gaugeOn S A` is the subgroup of fields that observer cannot distinguish from
-`0`, and `S` is `ObservationallyComplete` when restricted observation
-separates exactly the classes complete observation separates:
+comparison squares, `defectOn S K` is the restriction of the defect field to
+`S`, `gaugeOn S A` is the kernel of the restriction map, and `S` is
+`ObservationallyComplete` when the restricted kernel equals the full one:
 `gaugeOn S A = gauge R A`.
 
 Completeness is relative to the pairwise gauge, not absolute. On a context
@@ -43,8 +42,8 @@ theorem defectOnHom_apply (S : Set (R × R)) (K : ContextField R A) :
     defectOnHom S A K = defectOn S K :=
   rfl
 
-/-- The fields invisible to an observer of `S`: the kernel of restricted
-observation. -/
+/-- The kernel of restricted observation: the fields whose defect vanishes
+on `S`. -/
 def gaugeOn (S : Set (R × R)) (A : Type*) [AddCommGroup A] :
     AddSubgroup (ContextField R A) :=
   (defectOnHom S A).ker
@@ -59,7 +58,8 @@ theorem mem_gaugeOn_iff {S : Set (R × R)} {K : ContextField R A} :
     funext p
     exact h p.val p.property
 
-/-- Restriction observes less: the full gauge is invisible to every family. -/
+/-- Restricting can only enlarge the kernel: the gauge lies in every
+restricted kernel. -/
 theorem gauge_le_gaugeOn (S : Set (R × R)) : gauge R A ≤ gaugeOn S A :=
   fun _K hK => mem_gaugeOn_iff.mpr fun p _ => mem_gauge_iff.mp hK p.1 p.2
 
@@ -102,8 +102,8 @@ theorem gaugeOn_image_swap (S : Set (R × R)) :
     rw [Prod.fst_swap, Prod.snd_swap, defect_comm]
     exact h q hq
 
-/-- Degenerate squares carry no datum: a family of comparable pairs sees
-nothing. -/
+/-- On a family of comparable pairs the restriction map is zero, so its
+kernel is everything. -/
 theorem gaugeOn_eq_top_of_comparable {S : Set (R × R)}
     (h : ∀ p ∈ S, Comparable p.1 p.2) : gaugeOn S A = ⊤ :=
   eq_top_iff.mpr fun K _ => mem_gaugeOn_iff.mpr fun p hp => (h p hp).defect_eq_zero K

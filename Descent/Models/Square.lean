@@ -7,18 +7,19 @@ import Mathlib.Tactic.Module
 # The square
 
 `Bool × Bool` is the four-element Boolean lattice: `⊥`, `⊤`, and the
-incomparable pair `left`, `right`. It is the smallest context system whose
-pairwise defect sees anything, and on it everything is sharp:
+incomparable pair `left`, `right`. Its pairwise defect theory is solved
+completely, and the classifications are sharp:
 
 * the valuation law is the single relation `K left + K right = K ⊥ + K ⊤`
-  (`isValuation_iff`), and it has strict failures;
-* a family of squares is observationally complete exactly when it observes
-  the one nondegenerate square, in either order
+  (`isValuation_iff`), and for a nontrivial target it has strict failures;
+* for a nontrivial target, a family of squares is observationally complete
+  exactly when it observes the one nondegenerate square, in either order
   (`observationallyComplete_iff`): the singleton `{(left, right)}` is
-  complete, and no family of degenerate squares is;
-* a value restriction is adequate exactly when it misses at most one context
-  (`adequateOn_iff`): three values determine the fourth through the valuation
-  relation, two never do;
+  complete with no hypothesis on the target, and no family of degenerate
+  squares is;
+* for a nontrivial target, a value restriction is adequate exactly when it
+  misses at most one context (`adequateOn_iff`): three values determine the
+  fourth through the valuation relation, two never do;
 * reconstruction is an explicit formula (`reconstruct_defect`), not only an
   injectivity statement.
 -/

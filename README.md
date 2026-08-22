@@ -47,7 +47,7 @@ square (see Normalization and Models).
 
 Milestone M2, in `Descent/Core/Cube.lean`:
 
-The higher layers of the hierarchy are mixed differences on comparison cubes.
+The raw join calculus is mixed differences on comparison cubes.
 `supDiff a K = K (· ⊔ a) - K ·` is the difference of `K` across one context
 change, and `mixedDiff l K` iterates it over a finite list of directions. Up
 to the bridge, the layer consumes only `⊔`: it is stated over
@@ -73,13 +73,13 @@ Milestone M3, in `Descent/Reconstruction/Restricted.lean`:
 
 The gauge theorem settles complete observation, so the inverse problem starts
 by restricting it. For a family `S` of comparison squares, `defectOn S K` is
-the observed datum and `gaugeOn S A` is its kernel — the fields the observer
-cannot tell from `0`. `S` is observationally complete when
+the restriction of the defect field to `S`, and `gaugeOn S A` is the kernel
+of the restriction map. `S` is observationally complete when
 `gaugeOn S A = gauge R A`, which happens exactly when the restricted datum is
 injective on the observable quotient: a complete family recovers `[K]`, and no
-family recovers more. Restriction always observes less than the full field,
-completeness survives enlarging the family, degenerate squares carry no datum,
-and the incomparable pairs carry all of it.
+family recovers more. The restricted kernel always contains the gauge,
+completeness survives enlarging the family, the restriction map is zero on
+comparable pairs, and the incomparable pairs carry the whole defect field.
 
 ## Normalization
 
@@ -107,19 +107,20 @@ directions, never a raw list.
 
 For M3 the chain is the degenerate extreme: every family of squares is
 observationally complete (completeness is relative to the gauge, and the chain
-gauge forgets everything), and only the full value restriction is adequate —
-normalization must supply the whole field.
+gauge forgets everything), and for a nontrivial target only the full value
+restriction is adequate — normalization must supply the whole field.
 
-`Descent/Models/Square.lean`: the four-element Boolean lattice `Bool × Bool`
-is the smallest context system whose defect sees anything, and on it
-everything is sharp. The valuation law is the single relation
-`K left + K right = K ⊥ + K ⊤`, with strict failures. A family of squares is
-complete exactly when it observes the one nondegenerate square in either
-order — the singleton `{(left, right)}` suffices, and no family of degenerate
-squares does. A value restriction is adequate exactly when it misses at most
-one context: three values determine the fourth through the valuation
-relation, two never do. Reconstruction is an explicit formula, not only an
-injectivity statement.
+`Descent/Models/Square.lean`: on the four-element Boolean lattice
+`Bool × Bool` the pairwise defect theory is solved completely and the
+classifications are sharp. The valuation law is the single relation
+`K left + K right = K ⊥ + K ⊤`, with strict failures for a nontrivial target
+`A`. For a nontrivial target, a family of squares is complete exactly when it
+observes the one nondegenerate square in either order — the singleton
+`{(left, right)}` is complete with no hypothesis on `A`, and no family of
+degenerate squares is. For a nontrivial target, a value restriction is
+adequate exactly when it misses at most one context: three values determine
+the fourth through the valuation relation, two never do. Reconstruction is an
+explicit formula, not only an injectivity statement.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
