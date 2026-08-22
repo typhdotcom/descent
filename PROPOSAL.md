@@ -137,22 +137,11 @@ should be purely mathematical:
 
 > (D_K) measures the failure of (K) to satisfy a valuation identity on a comparison square.
 
-No physical vocabulary belongs in this definition.
-
-In particular, theorem and definition names in the core should not contain terms such as:
-
-- gravity;
-- matter;
-- time;
-- consciousness;
-- observer;
-- spacetime;
-- mass;
-- entropy,
-
-unless the object is literally the standard mathematical object with that name.
-
-Interpretations belong in separate recognition layers.
+The core API should be application-neutral and follow mathlib conventions.
+Definitions should use established mathematical nouns; theorem names should describe
+their formal content; docstrings should state the object, hypotheses, convention, or
+non-obvious design choice tersely. Realization-specific terminology belongs in the
+module that defines the corresponding data.
 
 The project should first determine what the defect **does**.
 
@@ -268,7 +257,7 @@ D^{(4)}
 \\quad\\to\\cdots
 \]
 
-with each layer defined without assuming what interpretation it will eventually receive.
+with each layer defined independently of the realizations it may eventually describe.
 
 Questions include:
 
@@ -351,7 +340,7 @@ Most mathematical toy universes begin by specifying a microscopic system and cal
 
 This project should repeatedly attempt the reverse direction.
 
-Suppose an observer receives only
+Suppose the available datum consists only of
 
 \[
 D_K(a,b)
@@ -428,7 +417,7 @@ A major target is a hierarchy
 
 with strictness witnesses wherever the implications fail to reverse.
 
-This makes the resolution of the observer part of the mathematics.
+This makes the resolution of the observable family part of the mathematics.
 
 ______________________________________________________________________
 
@@ -543,27 +532,19 @@ No unification is to be declared by analogy alone.
 
 ______________________________________________________________________
 
-# 13. Perspective is a later problem
+# 13. Names and documentation
 
-The project should make no foundational claim about consciousness.
+The core should read like a small mathlib development.
 
-If questions of subjectivity return, the first technical object should be **perspective**, not consciousness.
+Names should be concise, compositional, and determined by mathematical type and
+behavior. Prefer standard terminology over project-specific synonyms. A docstring
+should explain a definition's formal role or a theorem's non-obvious convention,
+not supply a narrative that the API does not need.
 
-A perspective might eventually be modeled as:
-
-- conditioning on internal data;
-- localization to a subdiagram;
-- a compatible family of partial observations;
-- a fiber over a coarse description;
-- a quotient defining what distinctions remain accessible.
-
-The mathematical question would be:
-
-> Which invariants are globally defined, which are perspective-relative, and which obstructions prevent all local perspectives from assembling into a single complete description?
-
-This question belongs naturally to the project.
-
-Claims about phenomenal consciousness do not, unless substantial mathematics eventually forces a useful recognition theorem.
+Introduce terminology only when it shortens theorem statements or distinguishes
+objects that the formal development actually treats differently. When several
+modules consume the same structure, move the shared mathematical name toward the
+root; keep realization-specific names local to their realization.
 
 ______________________________________________________________________
 
@@ -616,7 +597,7 @@ Files should split when theorem dependencies reveal a better structure.
 
 The import graph is part of the model.
 
-Core must never import interpretation modules.
+Core must never import application or realization modules.
 
 ______________________________________________________________________
 
@@ -663,7 +644,7 @@ For a defect operator:
 
 - theorem showing a concrete model computes the abstract object.
 
-No interpretation should be allowed to outrun this package.
+No README or overview claim should be allowed to outrun this package.
 
 ______________________________________________________________________
 
@@ -696,13 +677,11 @@ This document is intended to be sufficient initialization for a fresh coding mod
 
 A model working on this repository should obey the following rules.
 
-### Rule 1 — No inherited mythology
+### Rule 1 — Self-contained foundations
 
 Do not assume knowledge of any earlier project.
 
-Do not introduce physical narratives to motivate a definition.
-
-Definitions are justified by mathematical use.
+Introduce a definition when it is consumed by a stated theorem or construction.
 
 ### Rule 2 — Abstract only after consumption
 
@@ -728,9 +707,10 @@ Change the research question rather than weakening the meaning of “proved.”
 
 Never say “the defect determines the system” without specifying exactly which defect data is supplied and what equivalence class is recovered.
 
-### Rule 6 — Interpretation is downstream
+### Rule 6 — Application terms stay local
 
-A physical, logical, informational, or philosophical reading must appear as a theorem-backed recognition of an already-defined mathematical object.
+Keep core names application-neutral. Specialized terminology belongs in the module
+where the corresponding structure is defined and connected to the core by a theorem.
 
 ### Rule 7 — Build truth, not prose truth
 
@@ -778,7 +758,7 @@ What should normally be rebuilt:
 - namespaces;
 - theorem interfaces;
 - conceptual decompositions;
-- interpretation layers;
+- application layers;
 - project-specific terminology.
 
 This gives old work the correct status:
@@ -852,7 +832,7 @@ No lattice action.
 
 No probability.
 
-No physics words.
+Use only standard mathematical names.
 
 Build a status manifest immediately.
 
@@ -1016,9 +996,10 @@ For each datum class, what is the exact equivalence relation on realizations ind
 
 When is a failure of compositional valuation equivalent to a local-to-global obstruction in an underlying realization?
 
-### Q10 — Perspective
+### Q10 — Restricted data
 
-Can localization or conditioning be formalized as a change of accessible defect data, with rigorous limits on global reconstruction from an internal view?
+How do localization or conditioning change the available defect data, and what are
+the exact reconstruction limits under those restrictions?
 
 Q10 is deliberately last.
 
@@ -1146,21 +1127,11 @@ The long-term question is:
 \[
 \\boxed{
 \\text{Given only partial descriptions and their irreducible incompatibilities,
-what world can be reconstructed?}
+what structure can be reconstructed?}
 }
 \]
 
 Everything else is downstream.
-
-Not matter.
-
-Not gravity.
-
-Not spacetime.
-
-Not consciousness.
-
-Not even a lattice or a graph.
 
 First determine the calculus of descriptions, the gauge they cannot resolve, the defects left by failed composition, and the information recoverable from those defects.
 
