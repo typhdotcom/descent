@@ -5,6 +5,8 @@ import Descent.Core.Field
 import Descent.Core.Gauge
 import Descent.Models.Chain
 import Descent.Models.Square
+import Descent.Realization.FiniteGibbs
+import Descent.Realization.Independence
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 import Descent.Status

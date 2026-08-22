@@ -122,6 +122,41 @@ adequate exactly when it misses at most one context: three values determine
 the fourth through the valuation relation, two never do. Reconstruction is an
 explicit formula, not only an injectivity statement.
 
+## Realization
+
+Milestone M4, in `Descent/Realization/`:
+
+The first generative model behind a context field. A finite Gibbs realization
+attaches to each context a finite nonempty state space and to each state an
+energy, and produces the partition function `Z r = Σ exp (-energy x)` over the
+states of `r` and the log-partition field `K = log Z`. State spaces are
+nonempty so `Z` is positive and the logarithm is literal.
+
+`FiniteGibbs.lean` proves the recognition bridge into the core calculus, exact
+in both readings of the same realization:
+
+- **Logarithmic** — the pairwise defect of `log Z` is the logarithm of the
+  multiplicativity ratio `Z a · Z b / (Z (a ⊓ b) · Z (a ⊔ b))`, so `log Z` is
+  a valuation exactly when the partition function is multiplicative.
+- **Additive** — when the state map turns meet and join into intersection and
+  union, `Z` itself is a valuation and lands in the gauge.
+- **Gauge** — shifting the energy zero point moves `log Z` by a constant
+  field, so the defect observable cannot see the zero point.
+- **Naturality and products** — realizations pull back along lattice
+  homomorphisms, and the partition function of a product realization
+  (product states, additive energy: independent juxtaposition) factors, so
+  its defect observable splits componentwise.
+
+`Independence.lean` makes the obstruction strict on the square. Product
+realizations over chain factors have valuation log-partition — independent
+systems produce zero defect. The overlap realization — counting measure on
+nested state spaces sharing one ground state — has its partition function in
+the gauge, yet its log-partition has defect exactly `log (4 / 3)` at the
+nondegenerate square: additive exactness and multiplicative exactness are
+different laws, and the defect of the log-partition observes exactly the
+multiplicative one. The pairwise defect alone separates the overlap
+realization from every product realization over the square's chain factors.
+
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
 
@@ -138,11 +173,10 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M2 is built. M3 is built at this
-level: restricted observation with its kernel criterion, value-restriction
-normalization with its gauge characterization, and sharp classifications of
-both on the chain and the square, with explicit reconstruction on the square.
-Completeness and adequacy on richer context lattices remain open, as does the
-order-separated higher observable exposed as missing by M2 — raw mixed
-differences are not that object. M4 introduces the first weighted
-realization.
+`PROPOSAL.md` §20 sequences the work. M2 and M3 are built. M4 is built at
+this level: the finite Gibbs realization with its recognition bridge, the
+additive/multiplicative contrast, and the independence/correlation witnesses
+on the square. Completeness and adequacy on richer context lattices remain
+open, as does the order-separated higher observable exposed as missing by
+M2 — raw mixed differences are not that object. M5 begins realizability: which
+abstract defect data are induced by the finite Gibbs class.

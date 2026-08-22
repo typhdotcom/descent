@@ -115,4 +115,13 @@ theorem defect_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
     defect (K ∘ f) a b = defect K (f a) (f b) := by
   simp [defect, Function.comp_apply, map_inf, map_sup]
 
+/-- On a product of context systems the defect of a sum of fields pulled back
+from the factors splits componentwise. -/
+theorem defect_fst_add_snd {R' : Type*} [Lattice R']
+    (K : ContextField R A) (K' : ContextField R' A) (a b : R × R') :
+    defect (fun p => K p.1 + K' p.2) a b
+      = defect K a.1 b.1 + defect K' a.2 b.2 := by
+  simp only [defect, Prod.fst_inf, Prod.snd_inf, Prod.fst_sup, Prod.snd_sup]
+  abel
+
 end Descent

@@ -4,6 +4,8 @@ import Descent.Core.Defect
 import Descent.Core.Gauge
 import Descent.Models.Chain
 import Descent.Models.Square
+import Descent.Realization.FiniteGibbs
+import Descent.Realization.Independence
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 
@@ -312,5 +314,104 @@ example (K : ContextField Square A) :
     Square.reconstruct (K ⊥) (K Square.left) (K Square.right)
       (defect K Square.left Square.right) = K :=
   Square.reconstruct_defect K
+
+/-! ## Weighted realization (milestone M4)
+
+The claims below correspond to the "Realization" section of `README.md`.
+-/
+
+variable {Ω : Type*} (X : FiniteGibbs R Ω)
+
+/-- README: state spaces are nonempty, so the partition function is positive
+and its logarithm is literal. -/
+example (r : R) : 0 < X.partition r :=
+  X.partition_pos r
+
+/-- README: zero energy realizes the counting measure. -/
+example (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty) (r : R) :
+    (FiniteGibbs.counting states h).partition r = (states r).card :=
+  FiniteGibbs.partition_counting states h r
+
+/-- README: the recognition bridge --- the defect of the log-partition is
+the logarithm of the multiplicativity ratio of the partition function. -/
+example (a b : R) :
+    defect X.logPartition a b =
+      Real.log (X.partition a * X.partition b /
+        (X.partition (a ⊓ b) * X.partition (a ⊔ b))) :=
+  X.defect_logPartition a b
+
+/-- README: the log-partition is a valuation exactly when the partition
+function is multiplicative. -/
+example :
+    IsValuation X.logPartition ↔
+      ∀ a b, X.partition a * X.partition b =
+        X.partition (a ⊓ b) * X.partition (a ⊔ b) :=
+  X.isValuation_logPartition_iff
+
+/-- README: when the state map turns meet and join into intersection and
+union, the partition function itself is in the gauge. -/
+example [DecidableEq Ω]
+    (hinf : ∀ a b, X.states (a ⊓ b) = X.states a ∩ X.states b)
+    (hsup : ∀ a b, X.states (a ⊔ b) = X.states a ∪ X.states b) :
+    X.partition ∈ gauge R ℝ :=
+  X.partition_mem_gauge hinf hsup
+
+/-- README: shifting the energy zero point is gauge. -/
+example (c : ℝ) : DefectEquiv (X.shift c).logPartition X.logPartition :=
+  X.defectEquiv_logPartition_shift c
+
+/-- README: pulling a realization back along a lattice homomorphism pulls
+the defect observable back with it. -/
+example {R' : Type*} [Lattice R'] (f : LatticeHom R' R) (a b : R') :
+    defect (X.comap f).logPartition a b = defect X.logPartition (f a) (f b) :=
+  X.defect_logPartition_comap f a b
+
+/-- README: the partition function of a product realization factors. -/
+example {S' Ψ : Type*} (Y : FiniteGibbs S' Ψ) (p : R × S') :
+    (X.prod Y).partition p = X.partition p.1 * Y.partition p.2 :=
+  X.partition_prod Y p
+
+/-- README: the log-partition of a product realization is the sum of the
+pulled-back factor log-partitions. -/
+example {S' Ψ : Type*} (Y : FiniteGibbs S' Ψ) (p : R × S') :
+    (X.prod Y).logPartition p = X.logPartition p.1 + Y.logPartition p.2 :=
+  X.logPartition_prod Y p
+
+/-- README: the defect observable of a product realization splits
+componentwise. -/
+example {S' Ψ : Type*} [Lattice S'] (Y : FiniteGibbs S' Ψ) (a b : R × S') :
+    defect (X.prod Y).logPartition a b
+      = defect X.logPartition a.1 b.1 + defect Y.logPartition a.2 b.2 :=
+  X.defect_logPartition_prod Y a b
+
+/-- README: independence over chain factors --- every product realization
+has valuation log-partition. -/
+example {R' S' Ω' Ψ : Type*} [LinearOrder R'] [LinearOrder S']
+    (X' : FiniteGibbs R' Ω') (Y : FiniteGibbs S' Ψ) :
+    IsValuation (X'.prod Y).logPartition :=
+  FiniteGibbs.isValuation_logPartition_prod_of_linearOrder X' Y
+
+/-- README: the additive reading of the overlap realization is exact ---
+its partition function is in the gauge. -/
+example : Square.overlap.partition ∈ gauge Square ℝ :=
+  Square.partition_overlap_mem_gauge
+
+/-- README: the defect of its log-partition at the nondegenerate square is
+exactly `log (4 / 3)`. -/
+example :
+    defect Square.overlap.logPartition Square.left Square.right
+      = Real.log (4 / 3) :=
+  Square.defect_logPartition_overlap
+
+/-- README: so the log-partition of the overlap realization is not a
+valuation. -/
+example : ¬IsValuation Square.overlap.logPartition :=
+  Square.not_isValuation_logPartition_overlap
+
+/-- README: the pairwise defect alone separates the overlap realization
+from every product realization over the square's chain factors. -/
+example {Ω' Ψ : Type*} (X' : FiniteGibbs Bool Ω') (Y : FiniteGibbs Bool Ψ) :
+    ¬DefectEquiv Square.overlap.logPartition (X'.prod Y).logPartition :=
+  Square.not_defectEquiv_logPartition_overlap_prod X' Y
 
 end Descent.Status
