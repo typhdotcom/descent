@@ -1,54 +1,68 @@
 import Descent.Core.Gauge
-import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Finset.Sum
 
 /-!
 # Finite Gibbs realizations
 
-The first generative model behind a context field: each context `r` carries a
-finite nonempty state space `states r` inside a common carrier, each state `x`
-carries an energy `energy x`, and the realization produces
+The first generative model behind a context field. A finite Gibbs realization
+is a lattice homomorphism from contexts to finite nonempty state spaces ---
+meet is intersection, join is union --- together with an energy on states. It
+produces
 
     Z r = ∑ x ∈ states r, exp (-energy x),      K = log Z.
 
 State spaces are nonempty so `Z` is positive and the logarithm is literal.
+The lattice compatibility is structural: without it the class realizes every
+field exactly (`states r = {r}`, `energy = -K`) and constrains nothing.
 
-The recognition bridge into the core calculus is exact in both readings of the
-same realization:
+The two readings of the same realization obey different laws. The partition
+function of every realization is a valuation (`isValuation_partition`): the
+additive reading lands in the gauge. The log-partition is governed by the
+recognition identity `defect_logPartition` --- its defect is the logarithm of
+the multiplicativity ratio --- and by the exact correction
+`partition_mul_partition`, which gives that defect a universal sign
+(`defect_logPartition_nonneg`) and a sharp vanishing law: zero defect at a
+square is exactly nested state spaces
+(`defect_logPartition_eq_zero_iff_subset`), and it forces the partition
+function at the meet to agree with one of the sides
+(`partition_inf_eq_of_defect_eq_zero`). Nothing in this class factors
+nontrivially; the product of realizations is not a construction of the class
+because product state maps do not send join to union.
 
-* the pairwise defect of the log-partition field is the logarithm of the
-  multiplicativity ratio `Z a * Z b / (Z (a ⊓ b) * Z (a ⊔ b))`
-  (`defect_logPartition`), so it vanishes at a square exactly when the
-  partition function multiplies across it;
-* when the state map turns meet and join into intersection and union, the
-  partition function itself is a valuation (`isValuation_partition`) --- the
-  additive reading lands in the gauge.
+Log-partitions are monotone (`logPartition_mono`), and the class is genuinely
+restrictive: an explicit field on the two-element chain is the log-partition
+of no realization over any state carrier (`exists_not_logPartition`).
 
 Gibbs language is used only where it is mathematically literal: `weight` is
-the Boltzmann weight `exp (-energy x)`, a product realization juxtaposes
-independent systems and its partition function factors (`partition_prod`),
-and shifting the energy zero point moves the log-partition by a constant
-field, which is gauge (`defectEquiv_logPartition_shift`).
+the Boltzmann weight `exp (-energy x)`, `mass` is the total weight of a set
+of states, and shifting the energy zero point moves the log-partition by a
+constant field, which is gauge (`defectEquiv_logPartition_shift`).
 -/
 
 namespace Descent
 
-/-- A finite Gibbs realization: finite nonempty state spaces indexed by
-contexts, and an energy on states. Nonemptiness keeps the partition function
-positive, so its logarithm is literal. -/
-structure FiniteGibbs (R Ω : Type*) where
+/-- A finite Gibbs realization: a lattice homomorphism from contexts to
+finite nonempty state spaces --- meet is intersection, join is union ---
+together with an energy on states. Nonemptiness keeps the partition function
+positive, so its logarithm is literal; the lattice compatibility is what
+makes the class restrictive. -/
+structure FiniteGibbs (R Ω : Type*) [Lattice R] [DecidableEq Ω] where
   /-- The state space of a context. -/
   states : R → Finset Ω
   /-- Every context has at least one state. -/
   states_nonempty : ∀ r, (states r).Nonempty
+  /-- The state map sends meet to intersection. -/
+  states_inf : ∀ a b, states (a ⊓ b) = states a ∩ states b
+  /-- The state map sends join to union. -/
+  states_sup : ∀ a b, states (a ⊔ b) = states a ∪ states b
   /-- The energy of a state. -/
   energy : Ω → ℝ
 
 namespace FiniteGibbs
 
-variable {R Ω : Type*} (X : FiniteGibbs R Ω)
+variable {R Ω : Type*} [Lattice R] [DecidableEq Ω] (X : FiniteGibbs R Ω)
 
 /-- The Boltzmann weight of a state. -/
 noncomputable def weight (x : Ω) : ℝ :=
@@ -57,12 +71,61 @@ noncomputable def weight (x : Ω) : ℝ :=
 theorem weight_pos (x : Ω) : 0 < X.weight x :=
   Real.exp_pos _
 
-/-- The partition function `Z r = ∑ x ∈ states r, exp (-energy x)`. -/
+/-! ### Mass -/
+
+/-- The mass of a finite set of states: its total Boltzmann weight. -/
+noncomputable def mass (s : Finset Ω) : ℝ :=
+  ∑ x ∈ s, X.weight x
+
+theorem mass_nonneg (s : Finset Ω) : 0 ≤ X.mass s :=
+  Finset.sum_nonneg fun x _ => (X.weight_pos x).le
+
+theorem mass_pos {s : Finset Ω} (h : s.Nonempty) : 0 < X.mass s :=
+  Finset.sum_pos (fun x _ => X.weight_pos x) h
+
+theorem mass_eq_zero_iff {s : Finset Ω} : X.mass s = 0 ↔ s = ∅ := by
+  constructor
+  · intro h
+    by_contra hs
+    exact (X.mass_pos (Finset.nonempty_iff_ne_empty.mpr hs)).ne' h
+  · rintro rfl
+    simp [mass]
+
+theorem mass_inter_add_mass_sdiff (s t : Finset Ω) :
+    X.mass (s ∩ t) + X.mass (s \ t) = X.mass s := by
+  have h := Finset.sum_sdiff (f := X.weight) (Finset.inter_subset_left (s₁ := s) (s₂ := t))
+  rw [Finset.sdiff_inter_self_left] at h
+  simp only [mass]
+  linarith
+
+theorem mass_union_add_mass_inter (s t : Finset Ω) :
+    X.mass (s ∪ t) + X.mass (s ∩ t) = X.mass s + X.mass t :=
+  Finset.sum_union_inter
+
+/-- The exact multiplicative correction for masses: the product over two sets
+exceeds the product over intersection and union by exactly the product of
+the masses of the two differences. -/
+theorem mass_mul_mass (s t : Finset Ω) :
+    X.mass s * X.mass t
+      = X.mass (s ∩ t) * X.mass (s ∪ t) + X.mass (s \ t) * X.mass (t \ s) := by
+  have h1 := X.mass_inter_add_mass_sdiff s t
+  have h2 := X.mass_inter_add_mass_sdiff t s
+  have h3 := X.mass_union_add_mass_inter s t
+  rw [Finset.inter_comm t s] at h2
+  have hx : X.mass (s \ t) = X.mass s - X.mass (s ∩ t) := by linarith
+  have hy : X.mass (t \ s) = X.mass t - X.mass (s ∩ t) := by linarith
+  have hu : X.mass (s ∪ t) = X.mass s + X.mass t - X.mass (s ∩ t) := by linarith
+  rw [hx, hy, hu]
+  ring
+
+/-! ### The partition function and the log-partition field -/
+
+/-- The partition function: the mass of the state space. -/
 noncomputable def partition : ContextField R ℝ :=
-  fun r => ∑ x ∈ X.states r, X.weight x
+  fun r => X.mass (X.states r)
 
 theorem partition_pos (r : R) : 0 < X.partition r :=
-  Finset.sum_pos (fun x _ => X.weight_pos x) (X.states_nonempty r)
+  X.mass_pos (X.states_nonempty r)
 
 theorem partition_ne_zero (r : R) : X.partition r ≠ 0 :=
   (X.partition_pos r).ne'
@@ -72,29 +135,57 @@ to the defect calculus. -/
 noncomputable def logPartition : ContextField R ℝ :=
   fun r => Real.log (X.partition r)
 
-/-- The counting realization on a family of state spaces: zero energy, so
-the partition function is the counting measure. -/
-def counting (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty) :
+theorem states_mono {a b : R} (h : a ≤ b) : X.states a ⊆ X.states b := by
+  have hab : X.states a = X.states a ∩ X.states b := by
+    rw [← X.states_inf, inf_eq_left.mpr h]
+  rw [hab]
+  exact Finset.inter_subset_right
+
+theorem partition_mono : Monotone X.partition := fun _ _ h =>
+  Finset.sum_le_sum_of_subset_of_nonneg (X.states_mono h)
+    fun x _ _ => (X.weight_pos x).le
+
+/-- Log-partitions are monotone fields. -/
+theorem logPartition_mono : Monotone X.logPartition := fun a _ h =>
+  Real.log_le_log (X.partition_pos a) (X.partition_mono h)
+
+/-- The counting realization on a lattice homomorphism of state spaces: zero
+energy, so the partition function is the counting measure. -/
+def counting (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty)
+    (hinf : ∀ a b, states (a ⊓ b) = states a ∩ states b)
+    (hsup : ∀ a b, states (a ⊔ b) = states a ∪ states b) :
     FiniteGibbs R Ω :=
-  ⟨states, h, fun _ => 0⟩
+  ⟨states, h, hinf, hsup, fun _ => 0⟩
 
 @[simp]
-theorem states_counting (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty) :
-    (counting states h).states = states :=
+theorem states_counting (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty)
+    (hinf : ∀ a b, states (a ⊓ b) = states a ∩ states b)
+    (hsup : ∀ a b, states (a ⊔ b) = states a ∪ states b) :
+    (counting states h hinf hsup).states = states :=
   rfl
 
 theorem partition_counting (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty)
-    (r : R) : (counting states h).partition r = (states r).card := by
-  simp [partition, counting, weight, Real.exp_zero]
+    (hinf : ∀ a b, states (a ⊓ b) = states a ∩ states b)
+    (hsup : ∀ a b, states (a ⊔ b) = states a ∪ states b) (r : R) :
+    (counting states h hinf hsup).partition r = (states r).card := by
+  simp [partition, mass, counting, weight, Real.exp_zero]
 
 /-! ### The recognition bridge -/
 
-section Lattice
+/-- The additive law of the class: the partition function of every
+realization is a valuation. -/
+theorem isValuation_partition : IsValuation X.partition := by
+  intro a b
+  have h := X.mass_union_add_mass_inter (X.states a) (X.states b)
+  simp only [defect, partition, X.states_inf, X.states_sup]
+  linarith
 
-variable [Lattice R]
+/-- The additive recognition law: partition functions land in the gauge. -/
+theorem partition_mem_gauge : X.partition ∈ gauge R ℝ :=
+  mem_gauge_iff.mpr X.isValuation_partition
 
-/-- The recognition bridge: the pairwise defect of the log-partition field is
-the logarithm of the multiplicativity ratio of the partition function. -/
+/-- The recognition identity: the pairwise defect of the log-partition field
+is the logarithm of the multiplicativity ratio of the partition function. -/
 theorem defect_logPartition (a b : R) :
     defect X.logPartition a b =
       Real.log (X.partition a * X.partition b /
@@ -106,9 +197,9 @@ theorem defect_logPartition (a b : R) :
     defect_def, sub_add_eq_sub_sub]
   rfl
 
-/-- The exact obstruction: the log-partition satisfies the valuation law at a
-square exactly when the partition function multiplies across it. -/
-theorem defect_logPartition_eq_zero_iff {a b : R} :
+/-- The log-partition satisfies the valuation law at a square exactly when
+the partition function multiplies across it. -/
+theorem defect_logPartition_eq_zero_iff_mul {a b : R} :
     defect X.logPartition a b = 0 ↔
       X.partition a * X.partition b =
         X.partition (a ⊓ b) * X.partition (a ⊔ b) := by
@@ -125,39 +216,75 @@ theorem defect_logPartition_eq_zero_iff {a b : R} :
       (mul_ne_zero (X.partition_ne_zero (a ⊓ b)) (X.partition_ne_zero (a ⊔ b))),
       Real.log_one]
 
-/-- The log-partition is a valuation exactly when the partition function is
-multiplicative. -/
-theorem isValuation_logPartition_iff :
-    IsValuation X.logPartition ↔
-      ∀ a b, X.partition a * X.partition b =
-        X.partition (a ⊓ b) * X.partition (a ⊔ b) :=
-  forall₂_congr fun _ _ => X.defect_logPartition_eq_zero_iff
+/-- The exact multiplicative correction: across a comparison square the
+product of partition functions is the product at meet and join plus the
+masses of the two state-space differences. -/
+theorem partition_mul_partition (a b : R) :
+    X.partition a * X.partition b
+      = X.partition (a ⊓ b) * X.partition (a ⊔ b)
+        + X.mass (X.states a \ X.states b) * X.mass (X.states b \ X.states a) := by
+  simp only [partition, X.states_inf, X.states_sup]
+  exact X.mass_mul_mass _ _
 
-/-- The additive recognition: when the state map turns meet and join into
-intersection and union, the partition function itself is a valuation. -/
-theorem isValuation_partition [DecidableEq Ω]
-    (hinf : ∀ a b, X.states (a ⊓ b) = X.states a ∩ X.states b)
-    (hsup : ∀ a b, X.states (a ⊔ b) = X.states a ∪ X.states b) :
-    IsValuation X.partition := by
-  intro a b
-  have h := Finset.sum_union_inter (s₁ := X.states a) (s₂ := X.states b)
-    (f := X.weight)
-  simp only [defect, partition, hinf, hsup]
+/-- The universal sign of the class: the defect of a log-partition is
+nonnegative. -/
+theorem defect_logPartition_nonneg (a b : R) : 0 ≤ defect X.logPartition a b := by
+  rw [X.defect_logPartition a b]
+  refine Real.log_nonneg ?_
+  rw [one_le_div (mul_pos (X.partition_pos (a ⊓ b)) (X.partition_pos (a ⊔ b))),
+    X.partition_mul_partition a b]
+  have h := mul_nonneg (X.mass_nonneg (X.states a \ X.states b))
+    (X.mass_nonneg (X.states b \ X.states a))
   linarith
 
-theorem partition_mem_gauge [DecidableEq Ω]
-    (hinf : ∀ a b, X.states (a ⊓ b) = X.states a ∩ X.states b)
-    (hsup : ∀ a b, X.states (a ⊔ b) = X.states a ∪ X.states b) :
-    X.partition ∈ gauge R ℝ :=
-  mem_gauge_iff.mpr (X.isValuation_partition hinf hsup)
+/-- The sharp vanishing law: the defect of the log-partition vanishes at a
+square exactly when the state spaces are nested. -/
+theorem defect_logPartition_eq_zero_iff_subset {a b : R} :
+    defect X.logPartition a b = 0 ↔
+      X.states a ⊆ X.states b ∨ X.states b ⊆ X.states a := by
+  rw [X.defect_logPartition_eq_zero_iff_mul, X.partition_mul_partition a b,
+    add_eq_left, mul_eq_zero, X.mass_eq_zero_iff, X.mass_eq_zero_iff,
+    Finset.sdiff_eq_empty_iff_subset, Finset.sdiff_eq_empty_iff_subset]
 
-end Lattice
+/-- The log-partition is a valuation exactly when every pair of state spaces
+is nested. -/
+theorem isValuation_logPartition_iff :
+    IsValuation X.logPartition ↔
+      ∀ a b, X.states a ⊆ X.states b ∨ X.states b ⊆ X.states a :=
+  forall₂_congr fun _ _ => X.defect_logPartition_eq_zero_iff_subset
+
+/-- Zero defect is degenerate: it forces the partition function at the meet
+to agree with one of the sides, so nothing in this class factors
+nontrivially. -/
+theorem partition_inf_eq_of_defect_eq_zero {a b : R}
+    (h : defect X.logPartition a b = 0) :
+    X.partition (a ⊓ b) = X.partition a ∨ X.partition (a ⊓ b) = X.partition b := by
+  rcases X.defect_logPartition_eq_zero_iff_subset.mp h with hs | hs
+  · left
+    show X.mass (X.states (a ⊓ b)) = X.mass (X.states a)
+    rw [X.states_inf, Finset.inter_eq_left.mpr hs]
+  · right
+    show X.mass (X.states (a ⊓ b)) = X.mass (X.states b)
+    rw [X.states_inf, Finset.inter_comm, Finset.inter_eq_left.mpr hs]
+
+/-- The class is genuinely restrictive already on the two-element chain:
+log-partitions are monotone, so an explicit non-monotone field is the
+log-partition of no realization, over any state carrier. -/
+theorem exists_not_logPartition :
+    ∃ K : ContextField Bool ℝ,
+      ∀ {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Bool Ω'),
+        X'.logPartition ≠ K := by
+  refine ⟨fun b => cond b 0 1, fun {Ω'} _ X' h => ?_⟩
+  have hm := X'.logPartition_mono (Bool.false_le true)
+  rw [h] at hm
+  norm_num at hm
 
 /-! ### The energy zero point is gauge -/
 
 /-- Shifting the energy zero point. -/
 def shift (c : ℝ) : FiniteGibbs R Ω :=
-  ⟨X.states, X.states_nonempty, fun x => X.energy x + c⟩
+  ⟨X.states, X.states_nonempty, X.states_inf, X.states_sup,
+    fun x => X.energy x + c⟩
 
 @[simp]
 theorem states_shift (c : ℝ) : (X.shift c).states = X.states :=
@@ -169,7 +296,7 @@ theorem weight_shift (c : ℝ) (x : Ω) :
 
 theorem partition_shift (c : ℝ) (r : R) :
     (X.shift c).partition r = Real.exp (-c) * X.partition r := by
-  simp [partition, weight_shift, Finset.mul_sum]
+  simp [partition, mass, weight_shift, Finset.mul_sum]
 
 theorem logPartition_shift (c : ℝ) (r : R) :
     (X.shift c).logPartition r = X.logPartition r - c := by
@@ -181,7 +308,7 @@ theorem logPartition_shift (c : ℝ) (r : R) :
 /-- Shifting the energy zero point moves the log-partition by a constant
 field, which is a valuation: the defect observable cannot see the zero
 point. -/
-theorem defectEquiv_logPartition_shift [Lattice R] (c : ℝ) :
+theorem defectEquiv_logPartition_shift (c : ℝ) :
     DefectEquiv (X.shift c).logPartition X.logPartition := by
   rw [defectEquiv_iff_sub_isValuation]
   have h : (X.shift c).logPartition - X.logPartition
@@ -194,84 +321,68 @@ theorem defectEquiv_logPartition_shift [Lattice R] (c : ℝ) :
 
 /-! ### Naturality -/
 
-/-- Pulling a realization back along a map of context systems. -/
-def comap {R' : Type*} (f : R' → R) : FiniteGibbs R' Ω where
+/-- Pulling a realization back along a lattice homomorphism of context
+systems. -/
+def comap {R' : Type*} [Lattice R'] (f : LatticeHom R' R) : FiniteGibbs R' Ω where
   states r := X.states (f r)
   states_nonempty r := X.states_nonempty (f r)
+  states_inf a b := by rw [map_inf]; exact X.states_inf (f a) (f b)
+  states_sup a b := by rw [map_sup]; exact X.states_sup (f a) (f b)
   energy := X.energy
 
 @[simp]
-theorem partition_comap {R' : Type*} (f : R' → R) :
+theorem partition_comap {R' : Type*} [Lattice R'] (f : LatticeHom R' R) :
     (X.comap f).partition = X.partition ∘ f :=
   rfl
 
 @[simp]
-theorem logPartition_comap {R' : Type*} (f : R' → R) :
+theorem logPartition_comap {R' : Type*} [Lattice R'] (f : LatticeHom R' R) :
     (X.comap f).logPartition = X.logPartition ∘ f :=
   rfl
 
 /-- Realization-level naturality: pulling back along a lattice homomorphism
 pulls the defect observable back with it. -/
-theorem defect_logPartition_comap [Lattice R] {R' : Type*} [Lattice R']
+theorem defect_logPartition_comap {R' : Type*} [Lattice R']
     (f : LatticeHom R' R) (a b : R') :
     defect (X.comap f).logPartition a b = defect X.logPartition (f a) (f b) := by
   rw [logPartition_comap]
   exact defect_comp f X.logPartition a b
 
-/-! ### Products -/
+/-! ### Disjoint sums -/
 
-section Prod
+section DisjSum
 
-variable {S Ψ : Type*} (Y : FiniteGibbs S Ψ)
+variable {Ψ : Type*} [DecidableEq Ψ] (Y : FiniteGibbs R Ψ)
 
-/-- The product of two realizations: product state spaces with additive
-energy, the independent juxtaposition. -/
-def prod : FiniteGibbs (R × S) (Ω × Ψ) where
-  states p := X.states p.1 ×ˢ Y.states p.2
-  states_nonempty p := (X.states_nonempty p.1).product (Y.states_nonempty p.2)
-  energy x := X.energy x.1 + Y.energy x.2
+/-- The disjoint sum of two realizations over the same context system: the
+juxtaposition that stays in the class, adding state spaces. -/
+def disjSum : FiniteGibbs R (Ω ⊕ Ψ) where
+  states r := (X.states r).disjSum (Y.states r)
+  states_nonempty r := by
+    obtain ⟨x, hx⟩ := X.states_nonempty r
+    exact ⟨Sum.inl x, Finset.inl_mem_disjSum.mpr hx⟩
+  states_inf a b := by
+    rw [X.states_inf, Y.states_inf]
+    ext x
+    cases x <;> simp
+  states_sup a b := by
+    rw [X.states_sup, Y.states_sup]
+    ext x
+    cases x <;> simp
+  energy := Sum.elim X.energy Y.energy
 
 @[simp]
-theorem states_prod (p : R × S) :
-    (X.prod Y).states p = X.states p.1 ×ˢ Y.states p.2 :=
+theorem states_disjSum (r : R) :
+    (X.disjSum Y).states r = (X.states r).disjSum (Y.states r) :=
   rfl
 
-theorem weight_prod (x : Ω × Ψ) :
-    (X.prod Y).weight x = X.weight x.1 * Y.weight x.2 := by
-  simp only [weight, prod, neg_add_rev, Real.exp_add]
-  exact mul_comm _ _
+/-- The partition function of a disjoint sum adds. -/
+theorem partition_disjSum (r : R) :
+    (X.disjSum Y).partition r = X.partition r + Y.partition r := by
+  simp only [partition, mass, states_disjSum, Finset.sum_disjSum]
+  rfl
 
-/-- The partition function of a product realization factors. -/
-theorem partition_prod (p : R × S) :
-    (X.prod Y).partition p = X.partition p.1 * Y.partition p.2 := by
-  simp only [partition, states_prod, weight_prod, Finset.sum_product]
-  exact (Finset.sum_mul_sum _ _ _ _).symm
-
-/-- The log-partition of a product realization is the sum of the pulled-back
-factor log-partitions. -/
-theorem logPartition_prod (p : R × S) :
-    (X.prod Y).logPartition p = X.logPartition p.1 + Y.logPartition p.2 := by
-  simp only [logPartition, partition_prod]
-  exact Real.log_mul (X.partition_ne_zero _) (Y.partition_ne_zero _)
-
-/-- The defect observable of a product realization splits componentwise. -/
-theorem defect_logPartition_prod [Lattice R] [Lattice S] (a b : R × S) :
-    defect (X.prod Y).logPartition a b
-      = defect X.logPartition a.1 b.1 + defect Y.logPartition a.2 b.2 := by
-  have h : (X.prod Y).logPartition
-      = fun p : R × S => X.logPartition p.1 + Y.logPartition p.2 :=
-    funext fun p => X.logPartition_prod Y p
-  rw [h]
-  exact defect_fst_add_snd X.logPartition Y.logPartition a b
-
-/-- Independence: a product of realizations with valuation log-partitions has
-valuation log-partition. -/
-theorem isValuation_logPartition_prod [Lattice R] [Lattice S]
-    (hX : IsValuation X.logPartition) (hY : IsValuation Y.logPartition) :
-    IsValuation (X.prod Y).logPartition := fun a b => by
-  rw [defect_logPartition_prod, hX a.1 b.1, hY a.2 b.2, add_zero]
-
-end Prod
+end DisjSum
 
 end FiniteGibbs
 

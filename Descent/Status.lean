@@ -5,7 +5,7 @@ import Descent.Core.Gauge
 import Descent.Models.Chain
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
-import Descent.Realization.Independence
+import Descent.Realization.Overlap
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 
@@ -320,7 +320,14 @@ example (K : ContextField Square A) :
 The claims below correspond to the "Realization" section of `README.md`.
 -/
 
-variable {Ω : Type*} (X : FiniteGibbs R Ω)
+variable {Ω : Type*} [DecidableEq Ω] (X : FiniteGibbs R Ω)
+
+/-- README: the state map of a realization is a lattice homomorphism into
+finite sets --- meet is intersection, join is union. -/
+example (a b : R) :
+    X.states (a ⊓ b) = X.states a ∩ X.states b
+      ∧ X.states (a ⊔ b) = X.states a ∪ X.states b :=
+  ⟨X.states_inf a b, X.states_sup a b⟩
 
 /-- README: state spaces are nonempty, so the partition function is positive
 and its logarithm is literal. -/
@@ -328,11 +335,18 @@ example (r : R) : 0 < X.partition r :=
   X.partition_pos r
 
 /-- README: zero energy realizes the counting measure. -/
-example (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty) (r : R) :
-    (FiniteGibbs.counting states h).partition r = (states r).card :=
-  FiniteGibbs.partition_counting states h r
+example (states : R → Finset Ω) (h : ∀ r, (states r).Nonempty)
+    (hinf : ∀ a b, states (a ⊓ b) = states a ∩ states b)
+    (hsup : ∀ a b, states (a ⊔ b) = states a ∪ states b) (r : R) :
+    (FiniteGibbs.counting states h hinf hsup).partition r = (states r).card :=
+  FiniteGibbs.partition_counting states h hinf hsup r
 
-/-- README: the recognition bridge --- the defect of the log-partition is
+/-- README: the additive law --- the partition function of every realization
+is in the gauge. -/
+example : X.partition ∈ gauge R ℝ :=
+  X.partition_mem_gauge
+
+/-- README: the recognition identity --- the defect of the log-partition is
 the logarithm of the multiplicativity ratio of the partition function. -/
 example (a b : R) :
     defect X.logPartition a b =
@@ -340,21 +354,51 @@ example (a b : R) :
         (X.partition (a ⊓ b) * X.partition (a ⊔ b))) :=
   X.defect_logPartition a b
 
-/-- README: the log-partition is a valuation exactly when the partition
-function is multiplicative. -/
+/-- README: the exact multiplicative correction --- the product of partition
+functions across a square is the product at meet and join plus the masses of
+the two state-space differences. -/
+example (a b : R) :
+    X.partition a * X.partition b
+      = X.partition (a ⊓ b) * X.partition (a ⊔ b)
+        + X.mass (X.states a \ X.states b) * X.mass (X.states b \ X.states a) :=
+  X.partition_mul_partition a b
+
+/-- README: the universal sign --- the defect of a log-partition is
+nonnegative. -/
+example (a b : R) : 0 ≤ defect X.logPartition a b :=
+  X.defect_logPartition_nonneg a b
+
+/-- README: the defect of the log-partition vanishes at a square exactly
+when the partition function multiplies across it. -/
+example {a b : R} :
+    defect X.logPartition a b = 0 ↔
+      X.partition a * X.partition b =
+        X.partition (a ⊓ b) * X.partition (a ⊔ b) :=
+  X.defect_logPartition_eq_zero_iff_mul
+
+/-- README: the sharp vanishing law --- zero defect at a square is exactly
+nested state spaces. -/
+example {a b : R} :
+    defect X.logPartition a b = 0 ↔
+      X.states a ⊆ X.states b ∨ X.states b ⊆ X.states a :=
+  X.defect_logPartition_eq_zero_iff_subset
+
+/-- README: the log-partition is a valuation exactly when every pair of
+state spaces is nested. -/
 example :
     IsValuation X.logPartition ↔
-      ∀ a b, X.partition a * X.partition b =
-        X.partition (a ⊓ b) * X.partition (a ⊔ b) :=
+      ∀ a b, X.states a ⊆ X.states b ∨ X.states b ⊆ X.states a :=
   X.isValuation_logPartition_iff
 
-/-- README: when the state map turns meet and join into intersection and
-union, the partition function itself is in the gauge. -/
-example [DecidableEq Ω]
-    (hinf : ∀ a b, X.states (a ⊓ b) = X.states a ∩ X.states b)
-    (hsup : ∀ a b, X.states (a ⊔ b) = X.states a ∪ X.states b) :
-    X.partition ∈ gauge R ℝ :=
-  X.partition_mem_gauge hinf hsup
+/-- README: zero defect is degenerate --- it forces the partition function
+at the meet to agree with one of the sides. -/
+example {a b : R} (h : defect X.logPartition a b = 0) :
+    X.partition (a ⊓ b) = X.partition a ∨ X.partition (a ⊓ b) = X.partition b :=
+  X.partition_inf_eq_of_defect_eq_zero h
+
+/-- README: log-partitions are monotone fields. -/
+example : Monotone X.logPartition :=
+  X.logPartition_mono
 
 /-- README: shifting the energy zero point is gauge. -/
 example (c : ℝ) : DefectEquiv (X.shift c).logPartition X.logPartition :=
@@ -366,52 +410,40 @@ example {R' : Type*} [Lattice R'] (f : LatticeHom R' R) (a b : R') :
     defect (X.comap f).logPartition a b = defect X.logPartition (f a) (f b) :=
   X.defect_logPartition_comap f a b
 
-/-- README: the partition function of a product realization factors. -/
-example {S' Ψ : Type*} (Y : FiniteGibbs S' Ψ) (p : R × S') :
-    (X.prod Y).partition p = X.partition p.1 * Y.partition p.2 :=
-  X.partition_prod Y p
+/-- README: the disjoint sum of realizations adds partition functions. -/
+example {Ψ : Type*} [DecidableEq Ψ] (Y : FiniteGibbs R Ψ) (r : R) :
+    (X.disjSum Y).partition r = X.partition r + Y.partition r :=
+  X.partition_disjSum Y r
 
-/-- README: the log-partition of a product realization is the sum of the
-pulled-back factor log-partitions. -/
-example {S' Ψ : Type*} (Y : FiniteGibbs S' Ψ) (p : R × S') :
-    (X.prod Y).logPartition p = X.logPartition p.1 + Y.logPartition p.2 :=
-  X.logPartition_prod Y p
+/-- README: a non-monotone field on the two-element chain is the
+log-partition of no realization, over any state carrier. -/
+example :
+    ∃ K : ContextField Bool ℝ,
+      ∀ {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Bool Ω'),
+        X'.logPartition ≠ K :=
+  FiniteGibbs.exists_not_logPartition
 
-/-- README: the defect observable of a product realization splits
-componentwise. -/
-example {S' Ψ : Type*} [Lattice S'] (Y : FiniteGibbs S' Ψ) (a b : R × S') :
-    defect (X.prod Y).logPartition a b
-      = defect X.logPartition a.1 b.1 + defect Y.logPartition a.2 b.2 :=
-  X.defect_logPartition_prod Y a b
-
-/-- README: independence over chain factors --- every product realization
-has valuation log-partition. -/
-example {R' S' Ω' Ψ : Type*} [LinearOrder R'] [LinearOrder S']
-    (X' : FiniteGibbs R' Ω') (Y : FiniteGibbs S' Ψ) :
-    IsValuation (X'.prod Y).logPartition :=
-  FiniteGibbs.isValuation_logPartition_prod_of_linearOrder X' Y
-
-/-- README: the additive reading of the overlap realization is exact ---
-its partition function is in the gauge. -/
-example : Square.overlap.partition ∈ gauge Square ℝ :=
-  Square.partition_overlap_mem_gauge
-
-/-- README: the defect of its log-partition at the nondegenerate square is
-exactly `log (4 / 3)`. -/
+/-- README: the defect of the overlap realization's log-partition at the
+nondegenerate square is exactly `log (4 / 3)`. -/
 example :
     defect Square.overlap.logPartition Square.left Square.right
       = Real.log (4 / 3) :=
   Square.defect_logPartition_overlap
 
-/-- README: so the log-partition of the overlap realization is not a
-valuation. -/
+/-- README: so the universal sign is strict, and the overlap log-partition
+is not a valuation. -/
+example : 0 < defect Square.overlap.logPartition Square.left Square.right :=
+  Square.defect_logPartition_overlap_pos
+
 example : ¬IsValuation Square.overlap.logPartition :=
   Square.not_isValuation_logPartition_overlap
 
-/-- README: the pairwise defect alone separates the overlap realization
-from every product realization over the square's chain factors. -/
-example {Ω' Ψ : Type*} (X' : FiniteGibbs Bool Ω') (Y : FiniteGibbs Bool Ψ) :
-    ¬DefectEquiv Square.overlap.logPartition (X'.prod Y).logPartition :=
-  Square.not_defectEquiv_logPartition_overlap_prod X' Y
+/-- README: a field on the square with negative defect is the log-partition
+of no realization, over any state carrier. -/
+example :
+    ∃ K : ContextField Square ℝ,
+      ∀ {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Square Ω'),
+        X'.logPartition ≠ K :=
+  Square.exists_not_logPartition
 
 end Descent.Status

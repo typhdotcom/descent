@@ -126,36 +126,47 @@ explicit formula, not only an injectivity statement.
 
 Milestone M4, in `Descent/Realization/`:
 
-The first generative model behind a context field. A finite Gibbs realization
-attaches to each context a finite nonempty state space and to each state an
-energy, and produces the partition function `Z r = Σ exp (-energy x)` over the
-states of `r` and the log-partition field `K = log Z`. State spaces are
-nonempty so `Z` is positive and the logarithm is literal.
+The first generative model behind a context field, and a genuinely
+restrictive realization class. A finite Gibbs realization is a lattice
+homomorphism from contexts to finite nonempty state spaces — meet is
+intersection, join is union — together with an energy on states. It produces
+the partition function `Z r = Σ exp (-energy x)` over the states of `r` and
+the log-partition field `K = log Z`. State spaces are nonempty so `Z` is
+positive and the logarithm is literal; the lattice compatibility is
+structural, because without it every field is exactly realizable and the
+class constrains nothing.
 
-`FiniteGibbs.lean` proves the recognition bridge into the core calculus, exact
-in both readings of the same realization:
+`FiniteGibbs.lean` proves the recognition bridge into the core calculus, and
+the two readings of the same realization obey different laws:
 
-- **Logarithmic** — the pairwise defect of `log Z` is the logarithm of the
-  multiplicativity ratio `Z a · Z b / (Z (a ⊓ b) · Z (a ⊔ b))`, so `log Z` is
-  a valuation exactly when the partition function is multiplicative.
-- **Additive** — when the state map turns meet and join into intersection and
-  union, `Z` itself is a valuation and lands in the gauge.
-- **Gauge** — shifting the energy zero point moves `log Z` by a constant
-  field, so the defect observable cannot see the zero point.
-- **Naturality and products** — realizations pull back along lattice
-  homomorphisms, and the partition function of a product realization
-  (product states, additive energy: independent juxtaposition) factors, so
-  its defect observable splits componentwise.
+- **Additive law** — the partition function of every realization is a
+  valuation: `Z` always lands in the gauge.
+- **Recognition identity** — the pairwise defect of `log Z` is the logarithm
+  of the multiplicativity ratio `Z a · Z b / (Z (a ⊓ b) · Z (a ⊔ b))`.
+- **Exact correction** — `Z a · Z b` exceeds `Z (a ⊓ b) · Z (a ⊔ b)` by
+  exactly the product of the masses of the two state-space differences.
+- **Universal sign** — hence `defect (log Z) ≥ 0` everywhere.
+- **Sharp vanishing** — the defect of `log Z` vanishes at a square exactly
+  when the partition function multiplies across it, which happens exactly
+  when the state spaces are nested; `log Z` is a valuation exactly when
+  every pair of state spaces is nested. Zero defect is degenerate: it forces
+  the partition function at the meet to agree with one of the sides, so
+  nothing in this class factors nontrivially.
+- **Monotonicity** — log-partitions are monotone fields.
+- **Gauge and naturality** — shifting the energy zero point moves `log Z` by
+  a constant field, so the defect observable cannot see the zero point;
+  realizations pull back along lattice homomorphisms; the disjoint sum of
+  realizations adds partition functions.
 
-`Independence.lean` makes the obstruction strict on the square. Product
-realizations over chain factors have valuation log-partition — independent
-systems produce zero defect. The overlap realization — counting measure on
-nested state spaces sharing one ground state — has its partition function in
-the gauge, yet its log-partition has defect exactly `log (4 / 3)` at the
-nondegenerate square: additive exactness and multiplicative exactness are
-different laws, and the defect of the log-partition observes exactly the
-multiplicative one. The pairwise defect alone separates the overlap
-realization from every product realization over the square's chain factors.
+The class is restrictive over any state carrier: a non-monotone field on the
+two-element chain is the log-partition of no realization, and neither is a
+field on the square with negative defect.
+
+`Overlap.lean` makes the sign strict. The overlap realization — counting
+measure on state spaces sharing one ground state — has its partition
+function in the gauge like every realization, yet its log-partition has
+defect exactly `log (4 / 3) > 0` at the nondegenerate square: its state
+spaces there are not nested.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
@@ -174,9 +185,11 @@ installs on first use.
 ## Next
 
 `PROPOSAL.md` §20 sequences the work. M2 and M3 are built. M4 is built at
-this level: the finite Gibbs realization with its recognition bridge, the
-additive/multiplicative contrast, and the independence/correlation witnesses
-on the square. Completeness and adequacy on richer context lattices remain
-open, as does the order-separated higher observable exposed as missing by
-M2 — raw mixed differences are not that object. M5 begins realizability: which
-abstract defect data are induced by the finite Gibbs class.
+this level: the finite Gibbs class with structural lattice compatibility, its
+recognition bridge, the universal additive law, the signed multiplicative
+obstruction with its sharp vanishing, and explicit non-realizable fields.
+Completeness and adequacy on richer context lattices remain open, as does the
+order-separated higher observable exposed as missing by M2 — raw mixed
+differences are not that object. M5 begins realizability: monotonicity and
+the nonnegative, nesting-governed defect are necessary conditions visible
+here; which fields satisfying them the class actually realizes is open.
