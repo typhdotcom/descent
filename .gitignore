@@ -1,3 +1,5 @@
 /.direnv/
+/.lake/
 /result
 /result-*
+__pycache__/
