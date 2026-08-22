@@ -19,9 +19,9 @@ D_K (a, b) = K a + K b - K (a ⊓ b) - K (a ⊔ b)
 
 `D_K` is the theory's first observable, not an error measure.
 
-## Core
+## Defect
 
-Built, in `Descent/Core/`:
+Milestone M0, in `Descent/Core/`:
 
 - **Context** — the comparison square spanned by two contexts, and its
   degeneration on comparable pairs.
@@ -29,11 +29,18 @@ Built, in `Descent/Core/`:
 - **Defect** — `D_K` is symmetric, vanishes on comparable contexts, is
   additive in `K` (so `defectHom` is a homomorphism), commutes with scalars,
   and is natural under lattice homomorphisms of the context system.
-- **Gauge** — `gauge R A` is the kernel of the defect operator: exactly the
-  valuations. Two fields have the same defect precisely when they differ by a
-  gauge element, so pairwise defect data determines the class `[K]` in
-  `Observable R A` and nothing finer. Fixing a representative needs
-  normalization supplied separately.
+
+## Gauge
+
+Milestone M1, in `Descent/Core/Gauge.lean`:
+
+`gauge R A` is the kernel of the defect operator: exactly the valuations. Two
+fields have the same defect precisely when they differ by a gauge element, so
+pairwise defect data determines the class `[K]` in `Observable R A` and nothing
+finer. Fixing a representative needs normalization supplied separately.
+
+M1 is partial: it also asks for normalization lemmas on concrete context
+lattices, and none are built.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
@@ -51,6 +58,7 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M0 is the core above. M1 characterizes
-the gauge on concrete context lattices, M2 adds higher mixed defects on
-comparison cubes, and M3 opens the inverse problem.
+`PROPOSAL.md` §20 sequences the work. M1 closes once the gauge is characterized
+concretely enough to normalize a representative on a specific context lattice.
+M2 adds higher mixed defects on comparison cubes, and M3 opens the inverse
+problem.

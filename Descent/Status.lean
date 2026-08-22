@@ -16,9 +16,9 @@ namespace Descent.Status
 
 variable {R A : Type*} [Lattice R] [AddCommGroup A]
 
-/-! ## Core (milestone M0)
+/-! ## Defect (milestone M0)
 
-The claims below correspond to the "Core" section of `README.md`.
+The claims below correspond to the "Defect" section of `README.md`.
 -/
 
 /-- README: the defect is the exact correction to the valuation identity. -/
@@ -40,10 +40,23 @@ example (K K' : ContextField R A) (a b : R) :
     defect (K + K') a b = defect K a b + defect K' a b :=
   defect_add K K' a b
 
+/-- README: the defect commutes with scalars. -/
+example {S : Type*} [Monoid S] [DistribMulAction S A]
+    (s : S) (K : ContextField R A) (a b : R) :
+    defect (s • K) a b = s • defect K a b :=
+  defect_smul s K a b
+
 /-- README: the defect is natural in the context system. -/
 example {R' : Type*} [Lattice R'] (f : LatticeHom R R') (K : ContextField R' A) (a b : R) :
     defect (K ∘ f) a b = defect K (f a) (f b) :=
   defect_comp f K a b
+
+/-! ## Gauge (milestone M1)
+
+The claims below correspond to the "Gauge" section of `README.md`. M1 also
+asks for normalization lemmas on concrete context lattices; those are not
+built yet, so no claim here covers them.
+-/
 
 /-- README: the gauge freedom is the kernel of the defect operator, and it is
 a subgroup of the fields. -/
