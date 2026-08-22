@@ -40,7 +40,39 @@ pairwise defect data determines the class `[K]` in `Observable R A` and nothing
 finer. Fixing a representative needs normalization supplied separately.
 
 M1 is partial: it also asks for normalization lemmas on concrete context
-lattices, and none are built.
+lattices, and only chains are settled (see Models below).
+
+## Cubes
+
+Milestone M2, in `Descent/Core/Cube.lean`:
+
+The higher layers of the hierarchy are mixed differences on comparison cubes.
+`supDiff a K = K (· ⊔ a) - K ·` is the difference of `K` across one context
+change, and `mixedDiff l K` iterates it over a finite list of directions. Up
+to the bridge, the layer consumes only `⊔`: it is stated over
+`SemilatticeSup`, and the meet enters only through the choice of base point.
+
+- **Iterated differences** — `mixedDiff (a :: l) K = supDiff a (mixedDiff l K)`,
+  and difference operators commute.
+- **Permutation invariance** — a cube does not order its directions.
+- **Degeneration** — comparable directions collapse the cube one order, up to
+  sign; a direction contained in the base collapses it there; a direction that
+  moves the field nowhere kills every cube through it.
+- **Inclusion–exclusion** — the mixed difference is the signed alternating sum
+  of `K` over the `2 ^ k` cube vertices, `+` on the top vertex.
+- **Additivity and naturality** — in the field, and under `SupHom`s of the
+  context system.
+- **Bridge** — `mixedDiff [a, b] K (a ⊓ b) = -defect K a b`, and at an
+  arbitrary base the order-2 mixed difference is a translated pairwise defect
+  plus a modular correction.
+
+## Models
+
+`Descent/Models/Chain.lean`: on a linearly ordered context system every field
+is a valuation and the observable quotient is a point, while mixed differences
+still separate fields — two defect-equivalent fields on the three-element
+chain have different order-2 mixed differences. Cube data is a strictly finer
+observable than pairwise defect data.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
@@ -58,7 +90,7 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M1 closes once the gauge is characterized
-concretely enough to normalize a representative on a specific context lattice.
-M2 adds higher mixed defects on comparison cubes, and M3 opens the inverse
-problem.
+`PROPOSAL.md` §20 sequences the work. M1 still owes normalization lemmas on
+context lattices richer than chains. M2 is built; M3 opens the inverse
+problem: when a full pairwise defect field reconstructs `K` modulo gauge, and
+which sparse data suffices.
