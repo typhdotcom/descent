@@ -40,7 +40,7 @@ pairwise defect data determines the class `[K]` in `Observable R A` and nothing
 finer. Fixing a representative needs normalization supplied separately.
 
 M1 is partial: it also asks for normalization lemmas on concrete context
-lattices, and only chains are settled (see Models below).
+lattices, and none are built.
 
 ## Cubes
 
@@ -64,15 +64,20 @@ to the bridge, the layer consumes only `⊔`: it is stated over
   context system.
 - **Bridge** — `mixedDiff [a, b] K (a ⊓ b) = -defect K a b`, and at an
   arbitrary base the order-2 mixed difference is a translated pairwise defect
-  plus a modular correction.
+  plus a base-point correction that vanishes at the meet base.
 
 ## Models
 
 `Descent/Models/Chain.lean`: on a linearly ordered context system every field
-is a valuation and the observable quotient is a point, while mixed differences
-still separate fields — two defect-equivalent fields on the three-element
-chain have different order-2 mixed differences. Cube data is a strictly finer
-observable than pairwise defect data.
+is a valuation and the observable quotient is a point. Mixed differences along
+a raw direction list do not descend through that collapse: on the
+three-element chain the height field and the zero field are defect-equivalent,
+yet their mixed differences along `[1, 2]` differ. This is not higher
+interaction — the `[1, 2]` cube is degenerate, so its order-2 mixed difference
+is a retained signed first-order difference. The raw hierarchy is not
+order-separated: degenerate cubes keep lower-order data, so any claim of
+irreducible higher interaction must consume a nondegeneracy condition on the
+directions, never a raw list.
 
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
@@ -91,6 +96,6 @@ installs on first use.
 ## Next
 
 `PROPOSAL.md` §20 sequences the work. M1 still owes normalization lemmas on
-context lattices richer than chains. M2 is built; M3 opens the inverse
-problem: when a full pairwise defect field reconstructs `K` modulo gauge, and
-which sparse data suffices.
+concrete context lattices. M2 is built; M3 opens the inverse problem: when a
+full pairwise defect field reconstructs `K` modulo gauge, and which sparse
+data suffices.

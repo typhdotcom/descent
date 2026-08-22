@@ -9,10 +9,18 @@ On a linearly ordered context system every comparison square is degenerate, so
 the pairwise calculus collapses: every field is a valuation, any two fields
 are defect-equivalent, and the observable quotient is a point.
 
-Mixed differences do not collapse with it. `exists_defectEquiv_mixedDiff_ne`
-exhibits two defect-equivalent fields on the three-element chain whose order-2
-mixed differences differ, so the cube hierarchy is not a function of pairwise
-defect data: higher mixed differences are new observables, not derived ones.
+Mixed differences along a raw direction list do not descend through that
+collapse. On the three-element chain the height field and the zero field are
+defect-equivalent, yet their mixed differences along `[1, 2]` differ. This is
+not higher interaction: the `[1, 2]` cube is degenerate --- its directions
+are comparable --- so by `mixedDiff_cons_cons_of_le` its order-2 mixed
+difference is a signed first-order difference, and first-order differences
+see fields the pairwise defect cannot.
+
+The structural content is that the raw hierarchy is not order-separated:
+degenerate cubes retain lower-order data. A claim that a higher mixed defect
+carries irreducible higher interaction must therefore consume a nondegeneracy
+condition on its directions, never a raw list.
 -/
 
 namespace Descent
@@ -34,18 +42,32 @@ instance : Subsingleton (Observable R A) :=
     Quotient.inductionOn₂ x y fun K K' =>
       Observable.mk_eq_mk.mpr (defectEquiv_of_linearOrder K K')⟩
 
-/-- Pairwise defect data does not determine mixed differences: on the
-three-element chain the height field and the zero field are defect-equivalent,
-yet their order-2 mixed differences differ. The cube hierarchy is a strictly
-finer observable than `Observable R A`. -/
-theorem exists_defectEquiv_mixedDiff_ne :
-    ∃ K K' : ContextField (Fin 3) ℤ, ∃ l : List (Fin 3),
-      DefectEquiv K K' ∧ mixedDiff l K ≠ mixedDiff l K' := by
-  refine ⟨fun i => ((i : ℕ) : ℤ), 0, [1, 2],
-    defectEquiv_of_linearOrder _ _, fun h => ?_⟩
+namespace Chain
+
+/-- The height field on the three-element chain. -/
+def height : ContextField (Fin 3) ℤ := fun i => ((i : ℕ) : ℤ)
+
+/-- The height field carries no pairwise defect data. -/
+theorem defectEquiv_height_zero : DefectEquiv height 0 :=
+  defectEquiv_of_linearOrder height 0
+
+/-- The `[1, 2]` cube is degenerate --- its directions are comparable --- so
+its order-2 mixed difference is a retained signed first-order difference,
+not higher interaction. -/
+theorem mixedDiff_height_pair : mixedDiff [1, 2] height = -supDiff 1 height :=
+  mixedDiff_cons_cons_of_le (by decide) [] height
+
+/-- Mixed differences along the raw list `[1, 2]` do not descend through the
+pairwise gauge: they separate the defect-equivalent fields `height` and `0`,
+by the first-order data the degenerate cube retains. -/
+theorem mixedDiff_height_ne :
+    mixedDiff [1, 2] height ≠ mixedDiff [1, 2] (0 : ContextField (Fin 3) ℤ) := by
+  intro h
   have h0 := congrFun h 0
   rw [mixedDiff_zero, mixedDiff_pair_apply] at h0
   revert h0
   decide
+
+end Chain
 
 end Descent

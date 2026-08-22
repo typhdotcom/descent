@@ -283,8 +283,8 @@ section Lattice
 variable {R A : Type*} [Lattice R] [AddCommGroup A]
 
 /-- The exact law tying the order-2 mixed difference at an arbitrary base to
-the pairwise defect of the translated pair; the discrepancy is the modular
-correction `K c - K ((c ⊔ a) ⊓ (c ⊔ b))`. -/
+the pairwise defect of the translated pair; the discrepancy is the base-point
+correction `K c - K ((c ⊔ a) ⊓ (c ⊔ b))`, which vanishes at the meet base. -/
 theorem mixedDiff_pair_add_defect (K : ContextField R A) (a b c : R) :
     mixedDiff [a, b] K c + defect K (c ⊔ a) (c ⊔ b)
       = K c - K ((c ⊔ a) ⊓ (c ⊔ b)) := by

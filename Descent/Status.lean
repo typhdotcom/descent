@@ -146,7 +146,7 @@ example (K : ContextField R A) (a b : R) :
   mixedDiff_pair_inf K a b
 
 /-- README: at an arbitrary base the order-2 mixed difference is a translated
-pairwise defect plus a modular correction. -/
+pairwise defect plus a base-point correction. -/
 example (K : ContextField R A) (a b c : R) :
     mixedDiff [a, b] K c + defect K (c ⊔ a) (c ⊔ b)
       = K c - K ((c ⊔ a) ⊓ (c ⊔ b)) :=
@@ -165,11 +165,21 @@ example {R' : Type*} [LinearOrder R'] (K : ContextField R' A) : IsValuation K :=
 example {R' : Type*} [LinearOrder R'] : Subsingleton (Observable R' A) :=
   inferInstance
 
-/-- README: pairwise defect data does not determine the cube hierarchy ---
-two defect-equivalent fields can have different mixed differences. -/
+/-- README: the height field on the three-element chain carries no pairwise
+defect data. -/
+example : DefectEquiv Chain.height 0 :=
+  Chain.defectEquiv_height_zero
+
+/-- README: the `[1, 2]` cube is degenerate and its order-2 mixed difference
+is a retained signed first-order difference. -/
+example : mixedDiff [1, 2] Chain.height = -supDiff 1 Chain.height :=
+  Chain.mixedDiff_height_pair
+
+/-- README: mixed differences along a raw direction list do not descend
+through the pairwise gauge. -/
 example :
-    ∃ K K' : ContextField (Fin 3) ℤ, ∃ l : List (Fin 3),
-      DefectEquiv K K' ∧ mixedDiff l K ≠ mixedDiff l K' :=
-  exists_defectEquiv_mixedDiff_ne
+    mixedDiff [1, 2] Chain.height
+      ≠ mixedDiff [1, 2] (0 : ContextField (Fin 3) ℤ) :=
+  Chain.mixedDiff_height_ne
 
 end Descent.Status
