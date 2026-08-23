@@ -427,5 +427,11 @@ degenerating, natural — whose gauge equals the order-≤3 gauge on every
 lattice and target; order 3 is the final refinement of defect
 observation. The diamond classification is complete: the final
 observable's gauge there is exactly the constants, with the equality
-criterion and one-point normalization that follow. Direction for the
-next §21 program is pending.
+criterion and one-point normalization that follow. The next continuation
+is singular: give this final observable its canonical sparse coordinates
+on the diamond. Prove that the three defects at the incomparable atom
+pairs together with the defect at the atom triple determine the complete
+observable datum; derive the explicit reconstruction formulas after one
+normalization; and prove, for every nontrivial additive commutative
+target, that none of those four measurements can be omitted. The other
+§21 programs wait.

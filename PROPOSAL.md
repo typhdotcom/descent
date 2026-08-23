@@ -359,6 +359,14 @@ observation suffices on distributive contexts, order 3 can strictly refine it
 off distributivity, and no higher finite order adds information beyond order
 3\.
 
+On the diamond the final kernel is classified completely, for every additive
+commutative target: the order-(\\le 3) gauge consists exactly of constant
+fields. Consequently two fields have the same final observable exactly when
+their difference is constant, the observable class together with one context
+value determines the field, and every class has a unique representative
+vanishing at a chosen context. This is the full inverse cycle on the first
+carrier where order 3 is genuinely new.
+
 The closure removes the question whether this hierarchy keeps producing new
 observables. Questions about the completed datum still include:
 
@@ -1160,10 +1168,10 @@ The first edition of the research program should revolve around questions of thi
 
 For which context systems can the complete kernel of an established defect datum be classified?
 
-The immediate program is the final gauge on the diamond: classify
-`gauge3 Diamond A` for an arbitrary additive commutative group (A), prove that
-its fields are exactly the constants, and derive the equality criterion and
-one-point normalization for the final observable there.
+On the diamond the final kernel is solved: `gauge3 Diamond A` consists exactly
+of constant fields for every additive commutative group (A). Equality of final
+observable classes is therefore equality up to a constant, and one context
+value determines a unique representative.
 
 ### Q2 — Reconstruction
 
@@ -1175,6 +1183,33 @@ itself?
 
 Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 (\\ker D_S=\\ker D)?
+
+The immediate program is the canonical sparse datum for the final observable
+on the diamond. Prove that the three pairwise defects at the incomparable atom
+pairs together with the order-3 defect at the atom triple determine the
+complete observable datum. Derive explicit reconstruction formulas after one
+normalization, and prove for every nontrivial additive commutative target that
+each of the four measurements is essential.
+
+Concretely, with
+
+\[
+p=D_K(x,y),\\quad q=D_K(x,z),\\quad r=D_K(y,z),\\quad
+s=D^{(3)}\_K(x,y,z),
+\]
+
+the normalized coordinates must satisfy
+
+\[
+\\begin{aligned}
+K(x)-K(\\bot)&=s-r, & K(y)-K(\\bot)&=s-q,\\
+K(z)-K(\\bot)&=s-p, & K(\\top)-K(\\bot)&=2s-p-q-r.
+\\end{aligned}
+\]
+
+The formal result should package these as a reconstruction map with both
+round-trip laws. Minimality requires a strict witness after deleting each one
+of (p), (q), (r), and (s), not merely a dimension count.
 
 ### Q4 — Higher interaction
 
