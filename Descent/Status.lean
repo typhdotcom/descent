@@ -571,6 +571,16 @@ signs. -/
 example : ∃ K : ContextField (Bool × Square) ℝ, ¬Submodular K ∧ ¬Supermodular K :=
   exists_not_submodular_not_supermodular
 
+/-- README: the sampled defect matrix is gauge-invariant --- an observable
+of the defect class. -/
+example {ι : Type*} {K K' : ContextField R ℝ} (h : DefectEquiv K K') (r : ι → R) :
+    defectMatrix K r = defectMatrix K' r :=
+  defectMatrix_eq_of_defectEquiv h r
+
+example {ι : Type*} {K G : ContextField R ℝ} (hG : IsValuation G) (r : ι → R) :
+    defectMatrix (K + G) r = defectMatrix K r :=
+  defectMatrix_add_of_isValuation hG r
+
 /-- README: the raw defect matrix is positive semidefinite exactly when it
 vanishes, and likewise its negation. -/
 example {ι : Type*} [Fintype ι] [DecidableEq ι] {K : ContextField R ℝ} {r : ι → R} :
@@ -594,8 +604,48 @@ example (K : ContextField R ℝ) (a b c : R) :
         + 2 * (K ((a ⊔ b) ⊓ (b ⊔ c)) - K b) :=
   joinKernel_triangle_decomposition K a b c
 
-/-- README: a monotone submodular field generates a canonical pseudometric
-whose distance is the join kernel; dually for the supermodular chamber. -/
+/-- README: conditional negativity is exactly positive semidefiniteness of
+the centered Gram kernel, for any symmetric kernel with vanishing base
+diagonal entry. -/
+example {ι : Type*} [Fintype ι] [DecidableEq ι] {M : Matrix ι ι ℝ}
+    (hM : M.IsHermitian) {i₀ : ι} (h0 : M i₀ i₀ = 0) :
+    CondNegSemidef M ↔ (centeredGram M i₀).PosSemidef :=
+  condNegSemidef_iff_posSemidef_centeredGram hM h0
+
+/-- README: at the essential two-point sample, conditional negativity of
+the defect matrix detects the submodular chamber exactly. -/
+example {K : ContextField Square ℝ} :
+    CondNegSemidef (defectMatrix K ![Square.left, Square.right]) ↔ Submodular K :=
+  Square.condNegSemidef_defectMatrix_pair_iff
+
+/-- README: at the full four-context sample it collapses to the chamber
+wall --- the sampled datum decides which geometry is visible. -/
+example {K : ContextField Square ℝ} :
+    CondNegSemidef (defectMatrix K ![⊥, Square.left, Square.right, ⊤])
+      ↔ IsValuation K :=
+  Square.condNegSemidef_defectMatrix_square_iff
+
+/-- README: the derived kernels consume the field, not its defect
+observable --- shifting by a valuation moves both by exactly its span. -/
+example {G : ContextField R ℝ} (hG : IsValuation G) (K : ContextField R ℝ) (a b : R) :
+    joinKernel (K + G) a b = joinKernel K a b + (G (a ⊔ b) - G (a ⊓ b)) :=
+  joinKernel_add_of_isValuation hG K a b
+
+example {G : ContextField R ℝ} (hG : IsValuation G) (K : ContextField R ℝ) (a b : R) :
+    meetKernel (K + G) a b = meetKernel K a b + (G (a ⊔ b) - G (a ⊓ b)) :=
+  meetKernel_add_of_isValuation hG K a b
+
+/-- README: the induced geometry is representative-dependent --- on a
+chain, defect-equivalent monotone fields with different join kernels
+exist. -/
+example :
+    ∃ K K' : ContextField Bool ℝ, DefectEquiv K K' ∧ Monotone K ∧ Monotone K' ∧
+      joinKernel K ≠ joinKernel K' :=
+  exists_defectEquiv_monotone_joinKernel_ne
+
+/-- README: a monotone submodular field generates a pseudometric from the
+field as datum --- its distance is the join kernel; dually for the
+supermodular chamber. -/
 noncomputable example {K : ContextField R ℝ} (hs : Submodular K) (hK : Monotone K) :
     PseudoMetricSpace R :=
   hs.pseudoMetricSpace hK
@@ -617,12 +667,18 @@ example :
   exists_monotone_joinKernel_triangle_fails
 
 /-- README: log-partitions lie in the submodular chamber, so every finite
-Gibbs realization induces a canonical pseudometric on its context
-lattice. -/
+Gibbs realization induces a pseudometric on its context lattice from its
+log-partition representative. -/
 example : Submodular X.logPartition :=
   X.submodular_logPartition
 
 example : (X.pseudoMetricSpace).toDist.dist = joinKernel X.logPartition :=
   rfl
+
+/-- README: the energy zero point is normalization enough --- shifting the
+energy does not move the induced kernel. -/
+example (c : ℝ) :
+    joinKernel (X.shift c).logPartition = joinKernel X.logPartition :=
+  X.joinKernel_logPartition_shift c
 
 end Descent.Status

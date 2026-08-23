@@ -226,26 +226,41 @@ and maps the chambers:
 - No universal sign: on the product of the square with a chain, an explicit
   field has defects of both signs.
 
-`Definiteness.lean` shows the raw defect matrix carries no definiteness
-geometry: it is symmetric with zero diagonal, so it is positive
-semidefinite exactly when it vanishes — and likewise its negation.
-Canonical structure must come from derived kernels.
+`Definiteness.lean` studies the sampled defect matrix — the
+gauge-invariant observable: defect-equivalent fields have equal matrices
+over every sample. Ordinary definiteness is degenerate on it — symmetric
+with zero diagonal, it is positive semidefinite exactly when it vanishes,
+and likewise its negation. The condition it does support is conditional
+negative semidefiniteness — nonpositive quadratic form on centered
+vectors — which for any symmetric kernel with vanishing base diagonal is
+exactly positive semidefiniteness of the centered Gram kernel. The
+sampled datum decides what this observable sees: on the essential
+two-point square sample, conditional negativity detects the submodular
+chamber exactly; on the full four-context sample it collapses to the
+chamber wall.
 
-`Kernels.lean` derives them. The join kernel `2·K(a ⊔ b) − K a − K b` and
-the meet kernel `K a + K b − 2·K(a ⊓ b)` differ by exactly twice the
-defect, and the triangle slack of each decomposes exactly into a defect
-value at a derived square plus two order gaps. Sign and order hypotheses
-then generate geometry in the proposal's preferred shape — defect laws
-plus definiteness hypotheses yield a canonical geometric object:
+`Kernels.lean` derives the kernels that do carry metric geometry, and
+names their datum: they consume the field, not its defect observable.
+The join kernel `2·K(a ⊔ b) − K a − K b` and the meet kernel
+`K a + K b − 2·K(a ⊓ b)` differ by exactly twice the defect, and the
+triangle slack of each decomposes exactly into a defect value at a
+derived square plus two order gaps:
 
 - A monotone submodular field makes the join kernel a pseudometric — an
   actual `PseudoMetricSpace` whose distance is the kernel. Dually, a
   monotone supermodular field makes the meet kernel one.
 - The sign hypothesis is necessary: an explicit monotone field outside the
   chamber breaks the triangle inequality.
-- Realizations enter with no hypotheses: log-partitions are submodular and
-  monotone, so every finite Gibbs realization induces a canonical
-  pseudometric on its context lattice.
+- The geometry is representative-dependent, exactly: shifting by a
+  valuation moves both kernels by precisely the span of the valuation,
+  and on a chain — where all fields are defect-equivalent — monotone
+  fields with different join kernels exist. Defect data determines a
+  chamber; metric geometry needs either the sampled conditional-negativity
+  observable or a normalized representative.
+- Realizations carry their normalization: log-partitions are submodular
+  and monotone, so every finite Gibbs realization induces a pseudometric
+  from its log-partition, and the energy zero point — the constant gauge
+  direction — does not move it.
 
 ## Working on it
 
@@ -262,13 +277,16 @@ installs on first use.
 
 `PROPOSAL.md` §20 sequences the work. M2 through M5 are built. M6 is built
 at this level: the sign chambers are mapped — cones exchanged by negation,
-wall exactly the gauge, one coordinate on the square, defects of both signs
-on a richer lattice — the raw defect matrix is degenerate for definiteness,
-and each chamber generates a canonical pseudometric through the derived
-kernels, with the triangle slack decomposed exactly through the defect.
-Open: the definiteness theory of the derived kernels themselves — which
-chamber geometries embed in a Hilbert space — and chamber structure on
-richer lattices. Realizability on richer finite lattices remains open,
+wall exactly the gauge, one coordinate on the square, defects of both
+signs on a richer lattice. Defect data determines the chamber, and the
+milestone theorem separates what geometry consumes: the gauge-invariant
+sampled defect matrix supports conditional negativity — equivalent to a
+positive semidefinite centered Gram kernel, detecting the chamber at the
+two-point square sample and collapsing to the wall at the full sample —
+while the metric pseudogeometry of the derived kernels consumes a
+normalized representative, moving by an exact span term under gauge.
+Open: which sampled conditional-negativity observables embed in a Hilbert
+space on richer lattices, and the chamber structure there. Realizability on richer finite lattices remains open,
 where the pairwise valuation law need not control the higher
 inclusion–exclusion the state maps impose — the same higher-observable gap
 M2 exposed; so do completeness and adequacy on richer context lattices and
