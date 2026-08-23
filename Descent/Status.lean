@@ -1282,6 +1282,10 @@ example {Ω' : Type*} [DecidableEq Ω'] (X : FiniteGibbs Diamond Ω')
   Diamond.states_eq_states_bot X a
 
 example {Ω' : Type*} [DecidableEq Ω'] (X : FiniteGibbs Diamond Ω')
+    (a : Diamond) : X.partition a = X.partition Diamond.bot :=
+  Diamond.partition_eq_partition_bot X a
+
+example {Ω' : Type*} [DecidableEq Ω'] (X : FiniteGibbs Diamond Ω')
     (a : Diamond) : X.logPartition a = X.logPartition Diamond.bot :=
   Diamond.logPartition_eq_logPartition_bot X a
 
@@ -1306,6 +1310,17 @@ example : Diamond.logCountField Diamond.bot ≠ Diamond.logCountField Diamond.x 
 example : Monotone Diamond.logCountField :=
   Diamond.monotone_logCountField
 
+/-- README: the exact witness values `Z = (1, 2, 2, 2, 3)`. -/
+example :
+    Diamond.countField Diamond.bot = 1 ∧ Diamond.countField Diamond.x = 2 ∧
+      Diamond.countField Diamond.y = 2 ∧ Diamond.countField Diamond.z = 2 ∧
+      Diamond.countField Diamond.top = 3 :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- README: the exact bridge `exp ∘ K = Z`. -/
+example : Real.exp ∘ Diamond.logCountField = Diamond.countField :=
+  Diamond.exp_comp_logCountField
+
 example : IsValuation (Real.exp ∘ Diamond.logCountField) :=
   Diamond.isValuation_exp_logCountField
 
@@ -1317,5 +1332,70 @@ example : Diamond.canonicalDatum Diamond.logCountField ≠ ((0 : ℝ), 0, 0, 0) 
 
 example : ¬Realizable Diamond.logCountField :=
   Diamond.not_realizable_logCountField
+
+/-! ## The mass-compatible realization
+
+The claims below correspond to the mass-compatibility paragraph of the
+"Order separation" section of `README.md`.
+-/
+
+/-- README: every finite Gibbs realization induces a mass-compatible one
+with the same partition function and log-partition. -/
+noncomputable example (X : FiniteGibbs R Ω) : MassGibbs R Ω :=
+  X.toMassGibbs
+
+example (X : FiniteGibbs R Ω) : X.toMassGibbs.partition = X.partition :=
+  X.toMassGibbs_partition
+
+example (X : FiniteGibbs R Ω) : X.toMassGibbs.logPartition = X.logPartition :=
+  X.toMassGibbs_logPartition
+
+/-- README: the realization laws survive the weaker interface ---
+positive monotone valuation partition, recognition identity, exact
+correction, nonnegative defect, sharp mass-degeneracy zero law. -/
+example (M : MassGibbs R Ω) : IsValuation M.partition :=
+  M.isValuation_partition
+
+example (M : MassGibbs R Ω) : Monotone M.partition :=
+  M.partition_mono
+
+example (M : MassGibbs R Ω) (a b : R) :
+    defect M.logPartition a b
+      = Real.log (M.partition a * M.partition b
+          / (M.partition (a ⊓ b) * M.partition (a ⊔ b))) :=
+  M.defect_logPartition a b
+
+example (M : MassGibbs R Ω) (a b : R) :
+    M.partition a * M.partition b
+      = M.partition (a ⊓ b) * M.partition (a ⊔ b)
+        + (M.partition a - M.partition (a ⊓ b))
+          * (M.partition b - M.partition (a ⊓ b)) :=
+  M.partition_mul_partition a b
+
+example (M : MassGibbs R Ω) (a b : R) : 0 ≤ defect M.logPartition a b :=
+  M.defect_logPartition_nonneg a b
+
+example (M : MassGibbs R Ω) {a b : R} :
+    defect M.logPartition a b = 0
+      ↔ M.partition (a ⊓ b) = M.partition a
+        ∨ M.partition (a ⊓ b) = M.partition b :=
+  M.defect_logPartition_eq_zero_iff
+
+/-- README: the diamond overlap system --- unit weights on the shared
+blocks --- is mass-compatible, and crosses the proved boundary: its
+partition function is the witness values, its log-partition the excluded
+field, its canonical datum nonzero. -/
+example : MassGibbs Diamond (Fin 3) :=
+  Diamond.overlap
+
+example : Diamond.overlap.partition = Diamond.countField :=
+  Diamond.overlap_partition
+
+example : Diamond.overlap.logPartition = Diamond.logCountField :=
+  Diamond.overlap_logPartition
+
+example :
+    Diamond.canonicalDatum Diamond.overlap.logPartition ≠ ((0 : ℝ), 0, 0, 0) :=
+  Diamond.canonicalDatum_overlap_ne
 
 end Descent.Status

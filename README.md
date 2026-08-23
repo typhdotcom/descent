@@ -422,6 +422,26 @@ by nothing. Every previously known necessary condition — order, sign,
 algebra, cardinality, convergence — holds or is vacuous; what fails is
 only the distributivity of the state-space representation.
 
+The boundary is crossed by weakening exactly that, in
+`Descent/Realization/MassGibbs.lean`. The mass-compatible realization
+keeps the primitive data — nonempty finite state sets with positive
+weights — and demands meet and join compatibility at the level of
+weighted mass only: meets do not gain mass, and meet and join masses
+account exactly for the pair. Every finite Gibbs realization induces a
+mass-compatible one with the same partition function, and the laws that
+generated the defect calculus survive the weaker interface: the
+partition function is a positive monotone valuation, the recognition
+identity holds, the defect of the log-partition is nonnegative with the
+exact correction `Z(a)·Z(b) = Z(a⊓b)·Z(a⊔b) + (Z(a)−Z(a⊓b))·(Z(b)−Z(a⊓b))`,
+and the sharp zero law becomes mass degeneracy at the meet. Strict
+expressivity is then a theorem: the diamond overlap system —
+`{0}, {0,1}, {0,2}, {1,2}, {0,1,2}` with unit weights — is
+mass-compatible, its partition function is exactly the witness values
+`(1, 2, 2, 2, 3)`, its log-partition is exactly the field the finite
+Gibbs class provably cannot realize, and its canonical datum is
+nonzero. Mass-level compatibility crosses the distributivity boundary
+while retaining the realization laws.
+
 ## Working on it
 
 ```nu
@@ -449,10 +469,8 @@ exactly the constants; the equality criterion and one-point
 normalization follow; and sparse reconstruction identifies the
 observable with the canonical datum — four irredundant measurements
 carrying an explicit normalized inverse. The finite Gibbs boundary
-there is now exact: the class realizes the constants and attains only
-the zero canonical datum, and the excluded witness satisfies every
-previously known necessary condition — the obstruction is
-distributivity of the state representation, completely stated. Whether
-to widen the realization class past distributive state data is now a
-design question with an exact boundary. Direction for the next program
-is pending.
+there is exact — the class realizes the constants and only the zero
+datum — and the boundary is now crossed: the mass-compatible
+realization retains the realization laws while realizing the diamond's
+excluded witness through the overlap system, with nonzero canonical
+datum. Direction for the next program is pending.

@@ -13,6 +13,7 @@ import Descent.Models.Chain
 import Descent.Models.Diamond
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
+import Descent.Realization.MassGibbs
 import Descent.Realization.Overlap
 import Descent.Realization.Realizable
 import Descent.Reconstruction.Normalization

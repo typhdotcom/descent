@@ -1,5 +1,6 @@
 import Descent.Core.Hierarchy
 import Descent.Core.Higher
+import Descent.Realization.MassGibbs
 import Descent.Realization.Realizable
 import Mathlib.Data.Fintype.Pi
 
@@ -753,6 +754,56 @@ theorem canonicalDatum_logCountField_ne :
   have h1 := congrArg (fun t => t.1) h
   simp only [canonicalDatum] at h1
   exact absurd h1 (ne_of_gt defect_logCountField_xy_pos)
+
+/-! ### The mass-compatible overlap system crosses the boundary -/
+
+/-- The overlap state system the diamond wanted: a shared block for each
+pair of atoms. The join law of the finite Gibbs class fails for it; mass
+compatibility does not. -/
+def overlapStates : Diamond → Finset (Fin 3)
+  | bot => {0}
+  | x => {0, 1}
+  | y => {0, 2}
+  | z => {1, 2}
+  | top => {0, 1, 2}
+
+private theorem sum_overlapStates (r : Diamond) :
+    (∑ _o ∈ overlapStates r, (1 : ℝ)) = countField r := by
+  cases r <;> simp [overlapStates, countField, Finset.sum_const]
+
+/-- The overlap system as a mass-compatible realization: unit weights,
+compatibility inherited from the counting-shaped valuation. -/
+def overlap : MassGibbs Diamond (Fin 3) where
+  states := overlapStates
+  states_nonempty r := by cases r <;> decide
+  weight _ := 1
+  weight_pos _ := one_pos
+  sum_weight_inf_le a b := by
+    rw [sum_overlapStates, sum_overlapStates]
+    exact monotone_countField inf_le_left
+  sum_weight_inf_add_sup a b := by
+    rw [sum_overlapStates, sum_overlapStates, sum_overlapStates,
+      sum_overlapStates]
+    have h := isValuation_countField a b
+    rw [defect_def] at h
+    linarith
+
+/-- Its partition function is exactly the witness values. -/
+theorem overlap_partition : overlap.partition = countField :=
+  funext sum_overlapStates
+
+/-- Its log-partition is exactly the excluded witness field. -/
+theorem overlap_logPartition : overlap.logPartition = logCountField := by
+  funext r
+  rw [MassGibbs.logPartition, overlap_partition]
+  rfl
+
+/-- Strict expressivity: the mass-compatible class realizes the field
+the finite Gibbs class provably cannot, with nonzero canonical datum. -/
+theorem canonicalDatum_overlap_ne :
+    canonicalDatum overlap.logPartition ≠ ((0 : ℝ), 0, 0, 0) := by
+  rw [overlap_logPartition]
+  exact canonicalDatum_logCountField_ne
 
 end Diamond
 
