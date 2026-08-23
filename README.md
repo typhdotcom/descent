@@ -437,10 +437,12 @@ geometry, by itself, adds no restriction beyond the envelope. The
 diamond witness `(1, 2, 2, 2, 3)` lies in the envelope and outside the
 finite Gibbs class: the laws factor through a positive monotone
 valuation, and what the class adds beyond them is exactly the demand
-for a distributive state representation, which the diamond refuses. A
-future structural realization must make overlap or identification data
-observable in its axioms; decorative finite sets cannot serve as that
-object.
+for a distributive state representation, which the diamond refuses.
+Finite state sets become structural only once they carry restriction
+maps. The next realization therefore starts from context-indexed finite
+state types and functorial restriction along the context order; its
+comparison from global states to compatible local states makes failure
+of gluing observable rather than decorative.
 
 ## Working on it
 
@@ -473,5 +475,10 @@ there is exact — the class realizes the constants and only the zero
 datum — and the abstraction has migrated to what the proofs consume:
 the realization laws factor through the algebraic envelope of positive
 monotone valuations, in which the excluded witness lies. The next
-structural realization must make overlap or identification data
-observable in its axioms. Direction is pending.
+program is the finite restriction realization of `PROPOSAL.md` Q9. Build
+the comparison from states over a join to pairs agreeing over the meet,
+then realize the diamond witness by three global Boolean assignments
+inside the eight locally compatible atom assignments. Prove that its
+pairwise and order-3 canonical coordinates count the exact failures of
+pairwise and triple gluing. Do not add weights or a general sheaf layer
+in this milestone.

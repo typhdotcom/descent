@@ -1235,12 +1235,10 @@ order-(\\le 3) gauge on every lattice and for every additive commutative target.
 
 Which finite-family defect profiles arise from positive weighted realizations?
 
-The immediate program is the finite Gibbs image of the canonical Diamond
-datum. First prove the carrier theorem: every lattice homomorphism from the
-diamond into any distributive lattice is constant. Apply it to the finite-set
-state map and prove that every finite Gibbs realization on the diamond has
-constant state spaces, partition function, and log-partition. Deduce the exact
-classifications
+The first boundary is settled exactly. Every lattice homomorphism from the
+diamond into a distributive lattice is constant, so every finite Gibbs
+realization on the diamond has constant state spaces, partition function, and
+log-partition. Consequently
 
 \[
 \\operatorname{Realizable}(K)
@@ -1256,22 +1254,30 @@ and
 (p,q,r,s)=(0,0,0,0),
 \]
 
-where realizability of the canonical datum must be named directly rather than
-routed through pairwise `DefectRealizable`.
-
-Finally use the explicit positive field
+where realizability of the canonical datum is named directly rather than
+routed through pairwise `DefectRealizable`. The explicit positive field
 
 \[
 Z(\\bot)=1,\\qquad Z(x)=Z(y)=Z(z)=2,\\qquad Z(\\top)=3,
 \\qquad K=\\log\\circ Z.
 \]
 
-Prove that (K) is nonconstant and monotone, that (\\exp\\circ K=Z) is a
-valuation, and that all its pairwise defects are nonnegative, yet (K) is not
-realizable. This finite witness must isolate distributive structure in the
+is nonconstant and monotone, (\\exp\\circ K=Z) is a valuation, all pairwise
+defects of (K) are nonnegative, and its canonical datum is nonzero, yet (K) is
+not realizable. Thus the finite witness isolates distributive structure in the
 state map as the obstruction, rather than convergence, cardinality, or energy.
-Do not alter the realization interface in this milestone; first state exactly
-what it excludes.
+
+The realization laws have also migrated to their weakest established home.
+`IsPositiveValuation Z` is the field-level conjunction of positivity,
+monotonicity, and the valuation law; it alone implies the recognition identity,
+the exact multiplicative correction, nonnegative logarithmic defect, and the
+sharp zero law. Every finite Gibbs partition lies in this algebraic envelope.
+Conversely, over a decidable carrier every positive valuation has the trivial
+singleton presentation `states r = {r}`, `weight = Z`. Finite sums over named
+state sets therefore supply no geometry by themselves. Do not introduce
+another realization whose axioms observe only aggregate masses: any future
+state-space structure must make restriction, identification, or gluing data
+appear in its theorems.
 
 ### Q6 — Definiteness
 
@@ -1288,6 +1294,51 @@ For each datum class, what is the exact equivalence relation on realizations ind
 ### Q9 — Local/global correspondence
 
 When is a failure of compositional valuation equivalent to a local-to-global obstruction in an underlying realization?
+
+This is the next program. Define a finite restriction system over a preorder,
+with a nonempty finite state type (X_r) at each context and maps
+
+\[
+\\rho\_{a\\le b}:X_b\\longrightarrow X_a
+\]
+
+satisfying identity and composition. Add lattice structure only when defining,
+for a pair (a,b), the compatible local states as the fiber product of (X_a) and
+(X_b) over (X\_{a\\wedge b}), and the canonical comparison map from
+(X\_{a\\vee b}) by restriction. The comparison map, its injectivity, and its
+surjectivity are the structural data; do not impose cardinality identities that
+erase their failure.
+
+Build the first model on the diamond with
+
+\[
+X\_\\bot=\\mathbf 1,\\qquad X_x=X_y=X_z=\\mathbf 2,
+\]
+
+and three global assignments inside (\\mathbf 2^3), for example
+
+\[
+X\_\\top=\\{000,011,101\\}.
+\]
+
+Restrictions from the top are the coordinate projections and restrictions to
+the bottom are unique. Prove the functor laws, and then prove rather than
+suggest the local-to-global obstruction:
+
+- restriction from the top onto each atom is surjective;
+- every atom-pair comparison embeds three global states into four compatible
+  local pairs and misses exactly one;
+- the triple comparison embeds the same three global states into eight
+  compatible atom triples and misses exactly five;
+- the logarithmic cardinality field is exactly the existing
+  `Diamond.logCountField`;
+- its three pairwise canonical coordinates are each (\\log(4/3)), and its
+  order-3 coordinate is (\\log(8/3)).
+
+This milestone must make the four irredundant observable coordinates literal
+local-to-global losses. It must not add weights, a general sheaf library, or a
+second abstract defect calculus. Generalization waits until this model shows
+which restriction-system hypotheses the defect formulas actually consume.
 
 ### Q10 — Restricted data
 
