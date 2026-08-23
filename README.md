@@ -600,9 +600,14 @@ reconstruction, Q4 by the hierarchy's saturation at order 3, Q5 by the
 finite Gibbs boundary and the algebraic envelope, Q8 by observational
 equivalence and incidence blindness, Q9 by the restriction realization
 and the two recognition theorems, and Q10 by the extension profile's
-finite inverse theorem. Q2, Q6, and Q7 are answered exactly on the
-solved carriers and remain open in general; `PROPOSAL.md` records the
-built status of every milestone and question in place. Every
+finite inverse theorem. Q2 and Q6 are answered exactly on the solved
+carriers and remain open in general. Q7 records a precise partial
+universality boundary — the core defect, gauge, cube, and hierarchy
+layers are carrier-free, the incidence bookkeeping is about finite
+maps, and the recognition theorems consume finite restriction systems
+with real-valued `logCard` results — and remains open beyond it.
+`PROPOSAL.md` records the built status of every milestone and question
+in place. Every
 load-bearing claim in this file is a typed example in
 `Descent/Status.lean`, and the closure audit found no claim without its
 theorem. No new mathematical program is open.

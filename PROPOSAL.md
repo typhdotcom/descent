@@ -1342,11 +1342,14 @@ exact statements the question remains open.
 
 Which theorems survive replacement of the realization while keeping only the abstract context and defect interfaces?
 
-The abstract layers --- defect, gauge, cubes, the hierarchy, recognition,
-incidence --- are stated over arbitrary lattices and additive targets and
-consume no realization; the realization laws themselves factor through the
-algebraic envelope `IsPositiveValuation` (Q5). No further universality audit
-is built; the question remains open.
+The built boundary is partial and precise. The core layers --- defect,
+gauge, cubes, and the hierarchy --- are stated over arbitrary lattices and
+additive targets and consume no realization. The generic incidence
+bookkeeping is about finite maps alone, below any restriction system. The
+recognition theorems consume `FiniteRestriction` and produce real-valued
+`logCard` results. The realization laws themselves factor through the
+algebraic envelope `IsPositiveValuation` (Q5). Beyond this boundary no
+universality audit is built; the question remains open.
 
 ### Q8 — Observational equivalence
 
