@@ -645,5 +645,8 @@ complete finite-map package with its exact reconstruction limit — a
 finite inverse theorem, no probability and no weights — the scalar
 comparison term is its coarse statistic, and the two diamond systems
 are separated by `{0,1,1,1}` versus `{0,0,1,2}`: conditioning recovers
-precisely the incidence that defect observation discarded. Direction
-is pending.
+precisely the incidence that defect observation discarded. The next milestone
+is the first-edition closure audit: reconcile the built status of the proposal,
+typed Status manifest, public imports, assumptions, names, and this README;
+remove stale prospective language and duplication; and open no new
+mathematical program unless the audit identifies a concrete theorem-level gap.

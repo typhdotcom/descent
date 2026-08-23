@@ -1366,17 +1366,17 @@ refines the observable.
 How do localization or conditioning change the available defect data, and what are
 the exact reconstruction limits under those restrictions?
 
-Q10 is deliberately last, and is now the next program. The scalar comparison
-term loses the fiber distribution of the comparison map. Recover exactly that
-missing datum by conditioning on compatible local states.
+Q10 is complete. The scalar comparison term loses the fiber distribution of
+the comparison map; the extension profile recovers exactly that missing datum
+by conditioning on compatible local states.
 
-For any map (f:A\\to B) of finite types, define the extension profile
+For any map (f:A\\to B) of finite types, the extension profile is
 
 \[
 \\operatorname{ext}\_f(b)=|\\{a\\in A:f(a)=b\\}|.
 \]
 
-Prove its complete finite-map theorem package:
+Its complete finite-map theorem package is proved:
 
 - (\\sum\_{b\\in B}\\operatorname{ext}\_f(b)=|A|);
 - a codomain value is reached exactly when its extension count is positive,
@@ -1393,20 +1393,29 @@ Prove its complete finite-map theorem package:
 The last theorem is the reconstruction limit: the full conditioned profile
 recovers a finite map exactly up to relabeling inside its fibers.
 
-Instantiate the profile for `compare` and `compare3`. Prove that the
-unconditioned comparison term is only the coarse statistic obtained from the
-sum of the profile and the size of its codomain, while the profile determines
-the comparison map up to global-state relabeling over the compatible locals.
+The profile is instantiated for `compare` and `compare3`. The unconditioned
+comparison term is only the coarse statistic obtained from the sum of the
+profile and the size of its codomain, while the profile determines the
+comparison map up to global-state relabeling over the compatible locals.
 
-Finally return to the two observationally equivalent diamond code systems.
-Their (x,y) scalar comparison terms and complete defect observations agree,
-but their extension profiles must be proved different: the first has fiber
-multiset (\\{0,1,1,1\\}), the second (\\{0,0,1,2\\}). Thus conditioning
-recovers exactly the incidence that defect observation discarded.
+For the two observationally equivalent diamond code systems, the (x,y) scalar
+comparison terms and complete defect observations agree, but their extension
+profiles differ: the first has fiber multiset (\\{0,1,1,1\\}), the second
+(\\{0,0,1,2\\}). Thus conditioning recovers exactly the incidence that defect
+observation discarded.
 
-Do not introduce probability, weights, entropy terminology, or a general
-conditioning framework. First close the finite inverse theorem at the level
-of the maps already built.
+No probability, weights, entropy terminology, or general conditioning
+framework is needed: the finite inverse theorem closes at the level of the
+maps already built.
+
+Q10 closes the §21 program ladder. The next milestone is a closure audit, not
+Q11: make the built status of §20 and §21 explicit; check every load-bearing
+factual README and proposal claim against a named theorem and a typed Status
+example; remove stale prospective language and accidental duplication; and
+audit the public imports, assumptions, and names for the smallest coherent
+library surface. Finish with the full build and flake checks. Do not open
+another mathematical program until this audit has either certified the first
+edition or identified one concrete theorem-level gap.
 
 ______________________________________________________________________
 
