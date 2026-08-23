@@ -1446,6 +1446,22 @@ example :
       = 5 :=
   Diamond.card_missed3
 
+/-- README: the bridge --- the canonical datum of the code system's
+field is exactly the logarithmic cardinal ratios of the comparison
+objects to the global states. -/
+example :
+    Diamond.canonicalDatum Diamond.codeSystem.logCard
+      = (Real.log ((Fintype.card (Diamond.codeSystem.Compat Diamond.x Diamond.y) : ℝ)
+            / (Fintype.card (Diamond.codeSystem.states Diamond.top) : ℝ)),
+          Real.log ((Fintype.card (Diamond.codeSystem.Compat Diamond.x Diamond.z) : ℝ)
+            / (Fintype.card (Diamond.codeSystem.states Diamond.top) : ℝ)),
+          Real.log ((Fintype.card (Diamond.codeSystem.Compat Diamond.y Diamond.z) : ℝ)
+            / (Fintype.card (Diamond.codeSystem.states Diamond.top) : ℝ)),
+          Real.log ((Fintype.card
+              (Diamond.codeSystem.Compat3 Diamond.x Diamond.y Diamond.z) : ℝ)
+            / (Fintype.card (Diamond.codeSystem.states Diamond.top) : ℝ))) :=
+  Diamond.canonicalDatum_logCard
+
 /-- README: the logarithmic cardinality field is exactly the witness
 field, and its canonical datum is exact. -/
 example : Diamond.codeSystem.logCard = Diamond.logCountField :=

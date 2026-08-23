@@ -13,9 +13,13 @@ functorially.
 Lattice structure enters only for the local-to-global construction:
 compatible states at `a, b` form the fiber product of `states a` and
 `states b` over `states (a ⊓ b)`, and a global state over the join
-restricts to a compatible pair --- the canonical comparison. Its failure
-to be surjective is the local-to-global loss the defect calculus
-measures; the logarithmic cardinality field is the bridge.
+restricts to a compatible pair --- the canonical comparison, the
+structural local-to-global map. The logarithmic cardinality field is
+the candidate field of the system; for an arbitrary system its defect
+need not measure the comparison --- fiber cardinalities need not be
+uniform and the comparison need not be injective --- so the
+identification of defect coordinates with comparison losses is
+established per model, as in `Descent.Models.DiamondCode`.
 -/
 
 namespace Descent

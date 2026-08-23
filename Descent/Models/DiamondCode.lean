@@ -180,6 +180,9 @@ theorem card_missed3 :
         ∀ s, codeSystem.compare3 x y z s ≠ t} = 5 := by
   decide
 
+theorem card_states_top : Fintype.card (codeSystem.states top) = 3 := by
+  decide
+
 /-- The logarithmic cardinality field of the code system is exactly the
 witness field. -/
 theorem logCard_codeSystem : codeSystem.logCard = logCountField := by
@@ -240,6 +243,25 @@ theorem canonicalDatum_logCountField_eq :
     rw [Real.log_one, h83]
     ring
   rw [canonicalDatum, e1, e2, e3, e4]
+
+/-- The bridge: the canonical datum of the code system's field is
+exactly the logarithmic cardinal ratios of the comparison objects to the
+global states. With comparison injectivity and the missed-state counts,
+the four measurements are formally the local-to-global losses
+`(3+1)/3`, `(3+1)/3`, `(3+1)/3`, `(3+5)/3`. -/
+theorem canonicalDatum_logCard :
+    canonicalDatum codeSystem.logCard
+      = (Real.log ((Fintype.card (codeSystem.Compat x y) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat x z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat y z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat3 x y z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ))) := by
+  rw [logCard_codeSystem, canonicalDatum_logCountField_eq, card_compat_xy,
+    card_compat_xz, card_compat_yz, card_compat3, card_states_top]
+  norm_num
 
 end Diamond
 

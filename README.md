@@ -447,8 +447,10 @@ over a preorder assigns nonempty finite state types and functorial
 restriction maps toward coarser contexts; over a lattice, compatible
 states at a pair form the fiber product over the meet, and a global
 state over the join restricts to a compatible pair — the canonical
-comparison, whose failure to reach everything is a literal
-local-to-global loss. The diamond code system — bottom `Unit`, atoms
+comparison, the structural local-to-global map. The logarithmic
+cardinality field is the system's candidate field; identifying its
+defect coordinates with comparison losses is a per-model theorem, and
+the diamond delivers it. The diamond code system — bottom `Unit`, atoms
 `Bool`, top the three codewords `{000, 011, 101}`, restrictions the
 coordinate projections — realizes the witness this way, and its losses
 are the four measurements exactly: every top-to-atom restriction is
@@ -457,8 +459,14 @@ into the four compatible pairs and misses exactly one; the triple
 comparison injects them into the eight compatible triples and misses
 exactly five; the logarithmic cardinality field is exactly the witness
 field, and its canonical datum is exactly
-`(log(4/3), log(4/3), log(4/3), log(8/3))`. The diamond's four
-irredundant measurements are proved local-to-global losses.
+`(log(4/3), log(4/3), log(4/3), log(8/3))`. The identification is
+itself a theorem, not arithmetic left to the reader: the canonical
+datum of the code system's field equals the logarithmic cardinal
+ratios of the comparison objects to the global states — each pair
+coordinate is `log(|Compat|/|X⊤|)`, the order-3 coordinate
+`log(|Compat3|/|X⊤|)` — so with comparison injectivity and the missed
+counts, the four measurements are formally the losses `(3+1)/3`,
+`(3+1)/3`, `(3+1)/3`, `(3+5)/3`: proved local-to-global losses.
 
 ## Working on it
 
