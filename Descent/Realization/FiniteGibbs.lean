@@ -184,6 +184,18 @@ theorem isValuation_partition : IsValuation X.partition := by
 theorem partition_mem_gauge : X.partition ∈ gauge R ℝ :=
   mem_gauge_iff.mpr X.isValuation_partition
 
+theorem exp_logPartition (r : R) : Real.exp (X.logPartition r) = X.partition r :=
+  Real.exp_log (X.partition_pos r)
+
+theorem exp_comp_logPartition : Real.exp ∘ X.logPartition = X.partition :=
+  funext X.exp_logPartition
+
+/-- The additive law in field coordinates: the exponential of every
+log-partition is a valuation. -/
+theorem isValuation_exp_logPartition : IsValuation (Real.exp ∘ X.logPartition) := by
+  rw [X.exp_comp_logPartition]
+  exact X.isValuation_partition
+
 /-- The recognition identity: the pairwise defect of the log-partition field
 is the logarithm of the multiplicativity ratio of the partition function. -/
 theorem defect_logPartition (a b : R) :

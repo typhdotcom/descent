@@ -6,6 +6,7 @@ import Descent.Models.Chain
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
+import Descent.Realization.Realizable
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 
@@ -445,5 +446,61 @@ example :
       ∀ {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Square Ω'),
         X'.logPartition ≠ K :=
   Square.exists_not_logPartition
+
+/-! ## Realizability (milestone M5)
+
+The claims below correspond to the "Realizability" section of `README.md`.
+-/
+
+/-- README: realizable fields are monotone. -/
+example {K : ContextField R ℝ} (h : Realizable K) : Monotone K :=
+  h.monotone
+
+/-- README: realizable fields are exponentially valuations. -/
+example {K : ContextField R ℝ} (h : Realizable K) : IsValuation (Real.exp ∘ K) :=
+  h.isValuation_exp
+
+/-- README: realizable fields have nonnegative defect. -/
+example {K : ContextField R ℝ} (h : Realizable K) (a b : R) : 0 ≤ defect K a b :=
+  h.defect_nonneg a b
+
+/-- README: on the minimal chain, realizability is exactly the order
+condition. -/
+example {K : ContextField Bool ℝ} : Realizable K ↔ K false ≤ K true :=
+  realizable_bool_iff
+
+/-- README: on the square, realizability is exactly order plus algebra ---
+monotone and exponentially a valuation. -/
+example {K : ContextField Square ℝ} :
+    Realizable K ↔ Monotone K ∧ IsValuation (Real.exp ∘ K) :=
+  Square.realizable_iff
+
+/-- README: on the chain `ℝ`, the identity field is the log-partition of no
+realization over any state carrier. -/
+example {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs ℝ Ω') :
+    X'.logPartition ≠ id :=
+  id_not_logPartition X'
+
+/-- README: monotonicity and the exponential valuation law do not
+characterize realizability in general --- finiteness is a separate axis. -/
+example : ∃ K : ContextField ℝ ℝ, Monotone K ∧ IsValuation (Real.exp ∘ K) ∧ ¬Realizable K :=
+  exists_monotone_isValuation_not_realizable
+
+/-- README: the field datum determines the partition function. -/
+example {Ω' Ψ' : Type*} [DecidableEq Ω'] [DecidableEq Ψ']
+    {X' : FiniteGibbs R Ω'} {Y' : FiniteGibbs R Ψ'}
+    (h : X'.logPartition = Y'.logPartition) : X'.partition = Y'.partition :=
+  partition_eq_of_logPartition_eq h
+
+/-- README: the field datum does not determine the realization. -/
+example : ∃ X X' : FiniteGibbs Bool (Fin 2), X.logPartition = X'.logPartition ∧ X ≠ X' :=
+  exists_logPartition_eq_of_ne
+
+/-- README: defect data does not determine the field, even within the
+realizable class. -/
+example :
+    ∃ X X' : FiniteGibbs Bool (Fin 2),
+      DefectEquiv X.logPartition X'.logPartition ∧ X.logPartition ≠ X'.logPartition :=
+  exists_defectEquiv_logPartition_ne
 
 end Descent.Status

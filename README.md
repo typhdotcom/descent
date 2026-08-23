@@ -171,6 +171,36 @@ spaces there are not nested.
 `Descent/Status.lean` restates each claim above as a typed `example`. Prose
 that outruns the library stops compiling there.
 
+## Realizability
+
+Milestone M5, in `Descent/Realization/Realizable.lean`:
+
+The inverse problem. `Realizable K` names the datum — a finite Gibbs
+realization whose log-partition is exactly `K`. The M4 laws become the
+necessary conditions, read in field coordinates: a realizable field is
+monotone, its exponential is a valuation, and its defect is nonnegative.
+Positivity is absorbed by the exponential. The axes of the inverse problem
+then separate:
+
+- **Order and algebra suffice on the solved models.** On the minimal chain
+  `Bool`, realizability is exactly the order condition `K false ≤ K true` —
+  the valuation law is vacuous on a chain. On the square, realizability is
+  exactly monotone plus exponentially a valuation; the witness is a
+  three-state carrier — one shared state, one state private to each side of
+  the nondegenerate square, included exactly when its side strictly
+  increases mass.
+- **Finiteness is a separate axis.** On the chain `ℝ` the identity field is
+  monotone and exponentially a valuation, yet it is the log-partition of no
+  realization over any state carrier: its partition function would be
+  strictly monotone, forcing finite state spaces to grow strictly along an
+  uncountable chain. This is where the analytic part of the inverse problem
+  appears in the finite class.
+- **Uniqueness lives at the partition function.** The field datum determines
+  the partition function exactly. It does not determine the realization —
+  two realizations with different energies share a log-partition — and
+  defect data does not determine the field even within the realizable
+  class: a realization and its shift share defect data.
+
 ## Working on it
 
 ```nu
@@ -184,12 +214,13 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M2 and M3 are built. M4 is built at
-this level: the finite Gibbs class with structural lattice compatibility, its
-recognition bridge, the universal additive law, the signed multiplicative
-obstruction with its sharp vanishing, and explicit non-realizable fields.
-Completeness and adequacy on richer context lattices remain open, as does the
-order-separated higher observable exposed as missing by M2 — raw mixed
-differences are not that object. M5 begins realizability: monotonicity and
-the nonnegative, nesting-governed defect are necessary conditions visible
-here; which fields satisfying them the class actually realizes is open.
+`PROPOSAL.md` §20 sequences the work. M2 through M4 are built. M5 is built
+at this level: realizability is characterized on the solved models — order
+alone on the minimal chain, order plus the exponential valuation law on the
+square — refuted as a general characterization by the finiteness obstruction
+on the chain `ℝ`, and uniqueness is located at the partition function. Open:
+realizability on richer finite lattices, where the pairwise valuation law
+need not control the higher inclusion–exclusion the state maps impose — the
+same higher-observable gap M2 exposed. Completeness and adequacy on richer
+context lattices remain open, as does the order-separated higher observable
+— raw mixed differences are not that object. M6 is kernel geometry.
