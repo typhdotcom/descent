@@ -134,16 +134,10 @@ theorem four_comparable :
         Comparable b d ∨ Comparable c d := by
   decide
 
-/-- The diamond stabilizes at order 3: with no 4-antichain, the order-≤4
-gauge is the order-≤3 gauge. -/
-theorem gauge4_eq_gauge3 : gauge4 Diamond ℤ = gauge3 Diamond ℤ := by
-  refine le_antisymm inf_le_left fun K hK => ?_
-  rw [gauge4, AddSubgroup.mem_inf]
-  refine ⟨hK, ?_⟩
-  rw [AddMonoidHom.mem_ker]
-  funext a b c d
-  exact defect4_eq_zero_of_defect3_eq_zero (mem_gauge3_iff.mp hK).2
-    (four_comparable a b c d)
+/-- The diamond stabilizes at order 3: a corollary of the generic
+stabilization theorem, since it has no 4-antichain. -/
+theorem gauge4_eq_gauge3 : gauge4 Diamond ℤ = gauge3 Diamond ℤ :=
+  Descent.gauge4_eq_gauge3 four_comparable
 
 end Diamond
 

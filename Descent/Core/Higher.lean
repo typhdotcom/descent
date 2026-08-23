@@ -461,6 +461,20 @@ theorem mem_gauge4_iff {K : ContextField R A} :
     funext a b c d
     exact h a b c d
 
+/-- Stabilization without a 4-antichain, generically: if every quadruple
+contains a comparable pair, the order-≤4 gauge is the order-≤3 gauge. -/
+theorem gauge4_eq_gauge3
+    (h : ∀ a b c d : R,
+      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
+        Comparable b d ∨ Comparable c d) :
+    gauge4 R A = gauge3 R A := by
+  refine le_antisymm inf_le_left fun K hK => ?_
+  rw [gauge4, AddSubgroup.mem_inf]
+  refine ⟨hK, ?_⟩
+  rw [AddMonoidHom.mem_ker]
+  funext a b c d
+  exact defect4_eq_zero_of_defect3_eq_zero (mem_gauge3_iff.mp hK).2 (h a b c d)
+
 /-- Cumulative defect equivalence through order 4. -/
 def Defect4Equiv (K K' : ContextField R A) : Prop :=
   Defect3Equiv K K' ∧ defect4 K = defect4 K'

@@ -355,9 +355,10 @@ order-4 defect is the failure of fourfold inclusion–exclusion:
   same shape as the order-3 decomposition one order down — so the
   order-≤4 gauge is still the pairwise gauge; the arithmetic antichain
   `2, 3, 5, 7` instantiates the recurrence with its meets degenerating.
-- Without a 4-antichain, order 4 adds nothing beyond order 3: the
-  diamond has no 4-antichain — a theorem — and stabilizes,
-  `gauge4 = gauge3` there.
+- Without a 4-antichain, order 4 adds nothing beyond order 3 — a
+  generic theorem: on any context lattice where every quadruple contains
+  a comparable pair, `gauge4 = gauge3`. The diamond has no 4-antichain —
+  itself a theorem — and stabilizes as a corollary.
 
 ## Working on it
 
@@ -377,11 +378,15 @@ order 4: cumulative data, gauges, and injective quotient observations at
 orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
 the two-regime architecture — distributive contexts add nothing at
 either order, the diamond is strictly finer at order 3 and stabilizes at
-order 4 for want of a 4-antichain. Order 4 revealed the recurrence
-`D_{k+1}(a₁…a_k, d) = D_k(a₁…a_k) + D₂(⊔aᵢ, d) − D_k(a₁⊓d, …, a_k⊓d)`;
-the general-k hierarchy should now be built from it. Open besides: a
-carrier strictly separating order 4 from cumulative order ≤ 3 — it needs
-a 4-antichain and a distributivity gap invisible below — kernel
-classification beyond the solved models, and Hilbert embedding of
-sampled conditional negativity. Further carriers enter when they pay the
-admission fee: a theorem the abstract level cannot see.
+order 4 for want of a 4-antichain. The next question is singular: settle
+whether cumulative observation can become strictly finer at order 4 —
+whether any lattice, target, and field lie in `gauge3` but not `gauge4`.
+A strict witness needs a 4-antichain and a distributivity gap invisible
+below; the diamond, the pentagon, and chains are all ruled out. Either a
+strict finite witness or a theorem excluding separation settles it, and
+the hierarchy is not generalized to arbitrary order before then — order
+4 revealed the recurrence
+`D_{k+1}(a₁…a_k, d) = D_k(a₁…a_k) + D₂(⊔aᵢ, d) − D_k(a₁⊓d, …, a_k⊓d)`,
+and it waits on that answer. Behind it: kernel classification beyond the
+solved models, Hilbert embedding of sampled conditional negativity, and
+carriers that pay the admission fee.

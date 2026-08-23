@@ -998,8 +998,17 @@ example {D : Type*} [DistribLattice D] {K K' : ContextField D A} :
     Defect4Equiv K K' ↔ DefectEquiv K K' :=
   defect4Equiv_iff_defectEquiv
 
-/-- README: without a 4-antichain, order 4 adds nothing beyond order 3;
-the diamond has no 4-antichain and stabilizes. -/
+/-- README: without a 4-antichain, order 4 adds nothing beyond order 3
+--- generically, for any context lattice and target. -/
+example
+    (h : ∀ a b c d : R,
+      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
+        Comparable b d ∨ Comparable c d) :
+    gauge4 R A = gauge3 R A :=
+  gauge4_eq_gauge3 h
+
+/-- README: the diamond has no 4-antichain and stabilizes, as a
+corollary. -/
 example :
     ∀ a b c d : Diamond,
       Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
