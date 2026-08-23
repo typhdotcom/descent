@@ -350,11 +350,18 @@ order-4 defect is the failure of fourfold inclusion–exclusion:
   that vanishes at the meet base.
 - The cumulative datum `(D₂, D₃, D₄)` has its gauge `gauge4`, its
   equivalence, and its injective quotient observation `Observable4`.
-- On distributive lattices the collapse persists, through the recurrence
-  `D₄(a,b,c,d) = D₃(a,b,c) + D₂(a⊔b⊔c, d) − D₃(a⊓d, b⊓d, c⊓d)` — the
-  same shape as the order-3 decomposition one order down — so the
-  order-≤4 gauge is still the pairwise gauge; the arithmetic antichain
-  `2, 3, 5, 7` instantiates the recurrence with its meets degenerating.
+- The exact recurrence holds on any lattice, with a named remainder:
+  `D₄(a,b,c,d) = D₃(a,b,c) + D₂(a⊔b⊔c, d) − D₃(a⊓d, b⊓d, c⊓d) + (K((a⊔b⊔c)⊓d) − K((a⊓d)⊔(b⊓d)⊔(c⊓d)))` — the field gap across the
+  distributivity-defect interval. On the order-≤3 gauge everything but
+  the remainder dies: for `K` in `gauge3` the order-4 defect *is* that
+  gap. This is the search criterion for order-4 strictness: cumulative
+  observation is strictly finer at order 4 precisely when some order-≤3
+  gauge field detects a distributivity-defect interval.
+- On distributive lattices the remainder vanishes, so the collapse
+  persists — the same decomposition shape as order 3 over order 2 — and
+  the order-≤4 gauge is still the pairwise gauge; the arithmetic
+  antichain `2, 3, 5, 7` instantiates the recurrence with its meets
+  degenerating.
 - Without a 4-antichain, order 4 adds nothing beyond order 3 — a
   generic theorem: on any context lattice where every quadruple contains
   a comparable pair, `gauge4 = gauge3`. The diamond has no 4-antichain —
@@ -381,12 +388,11 @@ either order, the diamond is strictly finer at order 3 and stabilizes at
 order 4 for want of a 4-antichain. The next question is singular: settle
 whether cumulative observation can become strictly finer at order 4 —
 whether any lattice, target, and field lie in `gauge3` but not `gauge4`.
-A strict witness needs a 4-antichain and a distributivity gap invisible
-below; the diamond, the pentagon, and chains are all ruled out. Either a
-strict finite witness or a theorem excluding separation settles it, and
-the hierarchy is not generalized to arbitrary order before then — order
-4 revealed the recurrence
-`D_{k+1}(a₁…a_k, d) = D_k(a₁…a_k) + D₂(⊔aᵢ, d) − D_k(a₁⊓d, …, a_k⊓d)`,
-and it waits on that answer. Behind it: kernel classification beyond the
+The search criterion is committed
+(`defect4_eq_of_mem_gauge3`): a witness is exactly an order-≤3 gauge
+field detecting a distributivity-defect interval, which requires a
+4-antichain; the diamond and chains are ruled out. Either a strict
+finite witness or a theorem excluding separation settles it, and the
+hierarchy is not generalized to arbitrary order before then. Behind it: kernel classification beyond the
 solved models, Hilbert embedding of sampled conditional negativity, and
 carriers that pay the admission fee.

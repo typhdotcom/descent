@@ -327,6 +327,20 @@ theorem defect4_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
     defect4 (K ∘ f) a b c d = defect4 K (f a) (f b) (f c) (f d) := by
   simp [defect4, Function.comp_apply, map_inf, map_sup]
 
+/-- The exact recurrence on an arbitrary lattice: the order-4 defect is
+the order-3 recurrence shape plus the field gap across the
+distributivity-defect interval
+`[(a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d), (a ⊔ b ⊔ c) ⊓ d]`. -/
+theorem defect4_recurrence (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d
+      = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
+        - defect3 K (a ⊓ d) (b ⊓ d) (c ⊓ d)
+        + (K ((a ⊔ b ⊔ c) ⊓ d) - K ((a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d))) := by
+  have hm : ∀ x y : R, (x ⊓ d) ⊓ (y ⊓ d) = x ⊓ y ⊓ d := fun x y => by
+    rw [inf_assoc x d, inf_comm d (y ⊓ d), inf_assoc y d, inf_idem, ← inf_assoc]
+  simp only [defect4, defect3, defect_def, hm]
+  abel
+
 /-! ### The cumulative observation through order 3 -/
 
 /-- The order-3 defect operator, packaged as an additive homomorphism. -/
@@ -475,6 +489,20 @@ theorem gauge4_eq_gauge3
   funext a b c d
   exact defect4_eq_zero_of_defect3_eq_zero (mem_gauge3_iff.mp hK).2 (h a b c d)
 
+/-- The search criterion for order-4 strictness: on the order-≤3 gauge
+everything in the recurrence dies except the remainder, so the order-4
+defect is exactly the field gap across the distributivity-defect
+interval. Cumulative observation is strictly finer at order 4 precisely
+when some order-≤3 gauge field detects such an interval. -/
+theorem defect4_eq_of_mem_gauge3 {K : ContextField R A}
+    (hK : K ∈ gauge3 R A) (a b c d : R) :
+    defect4 K a b c d
+      = K ((a ⊔ b ⊔ c) ⊓ d) - K ((a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d)) := by
+  obtain ⟨h2, h3⟩ := mem_gauge3_iff.mp hK
+  rw [defect4_recurrence, h3 a b c, h2 (a ⊔ b ⊔ c) d,
+    h3 (a ⊓ d) (b ⊓ d) (c ⊓ d)]
+  abel
+
 /-- Cumulative defect equivalence through order 4. -/
 def Defect4Equiv (K K' : ContextField R A) : Prop :=
   Defect3Equiv K K' ∧ defect4 K = defect4 K'
@@ -615,19 +643,16 @@ theorem gauge3_eq_gauge : gauge3 R A = gauge R A := by
 /-! On a distributive lattice the recurrence continues one order up, and
 the collapse persists. -/
 
-/-- The recurrence: on a distributive lattice the order-4 defect
-decomposes exactly through order 3 --- the same shape as
-`defect3_decompose` one order down. -/
+/-- On a distributive lattice the remainder of `defect4_recurrence`
+vanishes and the order-4 defect decomposes exactly through order 3 ---
+the same shape as `defect3_decompose` one order down. -/
 theorem defect4_decompose (K : ContextField R A) (a b c d : R) :
     defect4 K a b c d
       = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
         - defect3 K (a ⊓ d) (b ⊓ d) (c ⊓ d) := by
   have hd : (a ⊔ b ⊔ c) ⊓ d = (a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d) := by
     rw [inf_sup_right, inf_sup_right]
-  have hm : ∀ x y : R, (x ⊓ d) ⊓ (y ⊓ d) = x ⊓ y ⊓ d := fun x y => by
-    rw [inf_assoc x d, inf_comm d (y ⊓ d), inf_assoc y d, inf_idem, ← inf_assoc]
-  simp only [defect4, defect3, defect_def, hd, hm]
-  abel
+  rw [defect4_recurrence, hd, sub_self, add_zero]
 
 /-- Pairwise valuations have no order-4 defect on distributive
 contexts: the collapse persists at order 4. -/

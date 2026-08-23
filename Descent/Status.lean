@@ -978,9 +978,26 @@ example (K : ContextField R A) :
 example : Function.Injective (Observable4.datum : Observable4 R A → _) :=
   Observable4.datum_injective
 
-/-- README: the recurrence --- on distributive lattices the order-4 defect
-decomposes through order 3 in the same shape as order 3 through order 2,
-and the collapse persists. -/
+/-- README: the exact recurrence on an arbitrary lattice --- the order-3
+shape plus the field gap across the distributivity-defect interval. -/
+example (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d
+      = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
+        - defect3 K (a ⊓ d) (b ⊓ d) (c ⊓ d)
+        + (K ((a ⊔ b ⊔ c) ⊓ d) - K ((a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d))) :=
+  defect4_recurrence K a b c d
+
+/-- README: the search criterion --- on the order-≤3 gauge the order-4
+defect is exactly the field gap across the distributivity-defect
+interval. -/
+example {K : ContextField R A} (hK : K ∈ gauge3 R A) (a b c d : R) :
+    defect4 K a b c d
+      = K ((a ⊔ b ⊔ c) ⊓ d) - K ((a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d)) :=
+  defect4_eq_of_mem_gauge3 hK a b c d
+
+/-- README: on distributive lattices the remainder vanishes, the order-4
+defect decomposes through order 3 in the same shape as order 3 through
+order 2, and the collapse persists. -/
 example {D : Type*} [DistribLattice D] (K : ContextField D A) (a b c d : D) :
     defect4 K a b c d
       = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
