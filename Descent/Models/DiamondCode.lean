@@ -1,5 +1,5 @@
 import Descent.Models.Diamond
-import Descent.Realization.Restriction
+import Descent.Realization.Recognition
 
 /-!
 # The diamond code system
@@ -16,6 +16,12 @@ comparison injects them into the eight compatible triples and misses
 exactly five. The logarithmic cardinality field is exactly the witness
 field `logCountField`, and its canonical datum is exactly
 `(log (4/3), log (4/3), log (4/3), log (8/3))`.
+
+The pairwise recognition theorem instantiates here: each atom pair
+satisfies the cardinal balance `4·1 = 2·2`, so its `logCard` defect is
+the comparison-cardinality term alone, and with the injective
+comparison missing exactly one compatible pair among three global
+states it is `log (1 + 1/3) = log (4/3)`.
 -/
 
 namespace Descent
@@ -261,6 +267,51 @@ theorem canonicalDatum_logCard :
             / (Fintype.card (codeSystem.states top) : ℝ))) := by
   rw [logCard_codeSystem, canonicalDatum_logCountField_eq, card_compat_xy,
     card_compat_xz, card_compat_yz, card_compat3, card_states_top]
+  norm_num
+
+/-! ### The recognition theorem, instantiated -/
+
+/-- The fiber balance holds at each atom pair: `4·1 = 2·2`. -/
+theorem balance_xy :
+    Fintype.card (codeSystem.Compat x y) * Fintype.card (codeSystem.states (x ⊓ y))
+      = Fintype.card (codeSystem.states x) * Fintype.card (codeSystem.states y) := by
+  decide
+
+theorem balance_xz :
+    Fintype.card (codeSystem.Compat x z) * Fintype.card (codeSystem.states (x ⊓ z))
+      = Fintype.card (codeSystem.states x) * Fintype.card (codeSystem.states z) := by
+  decide
+
+theorem balance_yz :
+    Fintype.card (codeSystem.Compat y z) * Fintype.card (codeSystem.states (y ⊓ z))
+      = Fintype.card (codeSystem.states y) * Fintype.card (codeSystem.states z) := by
+  decide
+
+/-- The pair coordinates, recovered from the generic recognition
+theorem: the balance kills the residue, injectivity turns the comparison
+term into the missed-state count. -/
+theorem defect_logCard_xy :
+    defect codeSystem.logCard x y = Real.log (4 / 3) := by
+  rw [codeSystem.defect_logCard_of_balance balance_xy,
+    codeSystem.comparisonTerm_eq_of_injective compare_xy_injective,
+    show Fintype.card (codeSystem.Missed x y) = 1 from by decide,
+    show Fintype.card (codeSystem.states (x ⊔ y)) = 3 from by decide]
+  norm_num
+
+theorem defect_logCard_xz :
+    defect codeSystem.logCard x z = Real.log (4 / 3) := by
+  rw [codeSystem.defect_logCard_of_balance balance_xz,
+    codeSystem.comparisonTerm_eq_of_injective compare_xz_injective,
+    show Fintype.card (codeSystem.Missed x z) = 1 from by decide,
+    show Fintype.card (codeSystem.states (x ⊔ z)) = 3 from by decide]
+  norm_num
+
+theorem defect_logCard_yz :
+    defect codeSystem.logCard y z = Real.log (4 / 3) := by
+  rw [codeSystem.defect_logCard_of_balance balance_yz,
+    codeSystem.comparisonTerm_eq_of_injective compare_yz_injective,
+    show Fintype.card (codeSystem.Missed y z) = 1 from by decide,
+    show Fintype.card (codeSystem.states (y ⊔ z)) = 3 from by decide]
   norm_num
 
 end Diamond

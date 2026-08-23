@@ -81,6 +81,9 @@ def compare (a b : R) (s : F.states (a ⊔ b)) : F.Compat a b :=
   ⟨(F.restrict le_sup_left s, F.restrict le_sup_right s), by
     rw [F.restrict_restrict, F.restrict_restrict]⟩
 
+instance (a b : R) : Nonempty (F.Compat a b) :=
+  (F.nonempty (a ⊔ b)).map (F.compare a b)
+
 /-- Compatible triples: pairwise fiber products over the meets. -/
 def Compat3 (a b c : R) : Type :=
   { t : F.states a × F.states b × F.states c //

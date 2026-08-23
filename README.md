@@ -468,6 +468,30 @@ coordinate is `log(|Compat|/|X⊤|)`, the order-3 coordinate
 counts, the four measurements are formally the losses `(3+1)/3`,
 `(3+1)/3`, `(3+1)/3`, `(3+5)/3`: proved local-to-global losses.
 
+The recognition theorem separates gluing failure from fiber imbalance,
+generically (`Descent/Realization/Recognition.lean`). For every finite
+restriction system over a lattice the defect of the logarithmic
+cardinality field decomposes exactly:
+
+```text
+D_logCard (a, b) = log (|Compat (a,b)| / |X (a⊔b)|)
+                 + log (|X a|·|X b| / (|X (a⊓b)|·|Compat (a,b)|))
+```
+
+The first summand is the comparison-cardinality term; the second is the
+fiber-balance residue — the exact obstruction to reading an arbitrary
+`logCard` defect as a pure gluing measurement. Under an injective
+comparison the compatible pairs are exactly the embedded global states
+together with the missed ones, so the comparison term is
+`log (1 + |Missed (a,b)| / |X (a⊔b)|)` — nonnegative, and zero exactly
+when the comparison is surjective. The residue vanishes exactly under
+the cardinal balance `|Compat (a,b)|·|X (a⊓b)| = |X a|·|X b|`;
+compatible pairs fiber over the meet as products of the two restriction
+legs' fibers, so constant fiber cardinality of either leg forces the
+balance. On the diamond code system every atom pair is balanced —
+`4·1 = 2·2` — so the pair coordinates follow by instantiation: each
+`logCard` defect is its comparison term, `log (1 + 1/3) = log (4/3)`.
+
 ## Working on it
 
 ```nu
@@ -502,10 +526,13 @@ monotone valuations, in which the excluded witness lies. Restriction
 data is now observable: the diamond code system realizes that witness
 as a finite restriction system whose comparison losses are the four
 irredundant measurements exactly — the canonical coordinates count the
-failures of pairwise and triple gluing. The next program is the generic
-pairwise recognition theorem: decompose every `logCard` defect into
-the logarithmic comparison-cardinality term and the exact fiber-balance
-residue; under an injective comparison, identify the first term with the
-number of missed compatible states, and characterize when the residue
-vanishes. The diamond pair coordinates must then follow by
-instantiation. Triple generalization waits on this theorem.
+failures of pairwise and triple gluing. The recognition theorem is
+proved: every `logCard` defect splits exactly into the
+comparison-cardinality term and the fiber-balance residue — the first
+counting missed compatible states under an injective comparison,
+nonnegative, zero exactly at surjectivity; the second vanishing exactly
+at the cardinal balance, which constant fibers force — and the diamond
+pair coordinates follow by instantiation. Open next: the triple —
+whether the order-3 defect of `logCard` recognizes the same way against
+`Compat3`, a comparison term over the triple fiber product with its own
+exact residue. Direction is pending.

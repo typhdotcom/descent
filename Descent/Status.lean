@@ -12,6 +12,7 @@ import Descent.Geometry.Chambers
 import Descent.Models.Arithmetic
 import Descent.Models.Diamond
 import Descent.Models.DiamondCode
+import Descent.Realization.Recognition
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
@@ -1472,5 +1473,83 @@ example :
       = (Real.log (4 / 3), Real.log (4 / 3), Real.log (4 / 3),
           Real.log (8 / 3)) :=
   Diamond.canonicalDatum_logCountField_eq
+
+/-! ## The pairwise recognition theorem
+
+The claims below correspond to the recognition paragraph of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: the `logCard` defect of every finite restriction system
+decomposes exactly into the comparison-cardinality term and the
+fiber-balance residue. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    defect F.logCard a b = F.comparisonTerm a b + F.residue a b :=
+  F.defect_logCard a b
+
+/-- README: under an injective comparison the comparison term counts
+the missed compatible states against the global states. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b : R}
+    (h : Function.Injective (F.compare a b)) :
+    F.comparisonTerm a b
+      = Real.log (1 + (Fintype.card (F.Missed a b) : ℝ)
+          / (Fintype.card (F.states (a ⊔ b)) : ℝ)) :=
+  F.comparisonTerm_eq_of_injective h
+
+/-- README: …hence is nonnegative… -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b : R}
+    (h : Function.Injective (F.compare a b)) :
+    0 ≤ F.comparisonTerm a b :=
+  F.comparisonTerm_nonneg h
+
+/-- README: …and zero exactly when the comparison is surjective. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b : R}
+    (h : Function.Injective (F.compare a b)) :
+    F.comparisonTerm a b = 0 ↔ Function.Surjective (F.compare a b) :=
+  F.comparisonTerm_eq_zero_iff h
+
+/-- README: the residue vanishes exactly under the cardinal balance. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.residue a b = 0
+      ↔ Fintype.card (F.Compat a b) * Fintype.card (F.states (a ⊓ b))
+          = Fintype.card (F.states a) * Fintype.card (F.states b) :=
+  F.residue_eq_zero_iff a b
+
+/-- README: constant fiber cardinality of either restriction leg to the
+meet forces the balance. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) (n : ℕ)
+    (h : ∀ t : F.states (a ⊓ b),
+      Fintype.card { s : F.states a // F.restrict inf_le_left s = t } = n) :
+    Fintype.card (F.Compat a b) * Fintype.card (F.states (a ⊓ b))
+      = Fintype.card (F.states a) * Fintype.card (F.states b) :=
+  F.balance_of_const_fiber_left a b n h
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) (n : ℕ)
+    (h : ∀ t : F.states (a ⊓ b),
+      Fintype.card { u : F.states b // F.restrict inf_le_right u = t } = n) :
+    Fintype.card (F.Compat a b) * Fintype.card (F.states (a ⊓ b))
+      = Fintype.card (F.states a) * Fintype.card (F.states b) :=
+  F.balance_of_const_fiber_right a b n h
+
+/-- README: on the diamond code system every atom pair is balanced. -/
+example :
+    Fintype.card (Diamond.codeSystem.Compat Diamond.x Diamond.y)
+        * Fintype.card (Diamond.codeSystem.states (Diamond.x ⊓ Diamond.y))
+      = Fintype.card (Diamond.codeSystem.states Diamond.x)
+        * Fintype.card (Diamond.codeSystem.states Diamond.y) :=
+  Diamond.balance_xy
+
+/-- README: …so the pair coordinates follow by instantiation. -/
+example :
+    defect Diamond.codeSystem.logCard Diamond.x Diamond.y = Real.log (4 / 3) :=
+  Diamond.defect_logCard_xy
+
+example :
+    defect Diamond.codeSystem.logCard Diamond.x Diamond.z = Real.log (4 / 3) :=
+  Diamond.defect_logCard_xz
+
+example :
+    defect Diamond.codeSystem.logCard Diamond.y Diamond.z = Real.log (4 / 3) :=
+  Diamond.defect_logCard_yz
 
 end Descent.Status
