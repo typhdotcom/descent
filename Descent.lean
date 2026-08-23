@@ -16,10 +16,10 @@ import Descent.Models.Square
 import Descent.Realization.Envelope
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Incidence
-import Descent.Realization.Recognition
-import Descent.Realization.Restriction
 import Descent.Realization.Overlap
 import Descent.Realization.Realizable
+import Descent.Realization.Recognition
+import Descent.Realization.Restriction
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 import Descent.Status

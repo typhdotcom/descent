@@ -201,8 +201,7 @@ then separate:
   strictly monotone, forcing finite state spaces to grow strictly along an
   uncountable chain. This is a cardinality obstruction, not analytic
   convergence — every sum in the class is finite, so convergence is
-  automatic and the analytic axis is absent here; it belongs to a future
-  summable realization class.
+  automatic and the analytic axis is absent from the finite class.
 - **Uniqueness lives at the partition function.** The field datum determines
   the partition function exactly. It does not determine the realization —
   two realizations with different energies share a log-partition — and
@@ -593,60 +592,17 @@ nu tasks.nu check   # nix flake check
 `direnv allow` puts `elan` on the path; the toolchain in `lean-toolchain`
 installs on first use.
 
-## Next
+## First edition
 
-`PROPOSAL.md` §20's ladder M0–M7 is built, and Q4 with it through
-order 4: cumulative data, gauges, and injective quotient observations at
-orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
-the two-regime architecture — distributive contexts add nothing at
-either order, the diamond is strictly finer at order 3.
-Q4 is closed: the
-inclusion–exclusion hierarchy carries one general defect — symmetric,
-degenerating, natural — whose gauge equals the order-≤3 gauge on every
-lattice and target; order 3 is the final refinement of defect
-observation. The diamond is finished: its final observable's gauge is
-exactly the constants; the equality criterion and one-point
-normalization follow; and sparse reconstruction identifies the
-observable with the canonical datum — four irredundant measurements
-carrying an explicit normalized inverse. The finite Gibbs boundary
-there is exact — the class realizes the constants and only the zero
-datum — and the abstraction has migrated to what the proofs consume:
-the realization laws factor through the algebraic envelope of positive
-monotone valuations, in which the excluded witness lies. Restriction
-data is now observable: the diamond code system realizes that witness
-as a finite restriction system whose comparison losses are the four
-irredundant measurements exactly — the canonical coordinates count the
-failures of pairwise and triple gluing. The recognition theorem is
-proved: every `logCard` defect splits exactly into the
-comparison-cardinality term and the fiber-balance residue — the first
-counting missed compatible states under an injective comparison,
-nonnegative, zero exactly at surjectivity; the second vanishing exactly
-at the cardinal balance, which constant fibers force — and the diamond
-pair coordinates follow by instantiation. The order-3 recognition
-theorem is proved: the triple `logCard` defect splits exactly against
-`Compat3`, missed compatible triples measure the injective comparison
-with the sharp zero law at surjectivity, the triple balance
-characterizes the vanishing residue and is forced structurally by
-coincident meets with two constant legs, and the diamond order-3
-coordinate and the complete canonical-datum bridge follow from the
-pairwise and triple recognition theorems alone. Recognition stops at
-order 3, because the abstract hierarchy proves that no higher order
-refines the observable. Q8 is closed: the incidence bookkeeping splits
-every comparison term into reached, missed, and redundant counts with
-the complete positive/zero/negative chamber law; observational
-equivalence is classified on the diamond as the proportional
-cardinality profile; and the second three-codeword system witnesses the
-blindness — identical complete defect observation, different comparison
-incidence. The epistemic boundary is exact: defect observation keeps
-the net cardinal obstruction and forgets how missed local states and
-identified global states cancel. Q10 is closed, and with it the
-program ladder of `PROPOSAL.md` §21: the extension profile carries the
-complete finite-map package with its exact reconstruction limit — a
-finite inverse theorem, no probability and no weights — the scalar
-comparison term is its coarse statistic, and the two diamond systems
-are separated by `{0,1,1,1}` versus `{0,0,1,2}`: conditioning recovers
-precisely the incidence that defect observation discarded. The next milestone
-is the first-edition closure audit: reconcile the built status of the proposal,
-typed Status manifest, public imports, assumptions, names, and this README;
-remove stale prospective language and duplication; and open no new
-mathematical program unless the audit identifies a concrete theorem-level gap.
+`PROPOSAL.md` §20's ladder M0–M7 is built, and its §21 program ladder
+is closed: Q1 and Q3 by the diamond classification and sparse
+reconstruction, Q4 by the hierarchy's saturation at order 3, Q5 by the
+finite Gibbs boundary and the algebraic envelope, Q8 by observational
+equivalence and incidence blindness, Q9 by the restriction realization
+and the two recognition theorems, and Q10 by the extension profile's
+finite inverse theorem. Q2, Q6, and Q7 are answered exactly on the
+solved carriers and remain open in general; `PROPOSAL.md` records the
+built status of every milestone and question in place. Every
+load-bearing claim in this file is a typed example in
+`Descent/Status.lean`, and the closure audit found no claim without its
+theorem. No new mathematical program is open.

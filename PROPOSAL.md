@@ -1028,6 +1028,10 @@ Use only standard mathematical names.
 
 Build a status manifest immediately.
 
+M0 is built: `Descent/Core/Context.lean`, `Descent/Core/Field.lean`, and
+`Descent/Core/Defect.lean`, with the status manifest `Descent/Status.lean` in
+place since the first milestone.
+
 ______________________________________________________________________
 
 ## M1 — Gauge and valuation
@@ -1052,6 +1056,11 @@ plus normalization lemmas for simple context lattices.
 
 This milestone establishes the observable quotient.
 
+M1 is built in `Descent/Core/Gauge.lean`: the gauge is exactly the valuations,
+equal defect data is exactly a gauge difference, and the datum descends
+injectively to `Observable`. The concrete normalization debt is discharged
+under M3.
+
 ______________________________________________________________________
 
 ## M2 — Cubes
@@ -1074,6 +1083,10 @@ The goal is a carrier-free calculus of finite changes together with an exact
 account of its degeneracies. It is not yet an irreducible interaction
 hierarchy. A degenerate raw cube may retain lower-order data and raw mixed
 differences need not descend through the pairwise gauge.
+
+M2 is built in `Descent/Core/Cube.lean`, and the conviction is a theorem: on
+the three-element chain a degenerate raw cube separates defect-equivalent
+fields (`Descent/Models/Chain.lean`).
 
 ______________________________________________________________________
 
@@ -1105,6 +1118,11 @@ refinement, and all higher inclusion--exclusion defects vanish on its gauge.
 The project should seek explicit reconstruction algorithms as well as
 existential statements.
 
+M3 is built in `Descent/Reconstruction/Restricted.lean` and
+`Descent/Reconstruction/Normalization.lean`, with the sharp classifications
+and explicit reconstruction formulas on the chain and the square in
+`Descent/Models/`.
+
 ______________________________________________________________________
 
 ## M4 — Weighted realization
@@ -1123,6 +1141,11 @@ Prove the recognition bridge into the core defect calculus.
 
 Only now introduce probability or Gibbs language where mathematically literal.
 
+M4 is built in `Descent/Realization/FiniteGibbs.lean`, with the strict sign
+witness in `Descent/Realization/Overlap.lean`: the recognition bridge, the
+exact multiplicative correction, the universal sign, and the sharp vanishing
+law.
+
 ______________________________________________________________________
 
 ## M5 — Realizability
@@ -1140,6 +1163,12 @@ Separate:
 
 Counterexamples are expected.
 
+M5 is built in `Descent/Realization/Realizable.lean`, and the axes separate
+exactly: order and algebra decide the solved models, defect realizability is
+sharp on the square, the chain (\\mathbb R) exhibits the cardinality
+obstruction with the analytic axis absent from the finite class, and
+uniqueness holds at the partition function and nowhere finer.
+
 ______________________________________________________________________
 
 ## M6 — Kernel geometry
@@ -1151,6 +1180,11 @@ Determine when sign or definiteness conditions generate canonical geometric stru
 Do not assume a universal sign.
 
 Map the chambers where different structures exist.
+
+M6 is built in `Descent/Geometry/`: the chamber map with its exact wall, the
+gauge-invariant sampled defect matrix whose definiteness is conditional
+negative semidefiniteness, and the representative-dependent kernels with
+their pseudometrics in the monotone chambers.
 
 ______________________________________________________________________
 
@@ -1166,6 +1200,11 @@ Likely candidates:
 - local-to-global constraint systems.
 
 Each model must justify its existence by producing a theorem not already visible at the abstract level.
+
+M7 is built in `Descent/Models/Arithmetic.lean`: the divisibility carrier
+produces the half-state-map theorem, the wall-reading divisor count, the
+divisor metric, and a defect-invisible unrealizable field. The
+local-to-global constraint systems became the Q9 restriction realization.
 
 ______________________________________________________________________
 
@@ -1187,6 +1226,14 @@ value determines a unique representative.
 What is the weakest restricted pairwise datum with the same kernel as complete
 defect observation, and what additional normalization reconstructs the field
 itself?
+
+For the solved carriers this is answered by the M3 classifications: on the
+square the singleton nondegenerate family is the weakest complete pairwise
+datum, and a value restriction is adequate exactly when it misses at most one
+context; on the chain every family is complete and only the full restriction
+is adequate; on the diamond the weakest datum is not pairwise at all --- it is
+the four sparse coordinates of Q3. A carrier-general minimality theory is not
+built and remains open.
 
 ### Q3 — Sparse reconstruction
 
@@ -1283,9 +1330,23 @@ appear in its theorems.
 
 Under what conditions does defect data define PSD, CND, metric, or embedding structure?
 
+The built answer is M6's chamber map: ordinary definiteness degenerates on
+the gauge-invariant sampled defect matrix, conditional negative
+semidefiniteness is the definiteness that observable supports --- detecting
+the submodular chamber at the two-point square sample and collapsing to the
+wall at the full sample --- and metric structure appears exactly in the
+monotone sign chambers, consuming the field representative. Beyond these
+exact statements the question remains open.
+
 ### Q7 — Universality
 
 Which theorems survive replacement of the realization while keeping only the abstract context and defect interfaces?
+
+The abstract layers --- defect, gauge, cubes, the hierarchy, recognition,
+incidence --- are stated over arbitrary lattices and additive targets and
+consume no realization; the realization laws themselves factor through the
+algebraic envelope `IsPositiveValuation` (Q5). No further universality audit
+is built; the question remains open.
 
 ### Q8 — Observational equivalence
 

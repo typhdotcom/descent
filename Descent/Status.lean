@@ -1,22 +1,25 @@
 import Descent.Core.Context
 import Descent.Core.Cube
 import Descent.Core.Defect
+import Descent.Core.Field
 import Descent.Core.Gauge
-import Descent.Models.Chain
-import Descent.Models.Square
-import Descent.Realization.FiniteGibbs
-import Descent.Realization.Overlap
 import Descent.Core.Hierarchy
 import Descent.Core.Higher
 import Descent.Geometry.Chambers
-import Descent.Models.Arithmetic
-import Descent.Models.Diamond
-import Descent.Models.DiamondCode
-import Descent.Realization.Incidence
-import Descent.Realization.Recognition
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
+import Descent.Models.Arithmetic
+import Descent.Models.Chain
+import Descent.Models.Diamond
+import Descent.Models.DiamondCode
+import Descent.Models.Square
+import Descent.Realization.Envelope
+import Descent.Realization.FiniteGibbs
+import Descent.Realization.Incidence
+import Descent.Realization.Overlap
 import Descent.Realization.Realizable
+import Descent.Realization.Recognition
+import Descent.Realization.Restriction
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 
@@ -27,7 +30,8 @@ Every load-bearing claim `README.md` makes about the mathematics is restated
 here as an `example` with an explicit type. Renaming, weakening, or deleting a
 result breaks this file, which is what makes stale prose detectable.
 
-Nothing outside this file may import it.
+No library module imports this file; only the root `Descent` aggregator
+does, so the manifest compiles with every build.
 -/
 
 namespace Descent.Status
