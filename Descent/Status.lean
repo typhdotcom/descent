@@ -6,6 +6,7 @@ import Descent.Models.Chain
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
+import Descent.Core.Hierarchy
 import Descent.Core.Higher
 import Descent.Geometry.Chambers
 import Descent.Models.Arithmetic
@@ -1064,5 +1065,53 @@ example (K : ContextField Arith ℝ) :
       = defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5)
         + defect K (Arith.of 30) (Arith.of 7) :=
   Arith.defect4_two_three_five_seven K
+
+/-! ## The full hierarchy (Q4, concluded)
+
+The claims below correspond to the closing paragraph of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: one defect for every finite family, whose low arities recover
+the committed definitions. -/
+example (K : ContextField R A) (a d : R) : defectFam K d [a] = defect K a d :=
+  defectFam_pair K a d
+
+example (K : ContextField R A) (a b c : R) :
+    defectFam K c [b, a] = defect3 K a b c :=
+  defectFam_triple K a b c
+
+example (K : ContextField R A) (a b c d : R) :
+    defectFam K d [c, b, a] = defect4 K a b c d :=
+  defectFam_quad K a b c d
+
+/-- README: the exact recurrence of the hierarchy, with the finite
+distributivity-gap remainder, on an arbitrary lattice. -/
+example (K : ContextField R A) (d a : R) (l : List R) :
+    defectFam K d (a :: l)
+      = defectFam K a l + defect K (supFam a l) d
+        - defectFam K (a ⊓ d) (l.map (· ⊓ d))
+        + (K (supFam a l ⊓ d) - K (supFam (a ⊓ d) (l.map (· ⊓ d)))) :=
+  defectFam_cons K d a l
+
+/-- README: binary blindness extends to finite joins. -/
+example {K : ContextField R A} (hK : K ∈ gauge3 R A) (l : List R) (a c : R) :
+    K (supFam a l ⊓ c) = K (supFam (a ⊓ c) (l.map (· ⊓ c))) :=
+  supFam_inf_apply_eq_of_mem_gauge3 hK l a c
+
+/-- README: every field in the order-≤3 gauge has vanishing defect at
+every arity. -/
+example {K : ContextField R A} (hK : K ∈ gauge3 R A) (l : List R) (a : R) :
+    defectFam K a l = 0 :=
+  defectFam_eq_zero_of_mem_gauge3 hK l a
+
+/-- README: order 3 is the final refinement --- the gauge of the whole
+hierarchy is the order-≤3 gauge, on every lattice and target. -/
+example {K : ContextField R A} :
+    K ∈ gaugeFam R A ↔ ∀ (a : R) (l : List R), defectFam K a l = 0 :=
+  mem_gaugeFam_iff
+
+example : gaugeFam R A = gauge3 R A :=
+  gaugeFam_eq_gauge3
 
 end Descent.Status

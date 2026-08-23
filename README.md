@@ -370,6 +370,21 @@ order-4 defect is the failure of fourfold inclusion–exclusion:
   equivalence through order 4 collapses to order 3, and the order-4
   datum is a function of the order-≤3 datum on every carrier.
 
+The hierarchy closes at every order (`Descent/Core/Hierarchy.lean`). One
+defect serves every finite family — the inclusion–exclusion defect
+`defectFam`, whose arity-2, 3, and 4 specializations recover `defect`,
+`defect3`, and `defect4` — and its exact recurrence on an arbitrary
+lattice carries the finite distributivity-gap remainder
+`K(supFam a l ⊓ d) − K(supFam (a⊓d) (l.map (·⊓d)))`. Binary blindness
+extends to finite joins by induction through the valuation law, so every
+field in the order-≤3 gauge has vanishing defect at every arity, and the
+gauge of the whole hierarchy is the order-≤3 gauge:
+`gaugeFam = gauge3`, on every lattice and every target. **Order 3 is the
+final refinement of defect observation.** The complete architecture:
+pairwise observation suffices on distributive contexts, order 3 adds
+exactly the non-distributive information, and no higher order adds
+anything, anywhere.
+
 ## Working on it
 
 ```nu
@@ -388,14 +403,13 @@ order 4: cumulative data, gauges, and injective quotient observations at
 orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
 the two-regime architecture — distributive contexts add nothing at
 either order, the diamond is strictly finer at order 3.
-The order-4 separation question is
-settled: no lattice, target, and field lie in `gauge3` but not `gauge4`
-— the saturation theorem `gauge4 = gauge3` holds unconditionally,
-because order-≤3 gauge fields are blind to every two-variable
-distributivity interval and that blindness propagates to the
-three-variable one. The natural sequel is whether the same propagation
-closes every higher order — making order 3 the final refinement of
-defect observation on all lattices — but the hierarchy is not
-generalized until directed. Behind it: kernel classification beyond the
-solved models, Hilbert embedding of sampled conditional negativity, and
-carriers that pay the admission fee.
+Q4 is closed. The order-4
+separation question was settled negatively, and the closure is now
+total: the inclusion–exclusion hierarchy carries one general defect
+whose gauge equals the order-≤3 gauge on every lattice and target —
+order 3 is the final refinement of defect observation. What remains of
+§21 now leads the queue: kernel classification beyond the solved models
+(Q1), sparse reconstruction (Q3), Hilbert embedding of sampled
+conditional negativity (Q6), observational equivalence of realizations
+(Q8), and carriers that pay the admission fee: a theorem the abstract
+level cannot see.

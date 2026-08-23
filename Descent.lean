@@ -3,6 +3,7 @@ import Descent.Core.Cube
 import Descent.Core.Defect
 import Descent.Core.Field
 import Descent.Core.Gauge
+import Descent.Core.Hierarchy
 import Descent.Core.Higher
 import Descent.Geometry.Chambers
 import Descent.Geometry.Definiteness
