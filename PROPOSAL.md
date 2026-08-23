@@ -274,11 +274,35 @@ Thus pairwise defect is a meet-normalized evaluation of the generic second
 mixed difference, not simply the second member of an already established
 interaction hierarchy.
 
-The higher observable remains an open mathematical object. Before an
-order-(k) construction earns that name, it must state its nondegeneracy or
-order-separation datum, characterize its gauge, prove descent through that
-gauge, and exhibit information not reducible to lower orders. No quotient or
-interaction terminology should be introduced before those theorems demand it.
+Order 3 now supplies the first corrected object. The triple
+inclusion--exclusion defect
+
+\[
+D^{(3)}\_K(a,b,c)
+=K(a)+K(b)+K(c)-K(a\\wedge b)-K(a\\wedge c)-K(b\\wedge c)
++K(a\\wedge b\\wedge c)-K(a\\vee b\\vee c)
+\]
+
+is related exactly to the raw triple mixed difference: at the common meet
+base, the raw cube is the sum of its three pairwise face defects minus
+(D^{(3)}); at an arbitrary base there is one additional named residue.
+Comparable directions reduce (D^{(3)}) to surviving pairwise face data, so
+the cumulative datum through order 3 is the pair (D,D^{(3)}), not the
+third-order term in isolation.
+
+The kernel of this cumulative datum is the order-(\\le 3) gauge, and quotienting
+by equality of the pair gives an injectively observed cumulative class. On
+distributive lattices (D^{(3)}) decomposes into pairwise defects at derived
+squares, so the cumulative gauge equals the pairwise gauge and order 3 adds no
+information. On the diamond the containment is strict: two fields with the
+same complete pairwise defect can have different triple defect. Thus the first
+higher observable is carrier-sensitive rather than a universal strict
+extension of pairwise observation.
+
+The hierarchy above order 3 remains open. Before an order-(k) construction
+earns observable or interaction terminology, it must state its nondegeneracy
+or order-separation datum, characterize its cumulative gauge, prove descent
+through that gauge, and exhibit information not reducible to lower orders.
 
 Questions include:
 
@@ -399,7 +423,8 @@ Distinguish, for example:
 - one infinite row;
 - a finite collection of entries;
 - the raw mixed-difference table;
-- an order-separated higher datum, once one has been defined;
+- the cumulative order-(\\le 3) datum, or a later order-separated datum with its
+  gauge already characterized;
 - either observable datum plus explicit normalization.
 
 Two inverse results consuming different data are different results even if their conclusions match.
@@ -680,8 +705,11 @@ The current mathematics exposes a conceptual stratification inside the core:
 
 The mixed-difference calculus belongs to the first layer and consumes a
 join-semilattice; pairwise defect belongs to the second and consumes a lattice.
-The missing order-separated higher observable should not receive a module or
-interface until its defining theorems are known.
+The next layer consumes the cumulative pair (D,D^{(3)}): its kernel defines
+the order-(\\le 3) gauge and its quotient is the cumulative observable. On
+distributive lattices this layer collapses to the pairwise observable; on the
+diamond it is strictly finer. No analogous order-(k) interface for (k\\ge 4)
+should be introduced until its defining theorems are known.
 
 ______________________________________________________________________
 
@@ -993,9 +1021,10 @@ Prove:
 - injectivity of (K\\mapsto([K],N(K))) for each adequate normalization (N);
 - impossibility under weaker observation or normalization data.
 
-The order-separated higher observable exposed as missing by M2 remains a
-parallel open problem. M3 must preserve that problem explicitly and must not
-manufacture a quotient before a theorem identifies its datum and gauge.
+M3 preserved the order-separated higher observable exposed as missing by M2
+without manufacturing a quotient. The later order-3 development identifies
+the first such datum and gauge exactly; the same discipline remains binding
+above order 3.
 
 The project should seek explicit reconstruction algorithms as well as
 existential statements.
@@ -1085,9 +1114,12 @@ Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 
 ### Q4 — Higher interaction
 
-What order-separation datum turns raw mixed differences into a
-gauge-respecting higher observable, and when does it contain information not
-reducible to lower orders?
+At order 3 the cumulative datum is (D,D^{(3)}). Its gauge is the joint
+kernel; it collapses to the pairwise gauge on distributive lattices and is
+strictly finer on the diamond. Above order 3, what cumulative
+inclusion--exclusion hierarchy isolates raw mixed differences from lower-order
+faces, what is its gauge, and for which carriers does each new order contain
+information not reducible to the preceding ones?
 
 ### Q5 — Realizability
 
