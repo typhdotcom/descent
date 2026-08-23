@@ -6,6 +6,9 @@ import Descent.Models.Chain
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
+import Descent.Geometry.Chambers
+import Descent.Geometry.Definiteness
+import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
@@ -527,5 +530,99 @@ example :
     ∃ X X' : FiniteGibbs Bool (Fin 2),
       DefectEquiv X.logPartition X'.logPartition ∧ X.logPartition ≠ X'.logPartition :=
   exists_defectEquiv_logPartition_ne
+
+/-! ## Kernel geometry (milestone M6)
+
+The claims below correspond to the "Kernel geometry" section of `README.md`.
+-/
+
+/-- README: the chamber wall is exact --- the sign chambers meet precisely
+in the gauge. -/
+example {A : Type*} [AddCommGroup A] [PartialOrder A] {K : ContextField R A} :
+    Submodular K ∧ Supermodular K ↔ IsValuation K :=
+  submodular_and_supermodular_iff
+
+/-- README: negation exchanges the chambers. -/
+example {A : Type*} [AddCommGroup A] [PartialOrder A] [AddLeftMono A]
+    {K : ContextField R A} : Submodular (-K) ↔ Supermodular K :=
+  submodular_neg_iff
+
+/-- README: each chamber is closed under addition and nonnegative
+scaling. -/
+example {K K' : ContextField R ℝ} (h : Submodular K) (h' : Submodular K') :
+    Submodular (K + K') :=
+  h.add h'
+
+example {K : ContextField R ℝ} {c : ℝ} (hc : 0 ≤ c) (h : Submodular K) :
+    Submodular (c • K) :=
+  h.smul hc
+
+/-- README: on the square the chamber map is one coordinate --- the sign of
+the single defect value --- and the chambers cover every field. -/
+example {K : ContextField Square ℝ} :
+    Submodular K ↔ 0 ≤ defect K Square.left Square.right :=
+  Square.submodular_iff
+
+example (K : ContextField Square ℝ) : Submodular K ∨ Supermodular K :=
+  Square.submodular_or_supermodular K
+
+/-- README: no universal sign --- an explicit field with defects of both
+signs. -/
+example : ∃ K : ContextField (Bool × Square) ℝ, ¬Submodular K ∧ ¬Supermodular K :=
+  exists_not_submodular_not_supermodular
+
+/-- README: the raw defect matrix is positive semidefinite exactly when it
+vanishes, and likewise its negation. -/
+example {ι : Type*} [Fintype ι] [DecidableEq ι] {K : ContextField R ℝ} {r : ι → R} :
+    (defectMatrix K r).PosSemidef ↔ defectMatrix K r = 0 :=
+  posSemidef_defectMatrix_iff
+
+example {ι : Type*} [Fintype ι] [DecidableEq ι] {K : ContextField R ℝ} {r : ι → R} :
+    (-defectMatrix K r).PosSemidef ↔ defectMatrix K r = 0 :=
+  posSemidef_neg_defectMatrix_iff
+
+/-- README: the derived kernels differ by exactly twice the defect. -/
+example (K : ContextField R ℝ) (a b : R) :
+    meetKernel K a b - joinKernel K a b = 2 * defect K a b :=
+  meetKernel_sub_joinKernel K a b
+
+/-- README: the triangle slack of the join kernel decomposes exactly into a
+defect value at a derived square plus two order gaps. -/
+example (K : ContextField R ℝ) (a b c : R) :
+    joinKernel K a b + joinKernel K b c - joinKernel K a c
+      = 2 * defect K (a ⊔ b) (b ⊔ c) + 2 * (K (a ⊔ b ⊔ c) - K (a ⊔ c))
+        + 2 * (K ((a ⊔ b) ⊓ (b ⊔ c)) - K b) :=
+  joinKernel_triangle_decomposition K a b c
+
+/-- README: a monotone submodular field generates a canonical pseudometric
+whose distance is the join kernel; dually for the supermodular chamber. -/
+noncomputable example {K : ContextField R ℝ} (hs : Submodular K) (hK : Monotone K) :
+    PseudoMetricSpace R :=
+  hs.pseudoMetricSpace hK
+
+example {K : ContextField R ℝ} (hs : Submodular K) (hK : Monotone K) :
+    (hs.pseudoMetricSpace hK).toDist.dist = joinKernel K :=
+  rfl
+
+example {K : ContextField R ℝ} (hs : Supermodular K) (hK : Monotone K) :
+    (hs.pseudoMetricSpace hK).toDist.dist = meetKernel K :=
+  rfl
+
+/-- README: the sign hypothesis is necessary --- a monotone field outside
+the chamber breaks the triangle inequality. -/
+example :
+    ∃ K : ContextField Square ℝ, Monotone K ∧
+      ¬joinKernel K Square.left Square.right
+        ≤ joinKernel K Square.left ⊥ + joinKernel K ⊥ Square.right :=
+  exists_monotone_joinKernel_triangle_fails
+
+/-- README: log-partitions lie in the submodular chamber, so every finite
+Gibbs realization induces a canonical pseudometric on its context
+lattice. -/
+example : Submodular X.logPartition :=
+  X.submodular_logPartition
+
+example : (X.pseudoMetricSpace).toDist.dist = joinKernel X.logPartition :=
+  rfl
 
 end Descent.Status

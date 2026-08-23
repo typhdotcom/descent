@@ -209,6 +209,44 @@ then separate:
   defect data does not determine the field even within the realizable
   class: a realization and its shift share defect data.
 
+## Kernel geometry
+
+Milestone M6, in `Descent/Geometry/`:
+
+Geometry is an output, and the defect has no universal sign. `Chambers.lean`
+names the two sign conditions by their literal content — a field is
+submodular when its defect is nonnegative, supermodular when nonpositive —
+and maps the chambers:
+
+- Each chamber is closed under addition and nonnegative scaling, and
+  negation exchanges them.
+- The chamber wall is exact: the chambers meet precisely in the gauge.
+- On the square the chamber map is one coordinate — the sign of the single
+  defect value — so the two chambers cover every field there.
+- No universal sign: on the product of the square with a chain, an explicit
+  field has defects of both signs.
+
+`Definiteness.lean` shows the raw defect matrix carries no definiteness
+geometry: it is symmetric with zero diagonal, so it is positive
+semidefinite exactly when it vanishes — and likewise its negation.
+Canonical structure must come from derived kernels.
+
+`Kernels.lean` derives them. The join kernel `2·K(a ⊔ b) − K a − K b` and
+the meet kernel `K a + K b − 2·K(a ⊓ b)` differ by exactly twice the
+defect, and the triangle slack of each decomposes exactly into a defect
+value at a derived square plus two order gaps. Sign and order hypotheses
+then generate geometry in the proposal's preferred shape — defect laws
+plus definiteness hypotheses yield a canonical geometric object:
+
+- A monotone submodular field makes the join kernel a pseudometric — an
+  actual `PseudoMetricSpace` whose distance is the kernel. Dually, a
+  monotone supermodular field makes the meet kernel one.
+- The sign hypothesis is necessary: an explicit monotone field outside the
+  chamber breaks the triangle inequality.
+- Realizations enter with no hypotheses: log-partitions are submodular and
+  monotone, so every finite Gibbs realization induces a canonical
+  pseudometric on its context lattice.
+
 ## Working on it
 
 ```nu
@@ -222,15 +260,17 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M2 through M4 are built. M5 is built
-at this level: realizability is characterized on the solved models at both
-observational levels — for fields, order alone on the minimal chain and
-order plus the exponential valuation law on the square; for defect data,
-exactly the nonnegative single values on the square — refuted as a general
-characterization by the cardinality obstruction on the chain `ℝ`, with
-uniqueness located at the partition function. Open:
-realizability on richer finite lattices, where the pairwise valuation law
-need not control the higher inclusion–exclusion the state maps impose — the
-same higher-observable gap M2 exposed. Completeness and adequacy on richer
-context lattices remain open, as does the order-separated higher observable
-— raw mixed differences are not that object. M6 is kernel geometry.
+`PROPOSAL.md` §20 sequences the work. M2 through M5 are built. M6 is built
+at this level: the sign chambers are mapped — cones exchanged by negation,
+wall exactly the gauge, one coordinate on the square, defects of both signs
+on a richer lattice — the raw defect matrix is degenerate for definiteness,
+and each chamber generates a canonical pseudometric through the derived
+kernels, with the triangle slack decomposed exactly through the defect.
+Open: the definiteness theory of the derived kernels themselves — which
+chamber geometries embed in a Hilbert space — and chamber structure on
+richer lattices. Realizability on richer finite lattices remains open,
+where the pairwise valuation law need not control the higher
+inclusion–exclusion the state maps impose — the same higher-observable gap
+M2 exposed; so do completeness and adequacy on richer context lattices and
+the order-separated higher observable — raw mixed differences are not that
+object. M7 is concrete carriers.
