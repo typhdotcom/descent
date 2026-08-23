@@ -12,6 +12,7 @@ import Descent.Geometry.Chambers
 import Descent.Models.Arithmetic
 import Descent.Models.Diamond
 import Descent.Models.DiamondCode
+import Descent.Realization.Incidence
 import Descent.Realization.Recognition
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
@@ -1660,5 +1661,188 @@ example :
     defect3 Diamond.codeSystem.logCard Diamond.x Diamond.y Diamond.z
       = Real.log (8 / 3) :=
   Diamond.defect3_logCard_xyz
+
+/-! ## Observational equivalence and incidence blindness (Q8)
+
+The claims below correspond to the incidence paragraphs of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: a finite map partitions its codomain into reached and
+missed values… -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    Fintype.card B
+      = Fintype.card (Incidence.Reached f) + Fintype.card (Incidence.Missed f) :=
+  Incidence.card_eq_reached_add_missed f
+
+/-- README: …and its domain into the reached codomain and the
+redundancy. -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    Fintype.card A
+      = Fintype.card (Incidence.Reached f) + Incidence.redundancy f :=
+  Incidence.card_eq_reached_add_redundancy f
+
+/-- README: injectivity is exactly zero redundancy… -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    Function.Injective f ↔ Incidence.redundancy f = 0 :=
+  Incidence.injective_iff_redundancy_eq_zero f
+
+/-- README: …and surjectivity exactly zero missed cardinality. -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    Function.Surjective f ↔ Fintype.card (Incidence.Missed f) = 0 :=
+  Incidence.surjective_iff_card_missed_eq_zero f
+
+/-- README: the comparison term is the logarithmic ratio of
+reached-plus-missed to reached-plus-redundancy. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.comparisonTerm a b
+      = Real.log
+          (((Fintype.card (Incidence.Reached (F.compare a b))
+                + Fintype.card (Incidence.Missed (F.compare a b)) : ℕ) : ℝ)
+            / ((Fintype.card (Incidence.Reached (F.compare a b))
+                + Incidence.redundancy (F.compare a b) : ℕ) : ℝ)) :=
+  F.comparisonTerm_eq_incidence a b
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    F.comparisonTerm3 a b c
+      = Real.log
+          (((Fintype.card (Incidence.Reached (F.compare3 a b c))
+                + Fintype.card (Incidence.Missed (F.compare3 a b c)) : ℕ) : ℝ)
+            / ((Fintype.card (Incidence.Reached (F.compare3 a b c))
+                + Incidence.redundancy (F.compare3 a b c) : ℕ) : ℝ)) :=
+  F.comparisonTerm3_eq_incidence a b c
+
+/-- README: the complete chamber law --- positive exactly when missed
+states outnumber redundancy… -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    0 < F.comparisonTerm a b
+      ↔ Incidence.redundancy (F.compare a b)
+          < Fintype.card (Incidence.Missed (F.compare a b)) :=
+  F.comparisonTerm_pos_iff a b
+
+/-- README: …zero exactly when they are equal --- balanced
+undercoverage and overidentification, not successful gluing… -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.comparisonTerm a b = 0
+      ↔ Fintype.card (Incidence.Missed (F.compare a b))
+          = Incidence.redundancy (F.compare a b) :=
+  F.comparisonTerm_eq_zero_iff_missed_eq_redundancy a b
+
+/-- README: …negative exactly when redundancy outnumbers missed
+states. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.comparisonTerm a b < 0
+      ↔ Fintype.card (Incidence.Missed (F.compare a b))
+          < Incidence.redundancy (F.compare a b) :=
+  F.comparisonTerm_neg_iff a b
+
+/-- README: the same chambers hold at order 3. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    0 < F.comparisonTerm3 a b c
+      ↔ Incidence.redundancy (F.compare3 a b c)
+          < Fintype.card (Incidence.Missed (F.compare3 a b c)) :=
+  F.comparisonTerm3_pos_iff a b c
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    F.comparisonTerm3 a b c = 0
+      ↔ Fintype.card (Incidence.Missed (F.compare3 a b c))
+          = Incidence.redundancy (F.compare3 a b c) :=
+  F.comparisonTerm3_eq_zero_iff_missed_eq_redundancy a b c
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    F.comparisonTerm3 a b c < 0
+      ↔ Fintype.card (Incidence.Missed (F.compare3 a b c))
+          < Incidence.redundancy (F.compare3 a b c) :=
+  F.comparisonTerm3_neg_iff a b c
+
+/-- README: on the diamond, observational equivalence is exactly the
+proportional state-cardinality profile --- no restriction map in the
+criterion. -/
+example (F G : FiniteRestriction Diamond) :
+    ObservationalEquiv F G
+      ↔ ∀ r : Diamond,
+          Fintype.card (F.states r) * Fintype.card (G.states Diamond.bot)
+            = Fintype.card (G.states r) * Fintype.card (F.states Diamond.bot) :=
+  Diamond.observationalEquiv_iff F G
+
+/-- README: the second code system keeps every top-to-atom restriction
+surjective… -/
+example :
+    Function.Surjective
+      (Diamond.codeSystem2.restrict (show Diamond.x ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict2_x
+
+example :
+    Function.Surjective
+      (Diamond.codeSystem2.restrict (show Diamond.y ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict2_y
+
+example :
+    Function.Surjective
+      (Diamond.codeSystem2.restrict (show Diamond.z ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict2_z
+
+/-- README: …carries the same cardinality field… -/
+example : Diamond.codeSystem2.logCard = Diamond.codeSystem.logCard :=
+  Diamond.logCard_codeSystem2
+
+/-- README: …agrees on all pairwise, order-3, and higher finite-family
+defect data… -/
+example (a b : Diamond) :
+    defect Diamond.codeSystem2.logCard a b
+      = defect Diamond.codeSystem.logCard a b :=
+  Diamond.defect_logCard_codeSystem2 a b
+
+example (a b c : Diamond) :
+    defect3 Diamond.codeSystem2.logCard a b c
+      = defect3 Diamond.codeSystem.logCard a b c :=
+  Diamond.defect3_logCard_codeSystem2 a b c
+
+example (a : Diamond) (l : List Diamond) :
+    defectFam Diamond.codeSystem2.logCard a l
+      = defectFam Diamond.codeSystem.logCard a l :=
+  Diamond.defectFam_logCard_codeSystem2 a l
+
+/-- README: …and is observationally equivalent to the first. -/
+example : ObservationalEquiv Diamond.codeSystem2 Diamond.codeSystem :=
+  Diamond.observationalEquiv_codeSystem2
+
+/-- README: yet its `(x, y)` comparison reaches two pairs, misses two,
+with redundancy one… -/
+example :
+    Fintype.card (Incidence.Reached (Diamond.codeSystem2.compare Diamond.x Diamond.y))
+      = 2 :=
+  Diamond.card_reached2_xy
+
+example :
+    Fintype.card (Incidence.Missed (Diamond.codeSystem2.compare Diamond.x Diamond.y))
+      = 2 :=
+  Diamond.card_missed2_xy
+
+example : Incidence.redundancy (Diamond.codeSystem2.compare Diamond.x Diamond.y) = 1 :=
+  Diamond.redundancy2_xy
+
+/-- README: …while the first reaches three, misses one, with redundancy
+zero… -/
+example :
+    Fintype.card (Incidence.Reached (Diamond.codeSystem.compare Diamond.x Diamond.y))
+      = 3 :=
+  Diamond.card_reached_xy
+
+example :
+    Fintype.card (Incidence.Missed (Diamond.codeSystem.compare Diamond.x Diamond.y))
+      = 1 :=
+  Diamond.card_incidence_missed_xy
+
+example : Incidence.redundancy (Diamond.codeSystem.compare Diamond.x Diamond.y) = 0 :=
+  Diamond.redundancy_xy
+
+/-- README: one comparison is injective, the other is not, under
+identical complete observation. -/
+example : Function.Injective (Diamond.codeSystem.compare Diamond.x Diamond.y) :=
+  Diamond.compare_xy_injective
+
+example : ¬Function.Injective (Diamond.codeSystem2.compare Diamond.x Diamond.y) :=
+  Diamond.not_injective_compare2_xy
 
 end Descent.Status

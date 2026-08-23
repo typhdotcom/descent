@@ -1,5 +1,6 @@
+import Descent.Core.Hierarchy
 import Descent.Models.Diamond
-import Descent.Realization.Recognition
+import Descent.Realization.Incidence
 
 /-!
 # The diamond code system
@@ -29,6 +30,18 @@ fibers, so the triple balance `8·1·1·1 = 2·2·2·1` holds structurally;
 the order-3 defect is the triple comparison term,
 `log (1 + 5/3) = log (8/3)`. The complete canonical-datum bridge is
 proved from the pairwise and triple recognition theorems.
+
+Observational equivalence on the diamond is classified exactly: two
+restriction systems share the final order-≤3 observable class iff their
+state counts are proportional --- cross-multiplied against the bottom
+cardinality, with no restriction map in the criterion. The second code
+system, codewords `{000, 001, 110}` on the same state types, witnesses
+the incidence blindness sharply: identical `logCard` field, identical
+pairwise, order-3, and finite-family defect data, all atom restrictions
+surjective --- but its `(x, y)` comparison reaches two pairs, misses
+two, with redundancy one, while the first system reaches three, misses
+one, with redundancy zero. One comparison is injective, the other is
+not, under identical complete observation.
 -/
 
 namespace Descent
@@ -356,6 +369,212 @@ theorem canonicalDatum_logCard :
     show (x ⊔ y : Diamond) = top from by decide,
     show (x ⊔ z : Diamond) = top from by decide,
     show (y ⊔ z : Diamond) = top from by decide]
+
+/-! ### Observational equivalence on the diamond -/
+
+/-- Complete defect observation on the diamond sees exactly the
+proportional state-cardinality profile: two restriction systems are
+observationally equivalent iff every context's state count crosses with
+the bottom count. No restriction map appears in the criterion. -/
+theorem observationalEquiv_iff (F G : FiniteRestriction Diamond) :
+    ObservationalEquiv F G
+      ↔ ∀ r : Diamond,
+          Fintype.card (F.states r) * Fintype.card (G.states bot)
+            = Fintype.card (G.states r) * Fintype.card (F.states bot) := by
+  rw [ObservationalEquiv, observable3_mk_eq_mk_iff]
+  constructor
+  · rintro ⟨c, hc⟩ r
+    have hr := congrFun hc r
+    have hb := congrFun hc bot
+    simp only [Pi.sub_apply, ContextField.const_apply,
+      FiniteRestriction.logCard] at hr hb
+    have hfr : (0 : ℝ) < (Fintype.card (F.states r) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hgr : (0 : ℝ) < (Fintype.card (G.states r) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hfb : (0 : ℝ) < (Fintype.card (F.states bot) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hgb : (0 : ℝ) < (Fintype.card (G.states bot) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hlog :
+        Real.log ((Fintype.card (F.states r) : ℝ)
+            * (Fintype.card (G.states bot) : ℝ))
+          = Real.log ((Fintype.card (G.states r) : ℝ)
+              * (Fintype.card (F.states bot) : ℝ)) := by
+      rw [Real.log_mul hfr.ne' hgb.ne', Real.log_mul hgr.ne' hfb.ne']
+      linarith
+    have hexp := congrArg Real.exp hlog
+    rw [Real.exp_log (mul_pos hfr hgb), Real.exp_log (mul_pos hgr hfb)] at hexp
+    exact_mod_cast hexp
+  · intro h
+    refine ⟨Real.log (Fintype.card (F.states bot))
+      - Real.log (Fintype.card (G.states bot)), ?_⟩
+    funext r
+    have hfr : (0 : ℝ) < (Fintype.card (F.states r) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hgr : (0 : ℝ) < (Fintype.card (G.states r) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hfb : (0 : ℝ) < (Fintype.card (F.states bot) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hgb : (0 : ℝ) < (Fintype.card (G.states bot) : ℝ) :=
+      Nat.cast_pos.mpr Fintype.card_pos
+    have hcast : (Fintype.card (F.states r) : ℝ)
+          * (Fintype.card (G.states bot) : ℝ)
+        = (Fintype.card (G.states r) : ℝ)
+          * (Fintype.card (F.states bot) : ℝ) := by
+      exact_mod_cast h r
+    have hlog := congrArg Real.log hcast
+    rw [Real.log_mul hfr.ne' hgb.ne', Real.log_mul hgr.ne' hfb.ne'] at hlog
+    simp only [Pi.sub_apply, ContextField.const_apply,
+      FiniteRestriction.logCard]
+    linarith
+
+/-! ### The second code system: incidence blindness -/
+
+/-- Second projections on the same codeword carrier: the codewords
+`000`, `001`, `110`. -/
+def px2 : Code → Bool
+  | .c0 => false
+  | .c1 => false
+  | .c2 => true
+
+/-- Second coordinate of the second system. -/
+def py2 : Code → Bool
+  | .c0 => false
+  | .c1 => false
+  | .c2 => true
+
+/-- Third coordinate of the second system. -/
+def pz2 : Code → Bool
+  | .c0 => false
+  | .c1 => true
+  | .c2 => false
+
+/-- Restriction of the second system: the same shape, the second
+projections. -/
+def codeRestrict2 : ∀ {a b : Diamond}, a ≤ b → codeStates b → codeStates a
+  | .bot, _, _, _ => ()
+  | .x, .x, _, s => s
+  | .x, .top, _, s => px2 s
+  | .y, .y, _, s => s
+  | .y, .top, _, s => py2 s
+  | .z, .z, _, s => s
+  | .z, .top, _, s => pz2 s
+  | .top, .top, _, s => s
+  | .x, .bot, h, _ => absurd h (by decide)
+  | .x, .y, h, _ => absurd h (by decide)
+  | .x, .z, h, _ => absurd h (by decide)
+  | .y, .bot, h, _ => absurd h (by decide)
+  | .y, .x, h, _ => absurd h (by decide)
+  | .y, .z, h, _ => absurd h (by decide)
+  | .z, .bot, h, _ => absurd h (by decide)
+  | .z, .x, h, _ => absurd h (by decide)
+  | .z, .y, h, _ => absurd h (by decide)
+  | .top, .bot, h, _ => absurd h (by decide)
+  | .top, .x, h, _ => absurd h (by decide)
+  | .top, .y, h, _ => absurd h (by decide)
+  | .top, .z, h, _ => absurd h (by decide)
+
+/-- The second diamond code system: identical state types, codewords
+`{000, 001, 110}`. -/
+def codeSystem2 : FiniteRestriction Diamond where
+  states := codeStates
+  fintype d := by
+    cases d
+    exacts [inferInstanceAs (Fintype Unit), inferInstanceAs (Fintype Bool),
+      inferInstanceAs (Fintype Bool), inferInstanceAs (Fintype Bool),
+      inferInstanceAs (Fintype Code)]
+  nonempty d := by
+    cases d
+    exacts [⟨()⟩, ⟨false⟩, ⟨false⟩, ⟨false⟩, ⟨.c0⟩]
+  decEq d := by
+    cases d
+    exacts [inferInstanceAs (DecidableEq Unit),
+      inferInstanceAs (DecidableEq Bool), inferInstanceAs (DecidableEq Bool),
+      inferInstanceAs (DecidableEq Bool), inferInstanceAs (DecidableEq Code)]
+  restrict := codeRestrict2
+  restrict_rfl r s := by
+    cases r <;> rfl
+  restrict_restrict {a b c} hab hbc s := by
+    cases a <;> cases b <;> cases c <;>
+      first
+        | rfl
+        | exact absurd hab (by decide)
+        | exact absurd hbc (by decide)
+
+/-- Every top-to-atom restriction of the second system is surjective. -/
+theorem surjective_restrict2_x :
+    Function.Surjective (codeSystem2.restrict (show x ≤ top from by decide)) := by
+  decide
+
+theorem surjective_restrict2_y :
+    Function.Surjective (codeSystem2.restrict (show y ≤ top from by decide)) := by
+  decide
+
+theorem surjective_restrict2_z :
+    Function.Surjective (codeSystem2.restrict (show z ≤ top from by decide)) := by
+  decide
+
+/-- The two code systems carry the same logarithmic cardinality
+field. -/
+theorem logCard_codeSystem2 : codeSystem2.logCard = codeSystem.logCard :=
+  rfl
+
+/-- All pairwise defect data of the two systems agree. -/
+theorem defect_logCard_codeSystem2 (a b : Diamond) :
+    defect codeSystem2.logCard a b = defect codeSystem.logCard a b := by
+  rw [logCard_codeSystem2]
+
+/-- All order-3 defect data agree. -/
+theorem defect3_logCard_codeSystem2 (a b c : Diamond) :
+    defect3 codeSystem2.logCard a b c = defect3 codeSystem.logCard a b c := by
+  rw [logCard_codeSystem2]
+
+/-- Every higher finite-family defect agrees. -/
+theorem defectFam_logCard_codeSystem2 (a : Diamond) (l : List Diamond) :
+    defectFam codeSystem2.logCard a l = defectFam codeSystem.logCard a l := by
+  rw [logCard_codeSystem2]
+
+/-- The two code systems are observationally equivalent: they share the
+final order-≤3 observable class. -/
+theorem observationalEquiv_codeSystem2 :
+    ObservationalEquiv codeSystem2 codeSystem :=
+  congrArg Observable3.mk logCard_codeSystem2
+
+/-- The `(x, y)` comparison of the second system reaches two compatible
+pairs… -/
+theorem card_reached2_xy :
+    Fintype.card (Incidence.Reached (codeSystem2.compare x y)) = 2 := by
+  decide
+
+/-- …misses two… -/
+theorem card_missed2_xy :
+    Fintype.card (Incidence.Missed (codeSystem2.compare x y)) = 2 := by
+  decide
+
+/-- …and identifies two global states: redundancy one. -/
+theorem redundancy2_xy : Incidence.redundancy (codeSystem2.compare x y) = 1 := by
+  decide
+
+/-- The second comparison is not injective. -/
+theorem not_injective_compare2_xy :
+    ¬Function.Injective (codeSystem2.compare x y) := by
+  decide
+
+/-- The `(x, y)` comparison of the first system reaches three compatible
+pairs… -/
+theorem card_reached_xy :
+    Fintype.card (Incidence.Reached (codeSystem.compare x y)) = 3 := by
+  decide
+
+/-- …misses one… -/
+theorem card_incidence_missed_xy :
+    Fintype.card (Incidence.Missed (codeSystem.compare x y)) = 1 := by
+  decide
+
+/-- …and identifies nothing: redundancy zero. -/
+theorem redundancy_xy : Incidence.redundancy (codeSystem.compare x y) = 0 := by
+  decide
 
 end Diamond
 

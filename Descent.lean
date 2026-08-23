@@ -15,6 +15,7 @@ import Descent.Models.DiamondCode
 import Descent.Models.Square
 import Descent.Realization.Envelope
 import Descent.Realization.FiniteGibbs
+import Descent.Realization.Incidence
 import Descent.Realization.Recognition
 import Descent.Realization.Restriction
 import Descent.Realization.Overlap

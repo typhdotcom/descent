@@ -519,6 +519,45 @@ balance kills its residue, so each coordinate is its comparison term.
 No recognition tower continues above order 3: the abstract hierarchy
 proves no higher order refines the observable.
 
+What the comparison term sees without injectivity is now exact
+(`Descent/Realization/Incidence.lean`). The finite-map bookkeeping is
+developed once, below restriction systems: a map `f : A → B` between
+finite types partitions its codomain into reached and missed values and
+its domain into the reached codomain and the redundancy
+`red f = |A| − |range f|`:
+
+```text
+|B| = |range f| + |missed f|        |A| = |range f| + red f
+```
+
+Instantiated at `compare` and `compare3`, both comparison terms become
+`log ((|range f| + |missed f|) / (|range f| + red f))`, with the
+complete chamber law: positive exactly when missed states outnumber
+redundancy, zero exactly when they are equal, negative exactly when
+redundancy outnumbers missed states; injectivity is exactly zero
+redundancy, surjectivity exactly zero missed cardinality. A zero
+comparison term therefore means balanced undercoverage and
+overidentification in general — not successful gluing.
+
+Observational equivalence of finite restriction systems is equality of
+the final order-≤3 observable classes of their `logCard` fields, and on
+the diamond it is classified exactly: `F ∼ G` iff every context's state
+count crosses with the bottom count, `|F_r|·|G_⊥| = |G_r|·|F_⊥|` for
+all `r` — restriction maps have disappeared; complete defect
+observation sees only the proportional cardinality profile. The
+blindness is witnessed sharply by a second code system on the same
+state types with codewords `{000, 001, 110}`: every top-to-atom
+restriction is surjective, the `logCard` field is literally the same,
+all pairwise, order-3, and higher finite-family defect data agree, and
+the systems are observationally equivalent — yet its `(x, y)`
+comparison reaches two compatible pairs, misses two, and identifies two
+global states (redundancy one), where the first system reaches three,
+misses one, and identifies nothing (redundancy zero). One comparison is
+injective, the other is not, under identical complete observation:
+defect observation retains the net cardinal obstruction while
+forgetting how missing local states and identified global states
+cancel.
+
 ## Working on it
 
 ```nu
@@ -568,10 +607,12 @@ coincident meets with two constant legs, and the diamond order-3
 coordinate and the complete canonical-datum bridge follow from the
 pairwise and triple recognition theorems alone. Recognition stops at
 order 3, because the abstract hierarchy proves that no higher order
-refines the observable. The next program is observational equivalence
-for finite restriction systems: remove injectivity from the comparison
-interpretation, separate missed compatible states from redundant global
-identifications, and prove the exact positive/zero/negative chambers of
-their net cardinality term. A second three-codeword diamond system with
-the same cardinal profile must then witness the blindness sharply:
-identical complete defect observation, different comparison incidence.
+refines the observable. Q8 is closed: the incidence bookkeeping splits
+every comparison term into reached, missed, and redundant counts with
+the complete positive/zero/negative chamber law; observational
+equivalence is classified on the diamond as the proportional
+cardinality profile; and the second three-codeword system witnesses the
+blindness — identical complete defect observation, different comparison
+incidence. The epistemic boundary is exact: defect observation keeps
+the net cardinal obstruction and forgets how missed local states and
+identified global states cancel. Direction is pending.
