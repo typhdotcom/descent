@@ -121,6 +121,9 @@ def compare3 (a b c : R) (s : F.states (a ⊔ b ⊔ c)) : F.Compat3 a b c :=
       by rw [F.restrict_restrict, F.restrict_restrict],
       by rw [F.restrict_restrict, F.restrict_restrict]⟩⟩
 
+instance (a b c : R) : Nonempty (F.Compat3 a b c) :=
+  (F.nonempty (a ⊔ b ⊔ c)).map (F.compare3 a b c)
+
 end Lattice
 
 end FiniteRestriction

@@ -1552,4 +1552,113 @@ example :
     defect Diamond.codeSystem.logCard Diamond.y Diamond.z = Real.log (4 / 3) :=
   Diamond.defect_logCard_yz
 
+/-! ## The order-3 recognition theorem
+
+The claims below correspond to the order-3 recognition paragraph of the
+"Order separation" section of `README.md`.
+-/
+
+/-- README: the order-3 `logCard` defect of every finite restriction
+system decomposes exactly into the triple comparison-cardinality term
+and the triple fiber-balance residue. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    defect3 F.logCard a b c = F.comparisonTerm3 a b c + F.residue3 a b c :=
+  F.defect3_logCard a b c
+
+/-- README: under an injective triple comparison the triple comparison
+term counts the missed compatible triples against the global states. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c : R}
+    (h : Function.Injective (F.compare3 a b c)) :
+    F.comparisonTerm3 a b c
+      = Real.log (1 + (Fintype.card (F.Missed3 a b c) : ℝ)
+          / (Fintype.card (F.states (a ⊔ b ⊔ c)) : ℝ)) :=
+  F.comparisonTerm3_eq_of_injective h
+
+/-- README: …hence is nonnegative… -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c : R}
+    (h : Function.Injective (F.compare3 a b c)) :
+    0 ≤ F.comparisonTerm3 a b c :=
+  F.comparisonTerm3_nonneg h
+
+/-- README: …and zero exactly when the triple comparison is
+surjective. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c : R}
+    (h : Function.Injective (F.compare3 a b c)) :
+    F.comparisonTerm3 a b c = 0 ↔ Function.Surjective (F.compare3 a b c) :=
+  F.comparisonTerm3_eq_zero_iff h
+
+/-- README: the triple residue vanishes exactly under the triple
+cardinal balance. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    F.residue3 a b c = 0
+      ↔ Fintype.card (F.Compat3 a b c) * Fintype.card (F.states (a ⊓ b))
+            * Fintype.card (F.states (a ⊓ c)) * Fintype.card (F.states (b ⊓ c))
+          = Fintype.card (F.states a) * Fintype.card (F.states b)
+            * Fintype.card (F.states c)
+            * Fintype.card (F.states (a ⊓ b ⊓ c)) :=
+  F.residue3_eq_zero_iff a b c
+
+/-- README: when the three pairwise meets coincide, constant fiber
+cardinality of any two of the three restriction legs to the common meet
+forces the triple balance. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c m : R}
+    (hab : a ⊓ b = m) (hac : a ⊓ c = m) (hbc : b ⊓ c = m)
+    (hma : m ≤ a) (hmb : m ≤ b) (n k : ℕ)
+    (hn : ∀ t : F.states m,
+      Fintype.card { s : F.states a // F.restrict hma s = t } = n)
+    (hk : ∀ t : F.states m,
+      Fintype.card { u : F.states b // F.restrict hmb u = t } = k) :
+    Fintype.card (F.Compat3 a b c) * Fintype.card (F.states (a ⊓ b))
+        * Fintype.card (F.states (a ⊓ c)) * Fintype.card (F.states (b ⊓ c))
+      = Fintype.card (F.states a) * Fintype.card (F.states b)
+        * Fintype.card (F.states c) * Fintype.card (F.states (a ⊓ b ⊓ c)) :=
+  F.balance3_of_const_fiber_left_middle hab hac hbc hma hmb n k hn hk
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c m : R}
+    (hab : a ⊓ b = m) (hac : a ⊓ c = m) (hbc : b ⊓ c = m)
+    (hma : m ≤ a) (hmc : m ≤ c) (n k : ℕ)
+    (hn : ∀ t : F.states m,
+      Fintype.card { s : F.states a // F.restrict hma s = t } = n)
+    (hk : ∀ t : F.states m,
+      Fintype.card { v : F.states c // F.restrict hmc v = t } = k) :
+    Fintype.card (F.Compat3 a b c) * Fintype.card (F.states (a ⊓ b))
+        * Fintype.card (F.states (a ⊓ c)) * Fintype.card (F.states (b ⊓ c))
+      = Fintype.card (F.states a) * Fintype.card (F.states b)
+        * Fintype.card (F.states c) * Fintype.card (F.states (a ⊓ b ⊓ c)) :=
+  F.balance3_of_const_fiber_left_right hab hac hbc hma hmc n k hn hk
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) {a b c m : R}
+    (hab : a ⊓ b = m) (hac : a ⊓ c = m) (hbc : b ⊓ c = m)
+    (hmb : m ≤ b) (hmc : m ≤ c) (n k : ℕ)
+    (hn : ∀ t : F.states m,
+      Fintype.card { u : F.states b // F.restrict hmb u = t } = n)
+    (hk : ∀ t : F.states m,
+      Fintype.card { v : F.states c // F.restrict hmc v = t } = k) :
+    Fintype.card (F.Compat3 a b c) * Fintype.card (F.states (a ⊓ b))
+        * Fintype.card (F.states (a ⊓ c)) * Fintype.card (F.states (b ⊓ c))
+      = Fintype.card (F.states a) * Fintype.card (F.states b)
+        * Fintype.card (F.states c) * Fintype.card (F.states (a ⊓ b ⊓ c)) :=
+  F.balance3_of_const_fiber_middle_right hab hac hbc hmb hmc n k hn hk
+
+/-- README: on the diamond code system the triple balance holds
+structurally. -/
+example :
+    Fintype.card (Diamond.codeSystem.Compat3 Diamond.x Diamond.y Diamond.z)
+        * Fintype.card (Diamond.codeSystem.states (Diamond.x ⊓ Diamond.y))
+        * Fintype.card (Diamond.codeSystem.states (Diamond.x ⊓ Diamond.z))
+        * Fintype.card (Diamond.codeSystem.states (Diamond.y ⊓ Diamond.z))
+      = Fintype.card (Diamond.codeSystem.states Diamond.x)
+        * Fintype.card (Diamond.codeSystem.states Diamond.y)
+        * Fintype.card (Diamond.codeSystem.states Diamond.z)
+        * Fintype.card
+            (Diamond.codeSystem.states (Diamond.x ⊓ Diamond.y ⊓ Diamond.z)) :=
+  Diamond.balance3_xyz
+
+/-- README: …so the order-3 coordinate follows by instantiation,
+`log (1 + 5/3) = log (8/3)`. -/
+example :
+    defect3 Diamond.codeSystem.logCard Diamond.x Diamond.y Diamond.z
+      = Real.log (8 / 3) :=
+  Diamond.defect3_logCard_xyz
+
 end Descent.Status

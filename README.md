@@ -492,6 +492,33 @@ balance. On the diamond code system every atom pair is balanced —
 `4·1 = 2·2` — so the pair coordinates follow by instantiation: each
 `logCard` defect is its comparison term, `log (1 + 1/3) = log (4/3)`.
 
+Recognition closes at order 3, the final refinement of defect
+observation. The order-3 `logCard` defect decomposes exactly against
+the triple fiber product:
+
+```text
+D3_logCard (a, b, c) = log (|Compat3 (a,b,c)| / |X (a⊔b⊔c)|)
+                     + log (|X a|·|X b|·|X c|·|X (a⊓b⊓c)|
+                         / (|X (a⊓b)|·|X (a⊓c)|·|X (b⊓c)|·|Compat3 (a,b,c)|))
+```
+
+Under an injective triple comparison the term is
+`log (1 + |Missed3 (a,b,c)| / |X (a⊔b⊔c)|)` — nonnegative, zero exactly
+at surjectivity — and the triple residue vanishes exactly under the
+triple balance
+`|Compat3|·|X (a⊓b)|·|X (a⊓c)|·|X (b⊓c)| = |X a|·|X b|·|X c|·|X (a⊓b⊓c)|`.
+The balance has structural content: when the three pairwise meets
+coincide, compatible triples fiber over the common meet as products of
+the three legs' fibers, so constant fiber cardinality of any two of the
+three legs forces it. On the diamond the atom meets coincide at the
+bottom and two legs are constant, so the triple balance `8·1·1·1 = 2·2·2·1` holds structurally and the order-3 coordinate follows:
+`log (1 + 5/3) = log (8/3)`. The complete canonical-datum bridge — all
+four coordinates as cardinal ratios of the comparison objects — is now
+proved from the pairwise and triple recognition theorems alone: every
+balance kills its residue, so each coordinate is its comparison term.
+No recognition tower continues above order 3: the abstract hierarchy
+proves no higher order refines the observable.
+
 ## Working on it
 
 ```nu
@@ -532,12 +559,13 @@ comparison-cardinality term and the fiber-balance residue — the first
 counting missed compatible states under an injective comparison,
 nonnegative, zero exactly at surjectivity; the second vanishing exactly
 at the cardinal balance, which constant fibers force — and the diamond
-pair coordinates follow by instantiation. The next program is the
-order-3 recognition theorem against `Compat3`. Decompose the
-order-3 `logCard` defect into the triple comparison-cardinality term
-and its exact fiber-balance residue; under injectivity, identify the
-first with missed compatible triples and its sharp zero law; then
-characterize and structurally force the triple balance. The diamond
-order-3 coordinate and complete canonical datum must follow by
-instantiation. Recognition stops at order 3, because the abstract
-hierarchy proves that no higher order refines the observable.
+pair coordinates follow by instantiation. The order-3 recognition
+theorem is proved: the triple `logCard` defect splits exactly against
+`Compat3`, missed compatible triples measure the injective comparison
+with the sharp zero law at surjectivity, the triple balance
+characterizes the vanishing residue and is forced structurally by
+coincident meets with two constant legs, and the diamond order-3
+coordinate and the complete canonical-datum bridge follow from the
+pairwise and triple recognition theorems alone. Recognition stops at
+order 3, because the abstract hierarchy proves that no higher order
+refines the observable. Direction is pending.

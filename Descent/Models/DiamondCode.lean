@@ -22,6 +22,13 @@ satisfies the cardinal balance `4·1 = 2·2`, so its `logCard` defect is
 the comparison-cardinality term alone, and with the injective
 comparison missing exactly one compatible pair among three global
 states it is `log (1 + 1/3) = log (4/3)`.
+
+The order-3 recognition theorem instantiates the same way: the three
+pairwise atom meets coincide at the bottom, two legs have constant
+fibers, so the triple balance `8·1·1·1 = 2·2·2·1` holds structurally;
+the order-3 defect is the triple comparison term,
+`log (1 + 5/3) = log (8/3)`. The complete canonical-datum bridge is
+proved from the pairwise and triple recognition theorems.
 -/
 
 namespace Descent
@@ -250,25 +257,6 @@ theorem canonicalDatum_logCountField_eq :
     ring
   rw [canonicalDatum, e1, e2, e3, e4]
 
-/-- The bridge: the canonical datum of the code system's field is
-exactly the logarithmic cardinal ratios of the comparison objects to the
-global states. With comparison injectivity and the missed-state counts,
-the four measurements are formally the local-to-global losses
-`(3+1)/3`, `(3+1)/3`, `(3+1)/3`, `(3+5)/3`. -/
-theorem canonicalDatum_logCard :
-    canonicalDatum codeSystem.logCard
-      = (Real.log ((Fintype.card (codeSystem.Compat x y) : ℝ)
-            / (Fintype.card (codeSystem.states top) : ℝ)),
-          Real.log ((Fintype.card (codeSystem.Compat x z) : ℝ)
-            / (Fintype.card (codeSystem.states top) : ℝ)),
-          Real.log ((Fintype.card (codeSystem.Compat y z) : ℝ)
-            / (Fintype.card (codeSystem.states top) : ℝ)),
-          Real.log ((Fintype.card (codeSystem.Compat3 x y z) : ℝ)
-            / (Fintype.card (codeSystem.states top) : ℝ))) := by
-  rw [logCard_codeSystem, canonicalDatum_logCountField_eq, card_compat_xy,
-    card_compat_xz, card_compat_yz, card_compat3, card_states_top]
-  norm_num
-
 /-! ### The recognition theorem, instantiated -/
 
 /-- The fiber balance holds at each atom pair: `4·1 = 2·2`. -/
@@ -313,6 +301,61 @@ theorem defect_logCard_yz :
     show Fintype.card (codeSystem.Missed y z) = 1 from by decide,
     show Fintype.card (codeSystem.states (y ⊔ z)) = 3 from by decide]
   norm_num
+
+/-- The triple fiber balance `8·1·1·1 = 2·2·2·1`, structurally: the
+three pairwise atom meets coincide at the bottom, and the legs from `x`
+and `y` have constant fibers. -/
+theorem balance3_xyz :
+    Fintype.card (codeSystem.Compat3 x y z)
+        * Fintype.card (codeSystem.states (x ⊓ y))
+        * Fintype.card (codeSystem.states (x ⊓ z))
+        * Fintype.card (codeSystem.states (y ⊓ z))
+      = Fintype.card (codeSystem.states x) * Fintype.card (codeSystem.states y)
+        * Fintype.card (codeSystem.states z)
+        * Fintype.card (codeSystem.states (x ⊓ y ⊓ z)) :=
+  codeSystem.balance3_of_const_fiber_left_middle
+    (show x ⊓ y = bot from by decide) (show x ⊓ z = bot from by decide)
+    (show y ⊓ z = bot from by decide) (by decide) (by decide) 2 2
+    (fun t => by cases t; decide) (fun t => by cases t; decide)
+
+/-- The order-3 coordinate, recovered from the generic recognition
+theorem: the triple balance kills the residue, injectivity turns the
+comparison term into the missed-triple count. -/
+theorem defect3_logCard_xyz :
+    defect3 codeSystem.logCard x y z = Real.log (8 / 3) := by
+  rw [codeSystem.defect3_logCard_of_balance balance3_xyz,
+    codeSystem.comparisonTerm3_eq_of_injective compare3_injective,
+    show Fintype.card (codeSystem.Missed3 x y z) = 5 from by decide,
+    show Fintype.card (codeSystem.states (x ⊔ y ⊔ z)) = 3 from by decide]
+  norm_num
+
+/-- The bridge: the canonical datum of the code system's field is
+exactly the logarithmic cardinal ratios of the comparison objects to the
+global states. With comparison injectivity and the missed-state counts,
+the four measurements are formally the local-to-global losses
+`(3+1)/3`, `(3+1)/3`, `(3+1)/3`, `(3+5)/3`. The proof is the pairwise
+and triple recognition theorems: every balance kills its residue, so
+each coordinate is its comparison term. -/
+theorem canonicalDatum_logCard :
+    canonicalDatum codeSystem.logCard
+      = (Real.log ((Fintype.card (codeSystem.Compat x y) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat x z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat y z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ)),
+          Real.log ((Fintype.card (codeSystem.Compat3 x y z) : ℝ)
+            / (Fintype.card (codeSystem.states top) : ℝ))) := by
+  rw [canonicalDatum,
+    codeSystem.defect_logCard_of_balance balance_xy,
+    codeSystem.defect_logCard_of_balance balance_xz,
+    codeSystem.defect_logCard_of_balance balance_yz,
+    codeSystem.defect3_logCard_of_balance balance3_xyz]
+  simp only [FiniteRestriction.comparisonTerm, FiniteRestriction.comparisonTerm3]
+  rw [show (x ⊔ y ⊔ z : Diamond) = top from by decide,
+    show (x ⊔ y : Diamond) = top from by decide,
+    show (x ⊔ z : Diamond) = top from by decide,
+    show (y ⊔ z : Diamond) = top from by decide]
 
 end Diamond
 
