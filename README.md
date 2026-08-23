@@ -439,10 +439,26 @@ finite Gibbs class: the laws factor through a positive monotone
 valuation, and what the class adds beyond them is exactly the demand
 for a distributive state representation, which the diamond refuses.
 Finite state sets become structural only once they carry restriction
-maps. The next realization therefore starts from context-indexed finite
-state types and functorial restriction along the context order; its
-comparison from global states to compatible local states makes failure
-of gluing observable rather than decorative.
+maps.
+
+Restriction data is now observable
+(`Descent/Realization/Restriction.lean`). A finite restriction system
+over a preorder assigns nonempty finite state types and functorial
+restriction maps toward coarser contexts; over a lattice, compatible
+states at a pair form the fiber product over the meet, and a global
+state over the join restricts to a compatible pair — the canonical
+comparison, whose failure to reach everything is a literal
+local-to-global loss. The diamond code system — bottom `Unit`, atoms
+`Bool`, top the three codewords `{000, 011, 101}`, restrictions the
+coordinate projections — realizes the witness this way, and its losses
+are the four measurements exactly: every top-to-atom restriction is
+surjective; each atom-pair comparison injects the three global states
+into the four compatible pairs and misses exactly one; the triple
+comparison injects them into the eight compatible triples and misses
+exactly five; the logarithmic cardinality field is exactly the witness
+field, and its canonical datum is exactly
+`(log(4/3), log(4/3), log(4/3), log(8/3))`. The diamond's four
+irredundant measurements are proved local-to-global losses.
 
 ## Working on it
 
@@ -474,11 +490,10 @@ carrying an explicit normalized inverse. The finite Gibbs boundary
 there is exact — the class realizes the constants and only the zero
 datum — and the abstraction has migrated to what the proofs consume:
 the realization laws factor through the algebraic envelope of positive
-monotone valuations, in which the excluded witness lies. The next
-program is the finite restriction realization of `PROPOSAL.md` Q9. Build
-the comparison from states over a join to pairs agreeing over the meet,
-then realize the diamond witness by three global Boolean assignments
-inside the eight locally compatible atom assignments. Prove that its
-pairwise and order-3 canonical coordinates count the exact failures of
-pairwise and triple gluing. Do not add weights or a general sheaf layer
-in this milestone.
+monotone valuations, in which the excluded witness lies. Restriction
+data is now observable: the diamond code system realizes that witness
+as a finite restriction system whose comparison losses are the four
+irredundant measurements exactly — the canonical coordinates count the
+failures of pairwise and triple gluing. Generalization waits for these
+theorems to reveal what the restriction model actually consumes.
+Direction is pending.

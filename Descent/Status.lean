@@ -11,6 +11,7 @@ import Descent.Core.Higher
 import Descent.Geometry.Chambers
 import Descent.Models.Arithmetic
 import Descent.Models.Diamond
+import Descent.Models.DiamondCode
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
@@ -1386,5 +1387,74 @@ example : IsPositiveValuation Diamond.countField :=
 
 example : Diamond.logCountField = logField Diamond.countField :=
   Diamond.logCountField_eq_logField
+
+/-! ## The diamond code system (Q9)
+
+The claims below correspond to the restriction paragraph of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: every top-to-atom restriction of the code system is
+surjective. -/
+example :
+    Function.Surjective
+      (Diamond.codeSystem.restrict (show Diamond.x ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict_x
+
+example :
+    Function.Surjective
+      (Diamond.codeSystem.restrict (show Diamond.y ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict_y
+
+example :
+    Function.Surjective
+      (Diamond.codeSystem.restrict (show Diamond.z ≤ Diamond.top from by decide)) :=
+  Diamond.surjective_restrict_z
+
+/-- README: each atom-pair comparison injects the three global states
+into the four compatible pairs and misses exactly one. -/
+example : Fintype.card Diamond.Code = 3 :=
+  Diamond.card_code
+
+example : Function.Injective (Diamond.codeSystem.compare Diamond.x Diamond.y) :=
+  Diamond.compare_xy_injective
+
+example : Fintype.card (Diamond.codeSystem.Compat Diamond.x Diamond.y) = 4 :=
+  Diamond.card_compat_xy
+
+example :
+    Fintype.card
+      {p : Diamond.codeSystem.Compat Diamond.x Diamond.y //
+        ∀ s, Diamond.codeSystem.compare Diamond.x Diamond.y s ≠ p} = 1 :=
+  Diamond.card_missed_xy
+
+/-- README: the triple comparison injects them into the eight compatible
+triples and misses exactly five. -/
+example :
+    Function.Injective
+      (Diamond.codeSystem.compare3 Diamond.x Diamond.y Diamond.z) :=
+  Diamond.compare3_injective
+
+example :
+    Fintype.card (Diamond.codeSystem.Compat3 Diamond.x Diamond.y Diamond.z) = 8 :=
+  Diamond.card_compat3
+
+example :
+    Fintype.card
+      {t : Diamond.codeSystem.Compat3 Diamond.x Diamond.y Diamond.z //
+        ∀ s, Diamond.codeSystem.compare3 Diamond.x Diamond.y Diamond.z s ≠ t}
+      = 5 :=
+  Diamond.card_missed3
+
+/-- README: the logarithmic cardinality field is exactly the witness
+field, and its canonical datum is exact. -/
+example : Diamond.codeSystem.logCard = Diamond.logCountField :=
+  Diamond.logCard_codeSystem
+
+example :
+    Diamond.canonicalDatum Diamond.logCountField
+      = (Real.log (4 / 3), Real.log (4 / 3), Real.log (4 / 3),
+          Real.log (8 / 3)) :=
+  Diamond.canonicalDatum_logCountField_eq
 
 end Descent.Status

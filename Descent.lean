@@ -11,9 +11,11 @@ import Descent.Geometry.Kernels
 import Descent.Models.Arithmetic
 import Descent.Models.Chain
 import Descent.Models.Diamond
+import Descent.Models.DiamondCode
 import Descent.Models.Square
 import Descent.Realization.Envelope
 import Descent.Realization.FiniteGibbs
+import Descent.Realization.Restriction
 import Descent.Realization.Overlap
 import Descent.Realization.Realizable
 import Descent.Reconstruction.Normalization
