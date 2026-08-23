@@ -1333,69 +1333,58 @@ example : Diamond.canonicalDatum Diamond.logCountField ≠ ((0 : ℝ), 0, 0, 0) 
 example : ¬Realizable Diamond.logCountField :=
   Diamond.not_realizable_logCountField
 
-/-! ## The mass-compatible realization
+/-! ## The algebraic envelope
 
-The claims below correspond to the mass-compatibility paragraph of the
-"Order separation" section of `README.md`.
+The claims below correspond to the envelope paragraph of the "Order
+separation" section of `README.md`.
 -/
 
-/-- README: every finite Gibbs realization induces a mass-compatible one
-with the same partition function and log-partition. -/
-noncomputable example (X : FiniteGibbs R Ω) : MassGibbs R Ω :=
-  X.toMassGibbs
+/-- README: every finite Gibbs partition function is a positive monotone
+valuation, and the log-partition is its logarithmic field. -/
+example (X : FiniteGibbs R Ω) : IsPositiveValuation X.partition :=
+  X.isPositiveValuation_partition
 
-example (X : FiniteGibbs R Ω) : X.toMassGibbs.partition = X.partition :=
-  X.toMassGibbs_partition
+example (X : FiniteGibbs R Ω) : X.logPartition = logField X.partition :=
+  X.logPartition_eq_logField
 
-example (X : FiniteGibbs R Ω) : X.toMassGibbs.logPartition = X.logPartition :=
-  X.toMassGibbs_logPartition
+/-- README: the finite Gibbs laws factor through the envelope ---
+recognition identity, exact correction, nonnegative defect, sharp zero
+law, from positivity, monotonicity, and the valuation law alone. -/
+example {Z : ContextField R ℝ} (hZ : IsPositiveValuation Z) (a b : R) :
+    defect (logField Z) a b
+      = Real.log (Z a * Z b / (Z (a ⊓ b) * Z (a ⊔ b))) :=
+  hZ.defect_logField a b
 
-/-- README: the realization laws survive the weaker interface ---
-positive monotone valuation partition, recognition identity, exact
-correction, nonnegative defect, sharp mass-degeneracy zero law. -/
-example (M : MassGibbs R Ω) : IsValuation M.partition :=
-  M.isValuation_partition
+example {Z : ContextField R ℝ} (hZ : IsPositiveValuation Z) (a b : R) :
+    Z a * Z b
+      = Z (a ⊓ b) * Z (a ⊔ b) + (Z a - Z (a ⊓ b)) * (Z b - Z (a ⊓ b)) :=
+  hZ.mul_eq a b
 
-example (M : MassGibbs R Ω) : Monotone M.partition :=
-  M.partition_mono
+example {Z : ContextField R ℝ} (hZ : IsPositiveValuation Z) (a b : R) :
+    0 ≤ defect (logField Z) a b :=
+  hZ.defect_logField_nonneg a b
 
-example (M : MassGibbs R Ω) (a b : R) :
-    defect M.logPartition a b
-      = Real.log (M.partition a * M.partition b
-          / (M.partition (a ⊓ b) * M.partition (a ⊔ b))) :=
-  M.defect_logPartition a b
+example {Z : ContextField R ℝ} (hZ : IsPositiveValuation Z) {a b : R} :
+    defect (logField Z) a b = 0 ↔ Z (a ⊓ b) = Z a ∨ Z (a ⊓ b) = Z b :=
+  hZ.defect_logField_eq_zero_iff
 
-example (M : MassGibbs R Ω) (a b : R) :
-    M.partition a * M.partition b
-      = M.partition (a ⊓ b) * M.partition (a ⊔ b)
-        + (M.partition a - M.partition (a ⊓ b))
-          * (M.partition b - M.partition (a ⊓ b)) :=
-  M.partition_mul_partition a b
+/-- README: the converse boundary --- over a decidable carrier every
+positive valuation is the total mass of the trivial singleton
+presentation: state-set geometry alone adds no restriction. -/
+example {R' : Type*} [Lattice R'] [DecidableEq R'] {Z : ContextField R' ℝ}
+    (hZ : IsPositiveValuation Z) :
+    ∃ (states : R' → Finset R') (weight : R' → ℝ),
+      (∀ r, (states r).Nonempty) ∧ (∀ o, 0 < weight o) ∧
+        ∀ r, (∑ o ∈ states r, weight o) = Z r :=
+  hZ.exists_singleton_presentation
 
-example (M : MassGibbs R Ω) (a b : R) : 0 ≤ defect M.logPartition a b :=
-  M.defect_logPartition_nonneg a b
+/-- README: the witness values lie in the envelope --- and outside the
+finite Gibbs class, because no distributive state representation
+exists. -/
+example : IsPositiveValuation Diamond.countField :=
+  Diamond.isPositiveValuation_countField
 
-example (M : MassGibbs R Ω) {a b : R} :
-    defect M.logPartition a b = 0
-      ↔ M.partition (a ⊓ b) = M.partition a
-        ∨ M.partition (a ⊓ b) = M.partition b :=
-  M.defect_logPartition_eq_zero_iff
-
-/-- README: the diamond overlap system --- unit weights on the shared
-blocks --- is mass-compatible, and crosses the proved boundary: its
-partition function is the witness values, its log-partition the excluded
-field, its canonical datum nonzero. -/
-example : MassGibbs Diamond (Fin 3) :=
-  Diamond.overlap
-
-example : Diamond.overlap.partition = Diamond.countField :=
-  Diamond.overlap_partition
-
-example : Diamond.overlap.logPartition = Diamond.logCountField :=
-  Diamond.overlap_logPartition
-
-example :
-    Diamond.canonicalDatum Diamond.overlap.logPartition ≠ ((0 : ℝ), 0, 0, 0) :=
-  Diamond.canonicalDatum_overlap_ne
+example : Diamond.logCountField = logField Diamond.countField :=
+  Diamond.logCountField_eq_logField
 
 end Descent.Status
