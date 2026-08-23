@@ -135,6 +135,19 @@ to the defect calculus. -/
 noncomputable def logPartition : ContextField R ℝ :=
   fun r => Real.log (X.partition r)
 
+/-- The state map, packaged as a lattice homomorphism into the
+distributive lattice of finite sets. -/
+def statesHom : LatticeHom R (Finset Ω) where
+  toFun := X.states
+  map_sup' a b := by
+    rw [X.states_sup, Finset.sup_eq_union]
+  map_inf' a b := by
+    rw [X.states_inf, Finset.inf_eq_inter]
+
+@[simp]
+theorem statesHom_apply (r : R) : X.statesHom r = X.states r :=
+  rfl
+
 theorem states_mono {a b : R} (h : a ≤ b) : X.states a ⊆ X.states b := by
   have hab : X.states a = X.states a ∩ X.states b := by
     rw [← X.states_inf, inf_eq_left.mpr h]

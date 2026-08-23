@@ -403,6 +403,25 @@ the inverse problem of the final observable is solved: defect data of
 all orders determines the field up to one constant, and one
 normalization recovers it exactly.
 
+The expressive boundary of the finite Gibbs class on the diamond is a
+theorem, and the obstruction is distributivity alone. The state map of
+any realization is a lattice homomorphism into the distributive lattice
+of finite sets, and every lattice homomorphism from the diamond into
+any distributive lattice is constant — relative complements in
+distributive data are unique, and the diamond has three. So every
+realization on the diamond has constant state spaces, partition
+function, and log-partition; the class realizes exactly the constant
+fields; and the canonical datum it attains is exactly `(0, 0, 0, 0)` —
+named directly on the four coordinates, since pairwise defect
+realizability cannot express the order-3 one. The isolating witness:
+`Z = (1, 2, 2, 2, 3)`, `K = log ∘ Z` — the values an overlap state
+system would produce, if the diamond admitted one — is nonconstant and
+monotone, `exp ∘ K = Z` is a valuation, every pairwise defect of `K` is
+nonnegative, and its canonical datum is nonzero; yet it is realizable
+by nothing. Every previously known necessary condition — order, sign,
+algebra, cardinality, convergence — holds or is vacuous; what fails is
+only the distributivity of the state-space representation.
+
 ## Working on it
 
 ```nu
@@ -429,12 +448,11 @@ observation. The diamond is finished: its final observable's gauge is
 exactly the constants; the equality criterion and one-point
 normalization follow; and sparse reconstruction identifies the
 observable with the canonical datum — four irredundant measurements
-carrying an explicit normalized inverse. The next continuation is
-singular: classify which of these canonical Diamond data arise from the
-finite Gibbs realization. Prove first that every lattice homomorphism
-from the diamond into a distributive lattice is constant; apply this to
-the finite-set state map to classify the realizable fields and canonical
-data; then exhibit a nonconstant Diamond field satisfying the existing
-order and exponential-valuation conditions but excluded by this
-distributivity obstruction. Do not redesign the realization class until
-this obstruction is completely stated. The other §21 programs wait.
+carrying an explicit normalized inverse. The finite Gibbs boundary
+there is now exact: the class realizes the constants and attains only
+the zero canonical datum, and the excluded witness satisfies every
+previously known necessary condition — the obstruction is
+distributivity of the state representation, completely stated. Whether
+to widen the realization class past distributive state data is now a
+design question with an exact boundary. Direction for the next program
+is pending.

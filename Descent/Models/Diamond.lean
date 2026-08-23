@@ -1,5 +1,6 @@
 import Descent.Core.Hierarchy
 import Descent.Core.Higher
+import Descent.Realization.Realizable
 import Mathlib.Data.Fintype.Pi
 
 /-!
@@ -503,6 +504,255 @@ theorem exists_pqs_eq_mk_ne [Nontrivial A] :
   exact he hcomp.symm
 
 end Classification
+
+/-! ### The finite Gibbs boundary: distributivity is the obstruction -/
+
+/-- Every lattice homomorphism from the diamond into a distributive
+lattice is constant: relative complements in distributive data are
+unique, and the diamond has three. -/
+theorem latticeHom_const {D : Type*} [DistribLattice D]
+    (f : LatticeHom Diamond D) (a : Diamond) : f a = f bot := by
+  have hxyi : f x ⊓ f y = f bot := by
+    rw [← map_inf, show (x ⊓ y : Diamond) = bot from by decide]
+  have hxzi : f x ⊓ f z = f bot := by
+    rw [← map_inf, show (x ⊓ z : Diamond) = bot from by decide]
+  have hyzi : f y ⊓ f z = f bot := by
+    rw [← map_inf, show (y ⊓ z : Diamond) = bot from by decide]
+  have hxys : f x ⊔ f y = f top := by
+    rw [← map_sup, show (x ⊔ y : Diamond) = top from by decide]
+  have hxzs : f x ⊔ f z = f top := by
+    rw [← map_sup, show (x ⊔ z : Diamond) = top from by decide]
+  have hy : f y = f bot ⊔ (f y ⊓ f z) := by
+    calc f y = f (y ⊓ top) := by rw [show (y ⊓ top : Diamond) = y from by decide]
+      _ = f y ⊓ f top := map_inf f y top
+      _ = f y ⊓ (f x ⊔ f z) := by rw [hxzs]
+      _ = (f y ⊓ f x) ⊔ (f y ⊓ f z) := inf_sup_left (f y) (f x) (f z)
+      _ = f bot ⊔ (f y ⊓ f z) := by rw [inf_comm (f y) (f x), hxyi]
+  have hz : f z = f bot ⊔ (f y ⊓ f z) := by
+    calc f z = f (z ⊓ top) := by rw [show (z ⊓ top : Diamond) = z from by decide]
+      _ = f z ⊓ f top := map_inf f z top
+      _ = f z ⊓ (f x ⊔ f y) := by rw [hxys]
+      _ = (f z ⊓ f x) ⊔ (f z ⊓ f y) := inf_sup_left (f z) (f x) (f y)
+      _ = f bot ⊔ (f y ⊓ f z) := by
+          rw [inf_comm (f z) (f x), hxzi, inf_comm (f z) (f y)]
+  have hyz : f y = f z := hy.trans hz.symm
+  have hyb : f y = f bot := by
+    have h := hyzi
+    rw [← hyz, inf_idem] at h
+    exact h
+  have hzb : f z = f bot := by
+    rw [← hyz]
+    exact hyb
+  have hyzs : f y ⊔ f z = f top := by
+    rw [← map_sup, show (y ⊔ z : Diamond) = top from by decide]
+  have htb : f top = f bot := by
+    rw [← hyzs, hyb, hzb, sup_idem]
+  have hxb : f x = f bot := by
+    have h1 : f x = f x ⊓ f bot := by
+      rw [← htb, ← map_inf, show (x ⊓ top : Diamond) = x from by decide]
+    have h2 : f x = f x ⊔ f bot := by
+      rw [← map_sup, show (x ⊔ bot : Diamond) = x from by decide]
+    exact le_antisymm (h1 ▸ inf_le_right) (h2 ▸ le_sup_right)
+  cases a
+  · rfl
+  · exact hxb
+  · exact hyb
+  · exact hzb
+  · exact htb
+
+section Gibbs
+
+open FiniteGibbs
+
+variable {Ω : Type*} [DecidableEq Ω]
+
+/-- Every finite Gibbs realization on the diamond has constant state
+spaces: its state map is a lattice homomorphism into the distributive
+lattice of finite sets. -/
+theorem states_eq_states_bot (X : FiniteGibbs Diamond Ω) (a : Diamond) :
+    X.states a = X.states bot :=
+  latticeHom_const X.statesHom a
+
+theorem partition_eq_partition_bot (X : FiniteGibbs Diamond Ω) (a : Diamond) :
+    X.partition a = X.partition bot :=
+  congrArg X.mass (states_eq_states_bot X a)
+
+theorem logPartition_eq_logPartition_bot (X : FiniteGibbs Diamond Ω)
+    (a : Diamond) : X.logPartition a = X.logPartition bot :=
+  congrArg Real.log (partition_eq_partition_bot X a)
+
+/-- The exact field classification: on the diamond the finite Gibbs class
+realizes exactly the constant fields. -/
+theorem realizable_iff_exists_const {K : ContextField Diamond ℝ} :
+    Realizable K ↔ ∃ c : ℝ, K = ContextField.const Diamond c := by
+  constructor
+  · rintro ⟨Ω', _, X, rfl⟩
+    refine ⟨X.logPartition bot, funext fun a => ?_⟩
+    rw [ContextField.const_apply]
+    exact logPartition_eq_logPartition_bot X a
+  · rintro ⟨c, rfl⟩
+    exact realizable_const c
+
+/-- Realizability of the canonical four-coordinate datum, named
+directly: attained by the log-partition of some realization. Pairwise
+defect realizability cannot express the order-3 coordinate. -/
+def CanonicalDatumRealizable (p q r s : ℝ) : Prop :=
+  ∃ (Ω' : Type) (_ : DecidableEq Ω') (X : FiniteGibbs Diamond Ω'),
+    canonicalDatum X.logPartition = (p, q, r, s)
+
+/-- The finite Gibbs class attains exactly the zero canonical datum on
+the diamond. -/
+theorem canonicalDatumRealizable_iff {p q r s : ℝ} :
+    CanonicalDatumRealizable p q r s
+      ↔ ((p, q, r, s) : ℝ × ℝ × ℝ × ℝ) = (0, 0, 0, 0) := by
+  constructor
+  · rintro ⟨Ω', _, X, hX⟩
+    rw [← hX]
+    have hc : X.logPartition
+        = ContextField.const Diamond (X.logPartition bot) := funext fun a => by
+      rw [ContextField.const_apply]
+      exact logPartition_eq_logPartition_bot X a
+    rw [hc, canonicalDatum, defect_const, defect3_const]
+    simp
+  · intro h
+    obtain ⟨Ω', i, X, hX⟩ := realizable_zero (R := Diamond)
+    refine ⟨Ω', i, X, ?_⟩
+    rw [hX, h]
+    simp [canonicalDatum]
+
+end Gibbs
+
+/-! ### The distributivity obstruction, witnessed -/
+
+/-- The counting-shaped witness values: what an overlap state system
+would produce, if the diamond admitted one. -/
+def countField : ContextField Diamond ℝ
+  | bot => 1
+  | top => 3
+  | _ => 2
+
+/-- The witness field: the logarithm of the counting-shaped values. -/
+noncomputable def logCountField : ContextField Diamond ℝ := fun a =>
+  Real.log (countField a)
+
+theorem countField_pos (a : Diamond) : 0 < countField a := by
+  cases a <;> norm_num [countField]
+
+theorem monotone_countField : Monotone countField := by
+  intro a b hab
+  cases a <;> cases b <;>
+    first
+      | exact absurd hab (by decide)
+      | norm_num [countField]
+
+theorem monotone_logCountField : Monotone logCountField := fun a _ h =>
+  Real.log_le_log (countField_pos a) (monotone_countField h)
+
+theorem exp_comp_logCountField : Real.exp ∘ logCountField = countField :=
+  funext fun a => Real.exp_log (countField_pos a)
+
+/-- The counting-shaped values form a valuation: `2 + 2 = 1 + 3` at each
+atom pair. -/
+theorem isValuation_countField : IsValuation countField := by
+  intro a b
+  rcases pair_cases a b with hc | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+    ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+  · exact hc.defect_eq_zero countField
+  · rw [defect_def, show (x ⊓ y : Diamond) = bot from by decide,
+      show (x ⊔ y : Diamond) = top from by decide]
+    norm_num [countField]
+  · rw [defect_def, show (y ⊓ x : Diamond) = bot from by decide,
+      show (y ⊔ x : Diamond) = top from by decide]
+    norm_num [countField]
+  · rw [defect_def, show (x ⊓ z : Diamond) = bot from by decide,
+      show (x ⊔ z : Diamond) = top from by decide]
+    norm_num [countField]
+  · rw [defect_def, show (z ⊓ x : Diamond) = bot from by decide,
+      show (z ⊔ x : Diamond) = top from by decide]
+    norm_num [countField]
+  · rw [defect_def, show (y ⊓ z : Diamond) = bot from by decide,
+      show (y ⊔ z : Diamond) = top from by decide]
+    norm_num [countField]
+  · rw [defect_def, show (z ⊓ y : Diamond) = bot from by decide,
+      show (z ⊔ y : Diamond) = top from by decide]
+    norm_num [countField]
+
+theorem isValuation_exp_logCountField :
+    IsValuation (Real.exp ∘ logCountField) := by
+  rw [exp_comp_logCountField]
+  exact isValuation_countField
+
+/-- Every pairwise defect of the witness is nonnegative. -/
+theorem defect_logCountField_nonneg (a b : Diamond) :
+    0 ≤ defect logCountField a b := by
+  have key : 0 ≤ Real.log 2 + Real.log 2 - Real.log 1 - Real.log 3 := by
+    rw [Real.log_one, sub_zero,
+      show Real.log 2 + Real.log 2 = Real.log 4 from by
+        rw [← Real.log_mul (by norm_num) (by norm_num)]
+        norm_num]
+    have h := Real.log_le_log (by norm_num : (0 : ℝ) < 3)
+      (by norm_num : (3 : ℝ) ≤ 4)
+    linarith
+  rcases pair_cases a b with hc | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+    ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+  · rw [hc.defect_eq_zero]
+  · rw [defect_def, show (x ⊓ y : Diamond) = bot from by decide,
+      show (x ⊔ y : Diamond) = top from by decide]
+    exact key
+  · rw [defect_def, show (y ⊓ x : Diamond) = bot from by decide,
+      show (y ⊔ x : Diamond) = top from by decide]
+    exact key
+  · rw [defect_def, show (x ⊓ z : Diamond) = bot from by decide,
+      show (x ⊔ z : Diamond) = top from by decide]
+    exact key
+  · rw [defect_def, show (z ⊓ x : Diamond) = bot from by decide,
+      show (z ⊔ x : Diamond) = top from by decide]
+    exact key
+  · rw [defect_def, show (y ⊓ z : Diamond) = bot from by decide,
+      show (y ⊔ z : Diamond) = top from by decide]
+    exact key
+  · rw [defect_def, show (z ⊓ y : Diamond) = bot from by decide,
+      show (z ⊔ y : Diamond) = top from by decide]
+    exact key
+
+/-- The witness is nonconstant. -/
+theorem logCountField_bot_ne : logCountField bot ≠ logCountField x := by
+  intro h
+  have h' : (0 : ℝ) = Real.log 2 := by
+    rw [← Real.log_one]
+    exact h
+  exact Real.log_ne_zero_of_pos_of_ne_one (by norm_num) (by norm_num) h'.symm
+
+/-- The witness is excluded, though monotone, exponentially a valuation,
+and of nonnegative pairwise defect: the obstruction is distributivity of
+the state representation alone. -/
+theorem not_realizable_logCountField : ¬Realizable logCountField := by
+  intro h
+  obtain ⟨c, hc⟩ := realizable_iff_exists_const.mp h
+  have h1 := congrFun hc bot
+  have h2 := congrFun hc x
+  rw [ContextField.const_apply] at h1 h2
+  exact logCountField_bot_ne (h1.trans h2.symm)
+
+/-- The witness's canonical datum is visibly nonzero. -/
+theorem defect_logCountField_xy_pos : 0 < defect logCountField x y := by
+  rw [defect_def, show (x ⊓ y : Diamond) = bot from by decide,
+    show (x ⊔ y : Diamond) = top from by decide]
+  show 0 < Real.log 2 + Real.log 2 - Real.log 1 - Real.log 3
+  rw [Real.log_one, sub_zero,
+    show Real.log 2 + Real.log 2 = Real.log 4 from by
+      rw [← Real.log_mul (by norm_num) (by norm_num)]
+      norm_num]
+  have h := Real.log_lt_log (by norm_num : (0 : ℝ) < 3)
+    (by norm_num : (3 : ℝ) < 4)
+  linarith
+
+theorem canonicalDatum_logCountField_ne :
+    canonicalDatum logCountField ≠ ((0 : ℝ), 0, 0, 0) := by
+  intro h
+  have h1 := congrArg (fun t => t.1) h
+  simp only [canonicalDatum] at h1
+  exact absurd h1 (ne_of_gt defect_logCountField_xy_pos)
 
 end Diamond
 

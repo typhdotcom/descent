@@ -1258,4 +1258,64 @@ example [Nontrivial A] :
         Observable3.mk K ≠ Observable3.mk K' :=
   Diamond.exists_pqs_eq_mk_ne
 
+/-! ## The finite Gibbs boundary on the diamond
+
+The claims below correspond to the distributivity-obstruction paragraph
+of the "Order separation" section of `README.md`.
+-/
+
+/-- README: the state map of any realization is a lattice homomorphism
+into the distributive lattice of finite sets. -/
+example (X : FiniteGibbs R Ω) (r : R) : X.statesHom r = X.states r :=
+  X.statesHom_apply r
+
+/-- README: every lattice homomorphism from the diamond into a
+distributive lattice is constant. -/
+example {D : Type*} [DistribLattice D] (f : LatticeHom Diamond D)
+    (a : Diamond) : f a = f Diamond.bot :=
+  Diamond.latticeHom_const f a
+
+/-- README: so every realization on the diamond has constant state
+spaces, partition function, and log-partition. -/
+example {Ω' : Type*} [DecidableEq Ω'] (X : FiniteGibbs Diamond Ω')
+    (a : Diamond) : X.states a = X.states Diamond.bot :=
+  Diamond.states_eq_states_bot X a
+
+example {Ω' : Type*} [DecidableEq Ω'] (X : FiniteGibbs Diamond Ω')
+    (a : Diamond) : X.logPartition a = X.logPartition Diamond.bot :=
+  Diamond.logPartition_eq_logPartition_bot X a
+
+/-- README: the exact field classification --- realizable iff constant. -/
+example {K : ContextField Diamond ℝ} :
+    Realizable K ↔ ∃ c : ℝ, K = ContextField.const Diamond c :=
+  Diamond.realizable_iff_exists_const
+
+/-- README: the class attains exactly the zero canonical datum. -/
+example {p q r s : ℝ} :
+    Diamond.CanonicalDatumRealizable p q r s
+      ↔ ((p, q, r, s) : ℝ × ℝ × ℝ × ℝ) = (0, 0, 0, 0) :=
+  Diamond.canonicalDatumRealizable_iff
+
+/-- README: the witness satisfies every previously known necessary
+condition --- nonconstant, monotone, exponentially a valuation,
+nonnegative pairwise defects, nonzero canonical datum --- and is
+realizable by nothing. -/
+example : Diamond.logCountField Diamond.bot ≠ Diamond.logCountField Diamond.x :=
+  Diamond.logCountField_bot_ne
+
+example : Monotone Diamond.logCountField :=
+  Diamond.monotone_logCountField
+
+example : IsValuation (Real.exp ∘ Diamond.logCountField) :=
+  Diamond.isValuation_exp_logCountField
+
+example (a b : Diamond) : 0 ≤ defect Diamond.logCountField a b :=
+  Diamond.defect_logCountField_nonneg a b
+
+example : Diamond.canonicalDatum Diamond.logCountField ≠ ((0 : ℝ), 0, 0, 0) :=
+  Diamond.canonicalDatum_logCountField_ne
+
+example : ¬Realizable Diamond.logCountField :=
+  Diamond.not_realizable_logCountField
+
 end Descent.Status
