@@ -18,12 +18,15 @@ place with theorems the abstract level cannot see:
   exactly at comparability, and the canonical M6 metric of its chamber is
   the divisor symmetric-difference distance;
 * multiplicatively the same field is exact --- `d(gcd)·d(lcm) = d·d` ---
-  so its logarithm is a monotone valuation: a field whose defect
-  observable vanishes identically, which nevertheless is the log-partition
-  of no finite Gibbs realization over any state carrier. The obstruction
-  is invisible to every defect datum; only exact factorization
-  (`partition_inf_eq_of_defect_eq_zero`) exposes it, on the divisor counts
-  of `4`, `6`, and their gcd.
+  so its logarithm is a monotone valuation, a field in the gauge. Its
+  exponential, the divisor count, is not an additive valuation, so M5's
+  algebraic compatibility obstruction applies concretely: the log divisor
+  count is the log-partition of no realization over any state carrier,
+  exposed by exact factorization on the divisor counts of `4`, `6`, and
+  their gcd. The new feature is that the offending field carries
+  identically vanishing defect data: it is defect-equivalent to the zero
+  field, which is realizable. No defect-only observation decides
+  realizability.
 -/
 
 namespace Descent
@@ -181,7 +184,7 @@ theorem defect_divisorCount_neg_iff {a b : Arith} :
 /-! ### The divisor metric -/
 
 open scoped symmDiff in
-/-- The canonical M6 metric of the supermodular chamber is the divisor
+/-- The M6 kernel of the supermodular chamber is the divisor
 symmetric-difference distance. -/
 theorem meetKernel_divisorCount (a b : Arith) :
     meetKernel divisorCount a b = ((divisorSet a ∆ divisorSet b).card : ℝ) := by
@@ -200,14 +203,37 @@ theorem meetKernel_divisorCount (a b : Arith) :
   push_cast
   linarith
 
-/-- The divisibility lattice carries the divisor metric: the chamber
-machinery instantiated on the arithmetic carrier. -/
-@[instance_reducible]
-noncomputable def divisorPseudoMetric : PseudoMetricSpace Arith :=
-  supermodular_divisorCount.pseudoMetricSpace monotone_divisorCount
+/-- Divisor sets separate contexts: a positive natural is the largest of
+its divisors. -/
+theorem divisorSet_injective : Function.Injective divisorSet := by
+  intro a b h
+  have hab : (num a : ℕ) ∣ (num b : ℕ) :=
+    mem_divisorSet.mp (h ▸ mem_divisorSet.mpr (dvd_refl _))
+  have hba : (num b : ℕ) ∣ (num a : ℕ) :=
+    mem_divisorSet.mp (h.symm ▸ mem_divisorSet.mpr (dvd_refl _))
+  exact PNat.coe_injective (Nat.dvd_antisymm hab hba)
 
-theorem dist_divisorPseudoMetric :
-    divisorPseudoMetric.toDist.dist = meetKernel divisorCount :=
+/-- Separation: zero symmetric-difference distance forces equal
+contexts. -/
+theorem eq_of_meetKernel_divisorCount_eq_zero {a b : Arith}
+    (h : meetKernel divisorCount a b = 0) : a = b := by
+  rw [meetKernel_divisorCount] at h
+  have hcard : (symmDiff (divisorSet a) (divisorSet b)).card = 0 := by
+    exact_mod_cast h
+  have hbot := Finset.card_eq_zero.mp hcard
+  rw [← Finset.bot_eq_empty] at hbot
+  exact divisorSet_injective (symmDiff_eq_bot.mp hbot)
+
+/-- The divisibility lattice carries the divisor metric: the chamber
+machinery instantiated on the arithmetic carrier, promoted to a genuine
+metric by separation. -/
+@[instance_reducible]
+noncomputable def divisorMetric : MetricSpace Arith where
+  toPseudoMetricSpace := supermodular_divisorCount.pseudoMetricSpace monotone_divisorCount
+  eq_of_dist_eq_zero := fun {_ _} h => eq_of_meetKernel_divisorCount_eq_zero h
+
+theorem dist_divisorMetric :
+    divisorMetric.toPseudoMetricSpace.toDist.dist = meetKernel divisorCount :=
   rfl
 
 /-! ### The multiplicative reading: exactness, gauge, and the invisible
@@ -280,6 +306,22 @@ theorem not_logPartition_logDivisorCount {Ω : Type*} [DecidableEq Ω]
 theorem not_realizable_logDivisorCount : ¬Realizable logDivisorCount := by
   rintro ⟨Ω, _, X, hX⟩
   exact not_logPartition_logDivisorCount X hX
+
+/-- The log divisor count carries the same defect data as the zero
+field. -/
+theorem defectEquiv_zero_logDivisorCount :
+    DefectEquiv (0 : ContextField Arith ℝ) logDivisorCount := by
+  show defect (0 : ContextField Arith ℝ) = defect logDivisorCount
+  rw [defect_zero]
+  exact (isValuation_iff_defect_eq_zero.mp isValuation_logDivisorCount).symm
+
+/-- No defect-only observation decides realizability: two fields with
+identical defect data, one realizable, one not. -/
+theorem exists_defectEquiv_realizable_not_realizable :
+    ∃ K K' : ContextField Arith ℝ,
+      DefectEquiv K K' ∧ Realizable K ∧ ¬Realizable K' :=
+  ⟨0, logDivisorCount, defectEquiv_zero_logDivisorCount, realizable_zero,
+    not_realizable_logDivisorCount⟩
 
 end Arith
 

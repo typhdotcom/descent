@@ -726,15 +726,24 @@ example {a b : Arith} : defect Arith.divisorCount a b < 0 ↔ ¬Comparable a b :
   Arith.defect_divisorCount_neg_iff
 
 open scoped symmDiff in
-/-- README: the M6 metric of the supermodular chamber is the divisor
-symmetric-difference distance. -/
+/-- README: the M6 kernel of the supermodular chamber is the divisor
+symmetric-difference distance, and separation makes it a genuine metric:
+zero distance forces equal contexts. -/
 example (a b : Arith) :
     meetKernel Arith.divisorCount a b
       = ((Arith.divisorSet a ∆ Arith.divisorSet b).card : ℝ) :=
   Arith.meetKernel_divisorCount a b
 
-example : (Arith.divisorPseudoMetric).toDist.dist = meetKernel Arith.divisorCount :=
-  Arith.dist_divisorPseudoMetric
+example {a b : Arith} (h : meetKernel Arith.divisorCount a b = 0) : a = b :=
+  Arith.eq_of_meetKernel_divisorCount_eq_zero h
+
+noncomputable example : MetricSpace Arith :=
+  Arith.divisorMetric
+
+example :
+    Arith.divisorMetric.toPseudoMetricSpace.toDist.dist
+      = meetKernel Arith.divisorCount :=
+  Arith.dist_divisorMetric
 
 /-- README: divisor counts factor exactly through gcd and lcm, so the log
 divisor count is a monotone valuation --- in the gauge, invisible to every
@@ -751,12 +760,26 @@ example : Arith.logDivisorCount ∈ gauge Arith ℝ :=
   Arith.logDivisorCount_mem_gauge
 
 /-- README: yet it is the log-partition of no finite Gibbs realization
-over any state carrier. -/
+over any state carrier --- M5's algebraic compatibility obstruction made
+concrete. -/
 example {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Arith Ω') :
     X'.logPartition ≠ Arith.logDivisorCount :=
   Arith.not_logPartition_logDivisorCount X'
 
 example : ¬Realizable Arith.logDivisorCount :=
   Arith.not_realizable_logDivisorCount
+
+/-- README: no defect-only observation decides realizability --- the zero
+field carries identical defect data and is realizable. -/
+example : DefectEquiv (0 : ContextField Arith ℝ) Arith.logDivisorCount :=
+  Arith.defectEquiv_zero_logDivisorCount
+
+example : Realizable (0 : ContextField Arith ℝ) :=
+  realizable_zero
+
+example :
+    ∃ K K' : ContextField Arith ℝ,
+      DefectEquiv K K' ∧ Realizable K ∧ ¬Realizable K' :=
+  Arith.exists_defectEquiv_realizable_not_realizable
 
 end Descent.Status

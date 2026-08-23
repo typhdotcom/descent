@@ -69,6 +69,21 @@ theorem Realizable.defect_nonneg {K : ContextField R ℝ} (h : Realizable K) (a 
   obtain ⟨Ω, _, X, rfl⟩ := h
   exact X.defect_logPartition_nonneg a b
 
+/-- Constant fields are realizable: one state, with the negated constant
+as its energy. -/
+theorem realizable_const (c : ℝ) : Realizable (ContextField.const R c) := by
+  refine ⟨Fin 1, inferInstance,
+    ⟨fun _ => {0}, fun _ => ⟨0, Finset.mem_singleton_self 0⟩,
+      fun _ _ => (Finset.inter_self _).symm, fun _ _ => (Finset.union_self _).symm,
+      fun _ => -c⟩, funext fun r => ?_⟩
+  simp [FiniteGibbs.logPartition, FiniteGibbs.partition, FiniteGibbs.mass,
+    FiniteGibbs.weight, Real.log_exp]
+
+/-- The zero field is realizable. -/
+theorem realizable_zero : Realizable (0 : ContextField R ℝ) := by
+  have h := realizable_const (R := R) 0
+  rwa [show ContextField.const R (0 : ℝ) = 0 from funext fun _ => rfl] at h
+
 /-- Defect data is realizable when it is the pairwise defect of the
 log-partition of a finite Gibbs realization. -/
 def DefectRealizable (D : R → R → ℝ) : Prop :=

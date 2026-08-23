@@ -278,17 +278,22 @@ the abstract level:
 - **The divisor count reads the wall.** The divisor-count field is
   monotone and supermodular, its defect is the negated count of the
   missing divisors, and it vanishes exactly at comparable pairs. The
-  chamber machinery then instantiates on the arithmetic carrier: the M6
-  pseudometric of the supermodular chamber is exactly the divisor
-  symmetric-difference distance.
+  chamber machinery then instantiates on the arithmetic carrier, and
+  separation — divisor sets determine the context — promotes it: the
+  divisor symmetric-difference distance is a genuine metric on the
+  divisibility lattice, not merely a pseudometric.
 - **The same field is multiplicatively exact** — divisor counts factor
   through gcd and lcm as `d(a ⊓ b)·d(a ⊔ b) = d(a)·d(b)` — so the log
-  divisor count is a monotone valuation: a field in the gauge, invisible
-  to every defect datum. Yet it is the log-partition of no finite Gibbs
-  realization over any state carrier: exact factorization is degenerate,
-  and the divisor counts of `4`, `6`, and their gcd `2` refuse it. After
-  M5's order, sign, and cardinality obstructions this is a fourth species
-  of non-realizability witness — one no defect observation can certify.
+  divisor count is a monotone valuation, a field in the gauge. Its
+  exponential, the divisor count, is not an additive valuation, so M5's
+  algebraic compatibility obstruction applies concretely: it is the
+  log-partition of no realization over any state carrier, exposed by
+  exact factorization on the divisor counts of `4`, `6`, and their gcd
+  `2`. What is new here is where the offending field lives: its defect
+  data vanishes identically, it is defect-equivalent to the zero field,
+  and the zero field is realizable. In one statement: there are fields
+  with identical defect data, one realizable, one not — no defect-only
+  observation decides realizability.
 
 ## Working on it
 
@@ -303,22 +308,13 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M2 through M6 are built. M7 is built
-at this level: the arithmetic carrier — divisibility with divisor-set
-states — produces its own theorems: the exact meet side and sharply
-failing join side of the divisor system, the comparability wall of the
-divisor-count defect, the divisor symmetric-difference metric as the
-instantiated chamber geometry, and a defect-invisible non-realizability
-witness. With the milestone ladder of §20 built at first-edition level,
-the driving questions of §21 take over: kernel classification beyond the
-solved models (Q1), sparse reconstruction (Q3), the order-separated
-higher observable (Q4) — still open, raw mixed differences are not that
-object — Hilbert embedding of sampled conditional negativity (Q6), and
-observational equivalence of realizations (Q8). Further carriers (graph
-cohomology, local-to-global constraint systems) enter when they can pay
-the same admission fee: a theorem the abstract level cannot see. Realizability on richer finite lattices remains open,
-where the pairwise valuation law need not control the higher
-inclusion–exclusion the state maps impose — the same higher-observable gap
-M2 exposed; so do completeness and adequacy on richer context lattices and
-the order-separated higher observable — raw mixed differences are not that
-object. M7 is concrete carriers.
+`PROPOSAL.md` §20 sequences the work, and M2 through M7 are built: the
+milestone ladder is at first-edition level. The next research program is
+Q4 of §21: discover the order-separated higher observable — the
+gauge-respecting datum that raw mixed differences provably are not — with
+the arithmetic carrier as its first nondegenerate testbed. Behind it in
+the queue: kernel classification beyond the solved models and Hilbert
+embedding of sampled conditional negativity on richer lattices. Further
+carriers — graph cohomology, local-to-global constraint systems — enter
+when they pay the same admission fee: a theorem the abstract level cannot
+see.
