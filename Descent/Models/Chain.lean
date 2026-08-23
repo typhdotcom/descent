@@ -1,5 +1,6 @@
 import Descent.Core.Cube
 import Descent.Core.Gauge
+import Descent.Core.Higher
 import Descent.Reconstruction.Normalization
 import Descent.Reconstruction.Restricted
 import Mathlib.Order.Fin.Basic
@@ -43,6 +44,16 @@ instance : Subsingleton (Observable R A) :=
   ⟨fun x y =>
     Quotient.inductionOn₂ x y fun K K' =>
       Observable.mk_eq_mk.mpr (defectEquiv_of_linearOrder K K')⟩
+
+/-- On a chain the order-3 defect vanishes identically: unlike the raw
+mixed difference, it retains no lower-order data on degenerate cubes. -/
+theorem defect3_eq_zero_of_linearOrder (K : ContextField R A) (a b c : R) :
+    defect3 K a b c = 0 := by
+  rcases le_total a b with h | h
+  · rw [defect3_of_le K h c]
+    exact isValuation_of_linearOrder K b c
+  · rw [defect3_comm_left, defect3_of_le K h c]
+    exact isValuation_of_linearOrder K a c
 
 /-- On a chain the gauge is everything. -/
 theorem gauge_eq_top_of_linearOrder : gauge R A = ⊤ :=
@@ -103,6 +114,13 @@ theorem mixedDiff_height_ne :
   rw [mixedDiff_zero, mixedDiff_pair_apply] at h0
   revert h0
   decide
+
+/-- The order-3 defect does not repeat the failure: it identifies the
+defect-equivalent fields the raw mixed difference separates. -/
+theorem defect3_height_eq :
+    defect3 height = defect3 (0 : ContextField (Fin 3) ℤ) :=
+  funext fun a => funext fun b => funext fun c => by
+    rw [defect3_eq_zero_of_linearOrder, defect3_eq_zero_of_linearOrder]
 
 end Chain
 

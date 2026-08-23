@@ -1,3 +1,4 @@
+import Descent.Core.Higher
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
 import Mathlib.Data.PNat.Prime
@@ -306,6 +307,36 @@ theorem not_logPartition_logDivisorCount {Ω : Type*} [DecidableEq Ω]
 theorem not_realizable_logDivisorCount : ¬Realizable logDivisorCount := by
   rintro ⟨Ω, _, X, hX⟩
   exact not_logPartition_logDivisorCount X hX
+
+/-- Third-order information invisible to the triple's own faces: at the
+antichain `2, 3, 5` an explicit field has all three pairwise face defects
+zero and order-3 defect one. Pairwise observation of the triple sees
+nothing; the triple does. -/
+theorem exists_defect_eq_zero_defect3_ne_zero :
+    ∃ K : ContextField Arith ℝ,
+      defect K (of 2) (of 3) = 0 ∧ defect K (of 2) (of 5) = 0 ∧
+        defect K (of 3) (of 5) = 0 ∧ defect3 K (of 2) (of 3) (of 5) ≠ 0 := by
+  classical
+  refine ⟨fun n => if n = of 30 then (-1 : ℝ) else 0, ?_, ?_, ?_, ?_⟩
+  · rw [defect_def, show of 2 ⊓ of 3 = of 1 from by decide,
+      show of 2 ⊔ of 3 = of 6 from by decide]
+    norm_num [show of 2 ≠ of 30 from by decide, show of 3 ≠ of 30 from by decide,
+      show of 1 ≠ of 30 from by decide, show of 6 ≠ of 30 from by decide]
+  · rw [defect_def, show of 2 ⊓ of 5 = of 1 from by decide,
+      show of 2 ⊔ of 5 = of 10 from by decide]
+    norm_num [show of 2 ≠ of 30 from by decide, show of 5 ≠ of 30 from by decide,
+      show of 1 ≠ of 30 from by decide, show of 10 ≠ of 30 from by decide]
+  · rw [defect_def, show of 3 ⊓ of 5 = of 1 from by decide,
+      show of 3 ⊔ of 5 = of 15 from by decide]
+    norm_num [show of 3 ≠ of 30 from by decide, show of 5 ≠ of 30 from by decide,
+      show of 1 ≠ of 30 from by decide, show of 15 ≠ of 30 from by decide]
+  · rw [defect3_def, show of 2 ⊓ of 3 ⊓ of 5 = of 1 from by decide,
+      show of 2 ⊓ of 3 = of 1 from by decide,
+      show of 2 ⊓ of 5 = of 1 from by decide,
+      show of 3 ⊓ of 5 = of 1 from by decide,
+      show of 2 ⊔ of 3 ⊔ of 5 = of 30 from by decide]
+    norm_num [show of 2 ≠ of 30 from by decide, show of 3 ≠ of 30 from by decide,
+      show of 5 ≠ of 30 from by decide, show of 1 ≠ of 30 from by decide]
 
 /-- The log divisor count carries the same defect data as the zero
 field. -/

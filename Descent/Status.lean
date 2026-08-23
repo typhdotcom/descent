@@ -6,8 +6,10 @@ import Descent.Models.Chain
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
+import Descent.Core.Higher
 import Descent.Geometry.Chambers
 import Descent.Models.Arithmetic
+import Descent.Models.Diamond
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
@@ -781,5 +783,104 @@ example :
     ∃ K K' : ContextField Arith ℝ,
       DefectEquiv K K' ∧ Realizable K ∧ ¬Realizable K' :=
   Arith.exists_defectEquiv_realizable_not_realizable
+
+/-! ## Order separation (Q4)
+
+The claims below correspond to the "Order separation" section of
+`README.md`.
+-/
+
+/-- README: on a degenerate triple the order-3 defect is a pairwise defect
+of the surviving pair --- never raw field data. -/
+example (K : ContextField R A) {a b : R} (h : a ≤ b) (c : R) :
+    defect3 K a b c = defect K b c :=
+  defect3_of_le K h c
+
+example (K : ContextField R A) (a c : R) : defect3 K a a c = defect K a c :=
+  defect3_self K a c
+
+/-- README: so it vanishes identically on chains, identifying the
+defect-equivalent fields that raw mixed differences separate. -/
+example {C : Type*} [LinearOrder C] (K : ContextField C A) (a b c : C) :
+    defect3 K a b c = 0 :=
+  defect3_eq_zero_of_linearOrder K a b c
+
+example :
+    mixedDiff [1, 2] Chain.height ≠ mixedDiff [1, 2] (0 : ContextField (Fin 3) ℤ) :=
+  Chain.mixedDiff_height_ne
+
+example : defect3 Chain.height = defect3 (0 : ContextField (Fin 3) ℤ) :=
+  Chain.defect3_height_eq
+
+/-- README: isolation --- the raw order-3 mixed difference is exactly face
+defects, minus the order-3 defect, plus a base-point residue that
+vanishes at the meet base. -/
+example (K : ContextField R A) (a b c r : R) :
+    mixedDiff [a, b, c] K r + defect3 K (r ⊔ a) (r ⊔ b) (r ⊔ c)
+      = defect K (r ⊔ a) (r ⊔ b) + defect K (r ⊔ a) (r ⊔ c)
+        + defect K (r ⊔ b) (r ⊔ c)
+        + (K ((r ⊔ a) ⊓ (r ⊔ b) ⊓ (r ⊔ c)) - K r) :=
+  mixedDiff_triple_add_defect3 K a b c r
+
+example (K : ContextField R A) (a b c : R) :
+    mixedDiff [a, b, c] K (a ⊓ b ⊓ c)
+      = defect K a b + defect K a c + defect K b c - defect3 K a b c :=
+  mixedDiff_triple_inf K a b c
+
+/-- README: the exact gauge law --- additive in the field, so invariant
+exactly under shifts with vanishing order-3 defect. -/
+example (K K' : ContextField R A) (a b c : R) :
+    defect3 (K + K') a b c = defect3 K a b c + defect3 K' a b c :=
+  defect3_add K K' a b c
+
+example {G : ContextField R A} (hG : ∀ a b c, defect3 G a b c = 0)
+    (K : ContextField R A) (a b c : R) :
+    defect3 (K + G) a b c = defect3 K a b c :=
+  defect3_add_of_eq_zero hG K a b c
+
+/-- README: on a distributive lattice the order-3 defect decomposes
+exactly into pairwise defects at derived squares, so pairwise valuations
+have none and it descends through the pairwise gauge to the observable
+quotient. -/
+example {D : Type*} [DistribLattice D] (K : ContextField D A) (a b c : D) :
+    defect3 K a b c
+      = defect K a b + defect K (a ⊔ b) c - defect K (a ⊓ c) (b ⊓ c) :=
+  defect3_decompose K a b c
+
+example {D : Type*} [DistribLattice D] {K : ContextField D A}
+    (h : IsValuation K) (a b c : D) : defect3 K a b c = 0 :=
+  defect3_eq_zero_of_isValuation h a b c
+
+example {D : Type*} [DistribLattice D] {K K' : ContextField D A}
+    (h : DefectEquiv K K') : defect3 K = defect3 K' :=
+  defect3_eq_of_defectEquiv h
+
+example {D : Type*} [DistribLattice D] (K : ContextField D A) :
+    Observable.defect3 (Observable.mk K) = defect3 K :=
+  Observable.defect3_mk K
+
+/-- README: off distributivity descent fails --- on the diamond the height
+field is a pairwise valuation with order-3 defect one at the atom
+triple. -/
+example : IsValuation Diamond.height :=
+  Diamond.isValuation_height
+
+example : defect3 Diamond.height Diamond.x Diamond.y Diamond.z = 1 :=
+  Diamond.defect3_height
+
+example :
+    ∃ K K' : ContextField Diamond ℤ, DefectEquiv K K' ∧ defect3 K ≠ defect3 K' :=
+  Diamond.exists_defectEquiv_defect3_ne
+
+/-- README: the arithmetic witness --- at the antichain `2, 3, 5` an
+explicit field has all three pairwise face defects zero and order-3
+defect one. -/
+example :
+    ∃ K : ContextField Arith ℝ,
+      defect K (Arith.of 2) (Arith.of 3) = 0 ∧
+        defect K (Arith.of 2) (Arith.of 5) = 0 ∧
+        defect K (Arith.of 3) (Arith.of 5) = 0 ∧
+        defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5) ≠ 0 :=
+  Arith.exists_defect_eq_zero_defect3_ne_zero
 
 end Descent.Status

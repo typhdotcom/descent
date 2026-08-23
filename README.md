@@ -295,6 +295,43 @@ the abstract level:
   with identical defect data, one realizable, one not — no defect-only
   observation decides realizability.
 
+## Order separation
+
+The Q4 program, in `Descent/Core/Higher.lean` and
+`Descent/Models/Diamond.lean`, with additions to the chain and arithmetic
+models:
+
+M2 convicted raw mixed differences: on degenerate cubes they retain
+lower-order data, so they do not descend through the pairwise gauge. The
+order-3 defect — the failure of triple inclusion–exclusion,
+`D₃(a,b,c) = K a + K b + K c − K(a⊓b) − K(a⊓c) − K(b⊓c) + K(a⊓b⊓c) − K(a⊔b⊔c)` — is the corrected object, and the separation is exact:
+
+- **Degeneracy is face data.** On a degenerate triple the order-3 defect
+  is a pairwise defect of the surviving pair — never raw field data — so
+  it vanishes identically on chains: it identifies the defect-equivalent
+  fields that raw mixed differences separate.
+- **Isolation.** The raw order-3 mixed difference decomposes exactly into
+  its three pairwise face defects, minus the order-3 defect of the
+  translated triple, plus a named base-point residue that vanishes at the
+  meet base. Subtracting faces from the raw cube is the order-separation
+  datum; what survives is the order-3 defect.
+- **The exact gauge and descent law.** The order-3 defect is additive in
+  the field, hence invariant exactly under shifts with vanishing order-3
+  defect. On a distributive lattice it decomposes exactly into pairwise
+  defects at derived squares, so pairwise valuations have none, and the
+  order-3 defect descends through the pairwise gauge to the observable
+  quotient (`Observable.defect3`): there it is an observable of the
+  pairwise class, and carries nothing irreducible.
+- **Off distributivity it is genuinely new.** On the diamond `M₃` the
+  height field is a pairwise valuation — defect-equivalent to zero — with
+  order-3 defect `1` at the atom triple: descent fails, and the surviving
+  equivalence is joint pairwise-and-triple defect equality, not pairwise
+  alone.
+- **The arithmetic witness.** At the antichain `2, 3, 5` in the
+  divisibility lattice, an explicit field has all three pairwise face
+  defects zero and order-3 defect one: third-order information invisible
+  to pairwise observation of the triple.
+
 ## Working on it
 
 ```nu
@@ -308,13 +345,14 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work, and M2 through M7 are built: the
-milestone ladder is at first-edition level. The next research program is
-Q4 of §21: discover the order-separated higher observable — the
-gauge-respecting datum that raw mixed differences provably are not — with
-the arithmetic carrier as its first nondegenerate testbed. Behind it in
-the queue: kernel classification beyond the solved models and Hilbert
-embedding of sampled conditional negativity on richer lattices. Further
-carriers — graph cohomology, local-to-global constraint systems — enter
-when they pay the same admission fee: a theorem the abstract level cannot
-see.
+`PROPOSAL.md` §20's ladder M0–M7 is built, and Q4's order-3 program with
+it: the order-separated datum at order 3 is the triple defect, with exact
+isolation from face data, descent through the pairwise gauge on
+distributive contexts, sharp failure of descent on the diamond, and the
+arithmetic antichain witness. Open in Q4: the order-k hierarchy above 3 —
+the k-fold inclusion–exclusion defect, its face isolation, and whether
+distributive descent persists at every order. Behind it in the queue:
+kernel classification beyond the solved models and Hilbert embedding of
+sampled conditional negativity on richer lattices. Further carriers —
+graph cohomology, local-to-global constraint systems — enter when they
+pay the same admission fee: a theorem the abstract level cannot see.

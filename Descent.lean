@@ -3,11 +3,13 @@ import Descent.Core.Cube
 import Descent.Core.Defect
 import Descent.Core.Field
 import Descent.Core.Gauge
+import Descent.Core.Higher
 import Descent.Geometry.Chambers
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
 import Descent.Models.Arithmetic
 import Descent.Models.Chain
+import Descent.Models.Diamond
 import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
