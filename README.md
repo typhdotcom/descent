@@ -315,22 +315,31 @@ order-3 defect — the failure of triple inclusion–exclusion,
   translated triple, plus a named base-point residue that vanishes at the
   meet base. Subtracting faces from the raw cube is the order-separation
   datum; what survives is the order-3 defect.
-- **The exact gauge and descent law.** The order-3 defect is additive in
-  the field, hence invariant exactly under shifts with vanishing order-3
-  defect. On a distributive lattice it decomposes exactly into pairwise
-  defects at derived squares, so pairwise valuations have none, and the
-  order-3 defect descends through the pairwise gauge to the observable
-  quotient (`Observable.defect3`): there it is an observable of the
-  pairwise class, and carries nothing irreducible.
-- **Off distributivity it is genuinely new.** On the diamond `M₃` the
-  height field is a pairwise valuation — defect-equivalent to zero — with
-  order-3 defect `1` at the atom triple: descent fails, and the surviving
-  equivalence is joint pairwise-and-triple defect equality, not pairwise
-  alone.
-- **The arithmetic witness.** At the antichain `2, 3, 5` in the
-  divisibility lattice, an explicit field has all three pairwise face
-  defects zero and order-3 defect one: third-order information invisible
-  to pairwise observation of the triple.
+- **The cumulative observation.** The datum through order 3 is the pair
+  of the pairwise and order-3 defects. The order-3 defect is additive in
+  the field, the kernel of cumulative observation is the order-≤3 gauge
+  `gauge3`, equal cumulative data is exactly a difference in that gauge,
+  and the datum descends injectively to the cumulative quotient
+  `Observable3`: the theorems name what survives — the pair — and under
+  which equivalence — cumulative defect equivalence.
+- **The architecture.** On a distributive lattice the order-3 defect
+  decomposes exactly into pairwise defects at derived squares, the
+  order-≤3 gauge equals the pairwise gauge, cumulative equivalence
+  collapses to pairwise equivalence, and `defect3` descends to the
+  pairwise quotient (`Observable.defect3`): distributive contexts —
+  order 3 adds nothing. On the diamond `M₃`, at its provably
+  nondegenerate atom triple, the height field is a pairwise valuation
+  with order-3 defect `1`: the gauges are strictly nested, and the height
+  field and zero share the pairwise observable while the cumulative
+  observable separates them — on the diamond, observation through
+  order 3 is strictly finer.
+- **The arithmetic reading is sparse-face incompleteness.** The
+  divisibility lattice is provably distributive, so complete pairwise
+  data reconstructs the order-3 defect; at the antichain `2, 3, 5` the
+  reconstruction runs exactly through the derived square `(6, 5)`. The
+  witness: an explicit field with all three of the triple's own face
+  defects zero and order-3 defect one. The triple's boundary never
+  determines its order-3 defect — complete pairwise observation does.
 
 ## Working on it
 
@@ -346,10 +355,11 @@ installs on first use.
 ## Next
 
 `PROPOSAL.md` §20's ladder M0–M7 is built, and Q4's order-3 program with
-it: the order-separated datum at order 3 is the triple defect, with exact
-isolation from face data, descent through the pairwise gauge on
-distributive contexts, sharp failure of descent on the diamond, and the
-arithmetic antichain witness. Open in Q4: the order-k hierarchy above 3 —
+it: the cumulative datum through order 3, its gauge, its injective
+quotient observation, the exact isolation of the order-3 defect from face
+data, and the two-regime architecture — distributive contexts add nothing
+at order 3, the diamond is strictly finer. Open in Q4: the order-k
+hierarchy above 3 —
 the k-fold inclusion–exclusion defect, its face isolation, and whether
 distributive descent persists at every order. Behind it in the queue:
 kernel classification beyond the solved models and Hilbert embedding of

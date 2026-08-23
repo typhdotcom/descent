@@ -838,6 +838,24 @@ example {G : ContextField R A} (hG : ∀ a b c, defect3 G a b c = 0)
     defect3 (K + G) a b c = defect3 K a b c :=
   defect3_add_of_eq_zero hG K a b c
 
+/-- README: the cumulative datum through order 3 has the order-≤3 gauge
+as its kernel, equal cumulative data is exactly a difference in that
+gauge, and the datum descends injectively to the cumulative quotient. -/
+example {K : ContextField R A} :
+    K ∈ gauge3 R A ↔ IsValuation K ∧ ∀ a b c, defect3 K a b c = 0 :=
+  mem_gauge3_iff
+
+example {K K' : ContextField R A} :
+    Defect3Equiv K K' ↔ K - K' ∈ gauge3 R A :=
+  defect3Equiv_iff_sub_mem_gauge3
+
+example (K : ContextField R A) :
+    Observable3.datum (Observable3.mk K) = (defect K, defect3 K) :=
+  Observable3.datum_mk K
+
+example : Function.Injective (Observable3.datum : Observable3 R A → _) :=
+  Observable3.datum_injective
+
 /-- README: on a distributive lattice the order-3 defect decomposes
 exactly into pairwise defects at derived squares, so pairwise valuations
 have none and it descends through the pairwise gauge to the observable
@@ -859,9 +877,18 @@ example {D : Type*} [DistribLattice D] (K : ContextField D A) :
     Observable.defect3 (Observable.mk K) = defect3 K :=
   Observable.defect3_mk K
 
+/-- README: on distributive contexts the order-≤3 gauge collapses to the
+pairwise gauge --- order 3 adds nothing. -/
+example {D : Type*} [DistribLattice D] : gauge3 D A = gauge D A :=
+  gauge3_eq_gauge
+
+example {D : Type*} [DistribLattice D] {K K' : ContextField D A} :
+    Defect3Equiv K K' ↔ DefectEquiv K K' :=
+  defect3Equiv_iff_defectEquiv
+
 /-- README: off distributivity descent fails --- on the diamond the height
-field is a pairwise valuation with order-3 defect one at the atom
-triple. -/
+field is a pairwise valuation with order-3 defect one at the atom triple,
+which is nondegenerate: pairwise incomparable. -/
 example : IsValuation Diamond.height :=
   Diamond.isValuation_height
 
@@ -869,12 +896,41 @@ example : defect3 Diamond.height Diamond.x Diamond.y Diamond.z = 1 :=
   Diamond.defect3_height
 
 example :
+    ¬Comparable Diamond.x Diamond.y ∧ ¬Comparable Diamond.x Diamond.z ∧
+      ¬Comparable Diamond.y Diamond.z :=
+  ⟨Diamond.not_comparable_x_y, Diamond.not_comparable_x_z,
+    Diamond.not_comparable_y_z⟩
+
+example :
     ∃ K K' : ContextField Diamond ℤ, DefectEquiv K K' ∧ defect3 K ≠ defect3 K' :=
   Diamond.exists_defectEquiv_defect3_ne
 
-/-- README: the arithmetic witness --- at the antichain `2, 3, 5` an
-explicit field has all three pairwise face defects zero and order-3
-defect one. -/
+/-- README: on the diamond the gauges are strictly nested, and observation
+through order 3 is strictly finer --- the height field and zero share the
+pairwise observable and the cumulative observable separates them. -/
+example : gauge3 Diamond ℤ < gauge Diamond ℤ :=
+  Diamond.gauge3_lt_gauge
+
+example : Observable.mk Diamond.height = Observable.mk (0 : ContextField Diamond ℤ) :=
+  Diamond.observable_mk_height_eq
+
+example : Observable3.mk Diamond.height ≠ Observable3.mk (0 : ContextField Diamond ℤ) :=
+  Diamond.observable3_mk_height_ne
+
+/-- README: the arithmetic lattice is provably distributive, so complete
+pairwise data reconstructs the order-3 defect --- at the antichain
+`2, 3, 5` through the derived square `(6, 5)`. -/
+example : DistribLattice Arith :=
+  inferInstance
+
+example (K : ContextField Arith ℝ) :
+    defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5)
+      = defect K (Arith.of 2) (Arith.of 3) + defect K (Arith.of 6) (Arith.of 5) :=
+  Arith.defect3_two_three_five K
+
+/-- README: the sparse-face witness --- an explicit field with all three
+of the triple's own face defects zero and order-3 defect one: the
+triple's boundary never determines its order-3 defect. -/
 example :
     ∃ K : ContextField Arith ℝ,
       defect K (Arith.of 2) (Arith.of 3) = 0 ∧

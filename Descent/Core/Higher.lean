@@ -24,16 +24,21 @@ The separation theorems:
   base-point residue; at the meet base the residue vanishes
   (`mixedDiff_triple_inf`). Subtracting faces from the raw cube is the
   order-separation datum, and what survives is `defect3`;
-* **the exact gauge law**: `defect3` is additive in the field, so it is
-  invariant under shifts by fields with vanishing order-3 defect. On a
-  distributive lattice every pairwise valuation is such a field, the
-  order-3 defect decomposes exactly into pairwise defects at derived
-  squares (`defect3_decompose`), and hence descends through the pairwise
-  gauge to the observable quotient (`Observable.defect3`): distributively,
-  order 3 is an observable of the pairwise class, and carries nothing
-  irreducible. Off distributivity descent fails
-  (`Descent.Models.Diamond`), and the surviving equivalence is joint
-  pairwise-and-triple defect equality.
+* **the cumulative observation**: the datum through order 3 is the pair
+  `(defect K, defect3 K)`. Its kernel is the order-≤3 gauge `gauge3`,
+  equal cumulative data is exactly a difference in that gauge
+  (`defect3Equiv_iff_sub_mem_gauge3`), and the datum descends injectively
+  to the cumulative quotient `Observable3`
+  (`Observable3.datum_injective`);
+* **the architecture**: on a distributive lattice the order-3 defect
+  decomposes exactly into pairwise defects at derived squares
+  (`defect3_decompose`), so the order-≤3 gauge collapses to the pairwise
+  gauge (`gauge3_eq_gauge`) and order 3 adds nothing --- `defect3`
+  descends to the pairwise quotient (`Observable.defect3`). Off
+  distributivity observation through order 3 is strictly finer: on the
+  diamond the gauges are strictly nested and two fields share the
+  pairwise observable while the cumulative observable separates them
+  (`Descent.Models.Diamond`).
 -/
 
 namespace Descent
@@ -148,6 +153,108 @@ theorem defect3_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
     defect3 (K ∘ f) a b c = defect3 K (f a) (f b) (f c) := by
   simp [defect3, Function.comp_apply, map_inf, map_sup]
 
+/-! ### The cumulative observation through order 3 -/
+
+/-- The order-3 defect operator, packaged as an additive homomorphism. -/
+def defect3Hom : ContextField R A →+ (R → R → R → A) where
+  toFun K := defect3 K
+  map_zero' := defect3_zero
+  map_add' K K' := by
+    funext a b c
+    exact defect3_add K K' a b c
+
+@[simp]
+theorem defect3Hom_apply (K : ContextField R A) : defect3Hom K = defect3 K :=
+  rfl
+
+/-- The order-≤3 gauge: the kernel of cumulative observation through
+order 3. -/
+def gauge3 (R A : Type*) [Lattice R] [AddCommGroup A] :
+    AddSubgroup (ContextField R A) :=
+  gauge R A ⊓ defect3Hom.ker
+
+theorem mem_gauge3_iff {K : ContextField R A} :
+    K ∈ gauge3 R A ↔ IsValuation K ∧ ∀ a b c, defect3 K a b c = 0 := by
+  rw [gauge3, AddSubgroup.mem_inf, mem_gauge_iff, AddMonoidHom.mem_ker]
+  refine and_congr Iff.rfl ?_
+  constructor
+  · exact fun h a b c => congrFun (congrFun (congrFun h a) b) c
+  · intro h
+    funext a b c
+    exact h a b c
+
+/-- Cumulative defect equivalence: equal pairwise and order-3 data. -/
+def Defect3Equiv (K K' : ContextField R A) : Prop :=
+  DefectEquiv K K' ∧ defect3 K = defect3 K'
+
+theorem Defect3Equiv.refl (K : ContextField R A) : Defect3Equiv K K :=
+  ⟨DefectEquiv.refl K, rfl⟩
+
+theorem Defect3Equiv.symm {K K' : ContextField R A} (h : Defect3Equiv K K') :
+    Defect3Equiv K' K :=
+  ⟨h.1.symm, h.2.symm⟩
+
+theorem Defect3Equiv.trans {K K' K'' : ContextField R A}
+    (h : Defect3Equiv K K') (h' : Defect3Equiv K' K'') : Defect3Equiv K K'' :=
+  ⟨h.1.trans h'.1, h.2.trans h'.2⟩
+
+/-- Equal cumulative data is exactly a difference in the order-≤3
+gauge. -/
+theorem defect3Equiv_iff_sub_mem_gauge3 {K K' : ContextField R A} :
+    Defect3Equiv K K' ↔ K - K' ∈ gauge3 R A := by
+  rw [mem_gauge3_iff, Defect3Equiv, defectEquiv_iff_sub_isValuation]
+  refine and_congr Iff.rfl ?_
+  constructor
+  · intro h a b c
+    rw [defect3_sub, congrFun (congrFun (congrFun h a) b) c, sub_self]
+  · intro h
+    funext a b c
+    have h0 := h a b c
+    rw [defect3_sub] at h0
+    exact sub_eq_zero.mp h0
+
+/-- Cumulative equivalence as a setoid. -/
+def defect3Setoid (R A : Type*) [Lattice R] [AddCommGroup A] :
+    Setoid (ContextField R A) where
+  r := Defect3Equiv
+  iseqv := ⟨Defect3Equiv.refl, Defect3Equiv.symm, Defect3Equiv.trans⟩
+
+/-- The cumulative observable quotient through order 3. -/
+def Observable3 (R A : Type*) [Lattice R] [AddCommGroup A] : Type _ :=
+  Quotient (defect3Setoid R A)
+
+namespace Observable3
+
+/-- The cumulative class of a field. -/
+def mk (K : ContextField R A) : Observable3 R A :=
+  Quotient.mk (defect3Setoid R A) K
+
+theorem mk_eq_mk {K K' : ContextField R A} :
+    mk K = mk K' ↔ Defect3Equiv K K' :=
+  Quotient.eq (r := defect3Setoid R A)
+
+/-- The cumulative datum, descended to the quotient. -/
+def datum : Observable3 R A → (R → R → A) × (R → R → R → A) :=
+  Quotient.lift (fun K => (Descent.defect K, defect3 K)) fun _ _ h =>
+    Prod.ext h.1 h.2
+
+@[simp]
+theorem datum_mk (K : ContextField R A) :
+    datum (mk K) = (Descent.defect K, defect3 K) :=
+  rfl
+
+/-- Cumulative observation is injective: the quotient carries exactly the
+cumulative datum. -/
+theorem datum_injective : Function.Injective (datum : Observable3 R A → _) := by
+  intro u v h
+  induction u using Quotient.inductionOn with
+  | _ K =>
+    induction v using Quotient.inductionOn with
+    | _ K' =>
+      exact mk_eq_mk.mpr ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩
+
+end Observable3
+
 end Lattice
 
 /-! ### Descent on distributive contexts -/
@@ -192,6 +299,18 @@ def Observable.defect3 : Observable R A → (R → R → R → A) :=
 theorem Observable.defect3_mk (K : ContextField R A) :
     Observable.defect3 (Observable.mk K) = Descent.defect3 K :=
   rfl
+
+/-- On distributive contexts cumulative equivalence collapses to pairwise
+equivalence: order 3 adds nothing. -/
+theorem defect3Equiv_iff_defectEquiv {K K' : ContextField R A} :
+    Defect3Equiv K K' ↔ DefectEquiv K K' :=
+  ⟨And.left, fun h => ⟨h, defect3_eq_of_defectEquiv h⟩⟩
+
+/-- On distributive contexts the order-≤3 gauge is the pairwise gauge. -/
+theorem gauge3_eq_gauge : gauge3 R A = gauge R A := by
+  refine le_antisymm inf_le_left fun K hK => mem_gauge3_iff.mpr ?_
+  exact ⟨mem_gauge_iff.mp hK,
+    defect3_eq_zero_of_isValuation (mem_gauge_iff.mp hK)⟩
 
 end DistribLattice
 

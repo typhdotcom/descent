@@ -72,6 +72,30 @@ theorem num_sup (a b : Arith) : (num (a ⊔ b) : ℕ) = (num a : ℕ).lcm (num b
 theorem num_ne_zero (a : Arith) : (num a : ℕ) ≠ 0 :=
   PNat.ne_zero (num a)
 
+/-- The arithmetic lattice is distributive: exponent vectors meet and join
+pointwise in a linear order. -/
+instance : DistribLattice Arith where
+  le_sup_inf a b c := by
+    have hbc : ((num b : ℕ)).gcd (num c) ≠ 0 := fun h =>
+      num_ne_zero b (Nat.eq_zero_of_gcd_eq_zero_left h)
+    have hab : ((num a : ℕ)).lcm (num b) ≠ 0 :=
+      Nat.lcm_ne_zero (num_ne_zero a) (num_ne_zero b)
+    have hac : ((num a : ℕ)).lcm (num c) ≠ 0 :=
+      Nat.lcm_ne_zero (num_ne_zero a) (num_ne_zero c)
+    have hg : Nat.gcd (((num a : ℕ)).lcm (num b)) (((num a : ℕ)).lcm (num c)) ≠ 0 :=
+      fun h => hab (Nat.eq_zero_of_gcd_eq_zero_left h)
+    rw [le_iff_dvd, num_inf, num_sup, num_sup, num_sup, num_inf,
+      ← Nat.factorization_le_iff_dvd hg (Nat.lcm_ne_zero (num_ne_zero a) hbc),
+      Nat.factorization_gcd hab hac, Nat.factorization_lcm (num_ne_zero a) hbc,
+      Nat.factorization_lcm (num_ne_zero a) (num_ne_zero b),
+      Nat.factorization_lcm (num_ne_zero a) (num_ne_zero c),
+      Nat.factorization_gcd (num_ne_zero b) (num_ne_zero c),
+      Finsupp.le_def]
+    intro p
+    rw [Finsupp.inf_apply, Finsupp.sup_apply, Finsupp.sup_apply, Finsupp.sup_apply,
+      Finsupp.inf_apply]
+    exact le_sup_inf
+
 /-! ### The divisor system -/
 
 /-- The divisor system: the finite set of divisors of a context. -/
@@ -308,10 +332,24 @@ theorem not_realizable_logDivisorCount : ¬Realizable logDivisorCount := by
   rintro ⟨Ω, _, X, hX⟩
   exact not_logPartition_logDivisorCount X hX
 
-/-- Third-order information invisible to the triple's own faces: at the
-antichain `2, 3, 5` an explicit field has all three pairwise face defects
-zero and order-3 defect one. Pairwise observation of the triple sees
-nothing; the triple does. -/
+/-- Sparse-face incompleteness made a theorem: the arithmetic lattice is
+distributive, so complete pairwise data reconstructs the order-3 defect
+--- at the antichain `2, 3, 5` the triple's own faces never suffice,
+because the whole order-3 defect is carried by the derived square
+`(6, 5)`. -/
+theorem defect3_two_three_five {A : Type*} [AddCommGroup A]
+    (K : ContextField Arith A) :
+    defect3 K (of 2) (of 3) (of 5)
+      = defect K (of 2) (of 3) + defect K (of 6) (of 5) := by
+  rw [defect3_decompose, show (of 2 ⊔ of 3 : Arith) = of 6 from by decide,
+    show (of 2 ⊓ of 5 : Arith) = of 1 from by decide,
+    show (of 3 ⊓ of 5 : Arith) = of 1 from by decide, defect_self, sub_zero]
+
+/-- The sparse-face witness: at the antichain `2, 3, 5` an explicit field
+has all three of the triple's own face defects zero and order-3 defect
+one. The triple's boundary does not determine its order-3 defect ---
+though by `defect3_two_three_five` complete pairwise observation, which
+also sees the derived square `(6, 5)`, does. -/
 theorem exists_defect_eq_zero_defect3_ne_zero :
     ∃ K : ContextField Arith ℝ,
       defect K (of 2) (of 3) = 0 ∧ defect K (of 2) (of 5) = 0 ∧

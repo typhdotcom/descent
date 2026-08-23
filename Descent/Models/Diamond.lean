@@ -56,6 +56,16 @@ instance : Lattice Diamond where
   le_sup_right := by decide
   sup_le := by decide
 
+instance : DecidableLE Diamond := fun p q =>
+  inferInstanceAs (Decidable (infD p q = p))
+
+/-- The atom triple is nondegenerate: pairwise incomparable. -/
+theorem not_comparable_x_y : ¬Comparable x y := by decide
+
+theorem not_comparable_x_z : ¬Comparable x z := by decide
+
+theorem not_comparable_y_z : ¬Comparable y z := by decide
+
 /-- The height field on the diamond. -/
 def height : ContextField Diamond ℤ
   | bot => 0
@@ -73,19 +83,48 @@ height field is a pairwise valuation with order-3 defect `1` at the atom
 triple. -/
 theorem defect3_height : defect3 height x y z = 1 := by decide
 
+/-- The height field is defect-equivalent to zero. -/
+theorem defectEquiv_height_zero :
+    DefectEquiv height (0 : ContextField Diamond ℤ) := by
+  show defect height = defect (0 : ContextField Diamond ℤ)
+  decide
+
 /-- Off distributivity the order-3 defect does not descend through the
 pairwise gauge: two defect-equivalent fields with different order-3
 defects. -/
 theorem exists_defectEquiv_defect3_ne :
     ∃ K K' : ContextField Diamond ℤ,
       DefectEquiv K K' ∧ defect3 K ≠ defect3 K' := by
-  refine ⟨height, 0, ?_, ?_⟩
-  · show defect height = defect (0 : ContextField Diamond ℤ)
-    decide
-  · intro h
-    have h0 := congrFun (congrFun (congrFun h x) y) z
-    rw [defect3_height] at h0
-    simp [defect3_zero] at h0
+  refine ⟨height, 0, defectEquiv_height_zero, ?_⟩
+  intro h
+  have h0 := congrFun (congrFun (congrFun h x) y) z
+  rw [defect3_height] at h0
+  simp [defect3_zero] at h0
+
+/-- On the diamond the order-≤3 gauge is strictly below the pairwise
+gauge: the height valuation is invisible to pairwise observation and
+visible to cumulative observation. -/
+theorem gauge3_lt_gauge : gauge3 Diamond ℤ < gauge Diamond ℤ := by
+  rw [SetLike.lt_iff_le_and_exists]
+  refine ⟨inf_le_left, height, mem_gauge_iff.mpr isValuation_height, fun h => ?_⟩
+  have h3 := (mem_gauge3_iff.mp h).2 x y z
+  rw [defect3_height] at h3
+  exact one_ne_zero h3
+
+/-- Observation through order 3 is strictly finer on the diamond: the
+height field and zero share the pairwise observable. -/
+theorem observable_mk_height_eq :
+    Observable.mk height = Observable.mk (0 : ContextField Diamond ℤ) :=
+  Observable.mk_eq_mk.mpr defectEquiv_height_zero
+
+/-- ... and the cumulative observable separates them. -/
+theorem observable3_mk_height_ne :
+    Observable3.mk height ≠ Observable3.mk (0 : ContextField Diamond ℤ) := by
+  rw [Ne, Observable3.mk_eq_mk]
+  rintro ⟨-, h3⟩
+  have h0 := congrFun (congrFun (congrFun h3 x) y) z
+  rw [defect3_height] at h0
+  simp [defect3_zero] at h0
 
 end Diamond
 
