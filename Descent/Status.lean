@@ -1178,4 +1178,84 @@ example (p : Diamond) (K : ContextField Diamond A) :
       Observable3.mk K₀ = Observable3.mk K ∧ K₀ p = 0 :=
   Diamond.existsUnique_mk_eq_and_apply_eq_zero p K
 
+/-! ## Sparse reconstruction on the diamond (the canonical datum)
+
+The claims below correspond to the sparse-reconstruction paragraph of
+the "Order separation" section of `README.md`.
+-/
+
+/-- README: four coordinates are complete --- equality of the canonical
+datum is equality in the final observable. -/
+example {K K' : ContextField Diamond A} :
+    Diamond.canonicalDatum K = Diamond.canonicalDatum K'
+      ↔ Observable3.mk K = Observable3.mk K' :=
+  Diamond.canonicalDatum_eq_iff
+
+/-- README: hence the datum determines every finite-family defect. -/
+example {K K' : ContextField Diamond A}
+    (h : Diamond.canonicalDatum K = Diamond.canonicalDatum K')
+    (a : Diamond) (l : List Diamond) : defectFam K a l = defectFam K' a l :=
+  Diamond.defectFam_eq_of_canonicalDatum_eq h a l
+
+/-- README: the normalized inverse realizes every quadruple. -/
+example (p q r s : A) :
+    Diamond.canonicalDatum (Diamond.reconstruct p q r s) = (p, q, r, s) :=
+  Diamond.canonicalDatum_reconstruct p q r s
+
+example (p q r s : A) : Diamond.reconstruct p q r s Diamond.bot = 0 :=
+  rfl
+
+/-- README: adjoining the bottom value reconstructs the entire field. -/
+example (K : ContextField Diamond A) :
+    Diamond.reconstruct (defect K Diamond.x Diamond.y)
+        (defect K Diamond.x Diamond.z) (defect K Diamond.y Diamond.z)
+        (defect3 K Diamond.x Diamond.y Diamond.z)
+      + ContextField.const Diamond (K Diamond.bot) = K :=
+  Diamond.reconstruct_canonicalDatum_add_const K
+
+/-- README: the inverse lands in the class it reconstructs. -/
+example (K : ContextField Diamond A) :
+    Observable3.mk (Diamond.reconstruct (defect K Diamond.x Diamond.y)
+        (defect K Diamond.x Diamond.z) (defect K Diamond.y Diamond.z)
+        (defect3 K Diamond.x Diamond.y Diamond.z))
+      = Observable3.mk K :=
+  Diamond.observable3_mk_reconstruct K
+
+/-- README: irredundancy --- deleting any one coordinate destroys
+completeness, with explicit witnesses over every nontrivial target. -/
+example [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K Diamond.x Diamond.y = defect K' Diamond.x Diamond.y ∧
+        defect K Diamond.x Diamond.z = defect K' Diamond.x Diamond.z ∧
+        defect K Diamond.y Diamond.z = defect K' Diamond.y Diamond.z ∧
+        Observable3.mk K ≠ Observable3.mk K' :=
+  Diamond.exists_pqr_eq_mk_ne
+
+example [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K Diamond.x Diamond.z = defect K' Diamond.x Diamond.z ∧
+        defect K Diamond.y Diamond.z = defect K' Diamond.y Diamond.z ∧
+        defect3 K Diamond.x Diamond.y Diamond.z
+          = defect3 K' Diamond.x Diamond.y Diamond.z ∧
+        Observable3.mk K ≠ Observable3.mk K' :=
+  Diamond.exists_qrs_eq_mk_ne
+
+example [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K Diamond.x Diamond.y = defect K' Diamond.x Diamond.y ∧
+        defect K Diamond.y Diamond.z = defect K' Diamond.y Diamond.z ∧
+        defect3 K Diamond.x Diamond.y Diamond.z
+          = defect3 K' Diamond.x Diamond.y Diamond.z ∧
+        Observable3.mk K ≠ Observable3.mk K' :=
+  Diamond.exists_prs_eq_mk_ne
+
+example [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K Diamond.x Diamond.y = defect K' Diamond.x Diamond.y ∧
+        defect K Diamond.x Diamond.z = defect K' Diamond.x Diamond.z ∧
+        defect3 K Diamond.x Diamond.y Diamond.z
+          = defect3 K' Diamond.x Diamond.y Diamond.z ∧
+        Observable3.mk K ≠ Observable3.mk K' :=
+  Diamond.exists_pqs_eq_mk_ne
+
 end Descent.Status

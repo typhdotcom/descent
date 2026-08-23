@@ -1,3 +1,4 @@
+import Descent.Core.Hierarchy
 import Descent.Core.Higher
 import Mathlib.Data.Fintype.Pi
 
@@ -235,6 +236,271 @@ theorem existsUnique_mk_eq_and_apply_eq_zero (p : Diamond)
   refine ⟨K - ContextField.const Diamond (K p), ⟨hw1, hw2⟩, ?_⟩
   rintro K₁ ⟨h1, h2⟩
   exact eq_of_mk_eq_of_apply_eq p (h1.trans hw1.symm) (by rw [h2, hw2])
+
+/-! ### Sparse reconstruction: the canonical datum -/
+
+/-- The canonical Diamond datum: the three pairwise defects and the
+order-3 defect at the atom triple. -/
+def canonicalDatum (K : ContextField Diamond A) : A × A × A × A :=
+  (defect K x y, defect K x z, defect K y z, defect3 K x y z)
+
+private theorem pair_cases :
+    ∀ a b : Diamond, Comparable a b ∨
+      (a = x ∧ b = y) ∨ (a = y ∧ b = x) ∨ (a = x ∧ b = z) ∨ (a = z ∧ b = x) ∨
+      (a = y ∧ b = z) ∨ (a = z ∧ b = y) := by
+  decide
+
+private theorem triple_cases :
+    ∀ a b c : Diamond,
+      (Comparable a b ∨ Comparable a c ∨ Comparable b c) ∨
+      ((a = x ∧ b = y ∧ c = z) ∨ (a = x ∧ b = z ∧ c = y) ∨
+        (a = y ∧ b = x ∧ c = z) ∨ (a = y ∧ b = z ∧ c = x) ∨
+        (a = z ∧ b = x ∧ c = y) ∨ (a = z ∧ b = y ∧ c = x)) := by
+  decide
+
+/-- Vanishing of the four coordinates puts a field in the order-≤3
+gauge: the atom triple carries all nondegenerate data of the diamond. -/
+theorem mem_gauge3_of {K : ContextField Diamond A} (hp : defect K x y = 0)
+    (hq : defect K x z = 0) (hr : defect K y z = 0)
+    (hs : defect3 K x y z = 0) : K ∈ gauge3 Diamond A := by
+  have hval : IsValuation K := by
+    intro a b
+    rcases pair_cases a b with hc | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+      ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact hc.defect_eq_zero K
+    · exact hp
+    · rw [defect_comm]
+      exact hp
+    · exact hq
+    · rw [defect_comm]
+      exact hq
+    · exact hr
+    · rw [defect_comm]
+      exact hr
+  refine mem_gauge3_iff.mpr ⟨hval, fun a b c => ?_⟩
+  rcases triple_cases a b c with (hab | hac | hbc) | hperm
+  · rcases hab with h | h
+    · rw [defect3_of_le K h]
+      exact hval _ _
+    · rw [defect3_comm_left, defect3_of_le K h]
+      exact hval _ _
+  · rcases hac with h | h
+    · rw [defect3_comm_right, defect3_of_le K h]
+      exact hval _ _
+    · rw [defect3_comm_right, defect3_comm_left, defect3_of_le K h]
+      exact hval _ _
+  · rcases hbc with h | h
+    · rw [defect3_comm_left, defect3_comm_right, defect3_of_le K h]
+      exact hval _ _
+    · rw [defect3_comm_left, defect3_comm_right, defect3_comm_left,
+        defect3_of_le K h]
+      exact hval _ _
+  · rcases hperm with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ |
+      ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩
+    · exact hs
+    · rw [defect3_comm_right]
+      exact hs
+    · rw [defect3_comm_left]
+      exact hs
+    · rw [defect3_comm_right, defect3_comm_left]
+      exact hs
+    · rw [defect3_comm_left, defect3_comm_right]
+      exact hs
+    · rw [defect3_comm_left, defect3_comm_right, defect3_comm_left]
+      exact hs
+
+/-- The four coordinates are complete: equality of the canonical datum is
+equality in the final observable. -/
+theorem canonicalDatum_eq_iff {K K' : ContextField Diamond A} :
+    canonicalDatum K = canonicalDatum K'
+      ↔ Observable3.mk K = Observable3.mk K' := by
+  constructor
+  · intro h
+    obtain ⟨h1, h2, h3, h4⟩ :
+        defect K x y = defect K' x y ∧ defect K x z = defect K' x z ∧
+          defect K y z = defect K' y z ∧ defect3 K x y z = defect3 K' x y z := by
+      simpa [canonicalDatum, Prod.ext_iff] using h
+    rw [Observable3.mk_eq_mk, defect3Equiv_iff_sub_mem_gauge3]
+    refine mem_gauge3_of ?_ ?_ ?_ ?_
+    · rw [defect_sub, h1, sub_self]
+    · rw [defect_sub, h2, sub_self]
+    · rw [defect_sub, h3, sub_self]
+    · rw [defect3_sub, h4, sub_self]
+  · intro h
+    obtain ⟨h2eq, h3eq⟩ := Observable3.mk_eq_mk.mp h
+    rw [canonicalDatum, canonicalDatum,
+      show defect K = defect K' from h2eq, h3eq]
+
+/-- Hence the canonical datum determines every finite-family defect. -/
+theorem defectFam_eq_of_canonicalDatum_eq {K K' : ContextField Diamond A}
+    (h : canonicalDatum K = canonicalDatum K') (a : Diamond) (l : List Diamond) :
+    defectFam K a l = defectFam K' a l := by
+  have hm : K - K' ∈ gauge3 Diamond A := by
+    rw [← defect3Equiv_iff_sub_mem_gauge3]
+    exact Observable3.mk_eq_mk.mp (canonicalDatum_eq_iff.mp h)
+  have h0 := defectFam_eq_zero_of_mem_gauge3 hm l a
+  have hsub : defectFam (K - K') a l = defectFam K a l - defectFam K' a l :=
+    congrFun (congrFun (defectFamHom.map_sub K K') a) l
+  rw [h0] at hsub
+  exact (sub_eq_zero.mp hsub.symm)
+
+/-- The explicit normalized inverse: the zero-at-bottom field with
+prescribed canonical datum. -/
+def reconstruct (p q r s : A) : ContextField Diamond A
+  | bot => 0
+  | x => s - r
+  | y => s - q
+  | z => s - p
+  | top => s + s - p - q - r
+
+@[simp]
+theorem defect_reconstruct_xy (p q r s : A) :
+    defect (reconstruct p q r s) x y = p := by
+  rw [defect_def, show (x ⊓ y : Diamond) = bot from by decide,
+    show (x ⊔ y : Diamond) = top from by decide]
+  show (s - r) + (s - q) - 0 - (s + s - p - q - r) = p
+  abel
+
+@[simp]
+theorem defect_reconstruct_xz (p q r s : A) :
+    defect (reconstruct p q r s) x z = q := by
+  rw [defect_def, show (x ⊓ z : Diamond) = bot from by decide,
+    show (x ⊔ z : Diamond) = top from by decide]
+  show (s - r) + (s - p) - 0 - (s + s - p - q - r) = q
+  abel
+
+@[simp]
+theorem defect_reconstruct_yz (p q r s : A) :
+    defect (reconstruct p q r s) y z = r := by
+  rw [defect_def, show (y ⊓ z : Diamond) = bot from by decide,
+    show (y ⊔ z : Diamond) = top from by decide]
+  show (s - q) + (s - p) - 0 - (s + s - p - q - r) = r
+  abel
+
+@[simp]
+theorem defect3_reconstruct (p q r s : A) :
+    defect3 (reconstruct p q r s) x y z = s := by
+  rw [defect3_def, show (x ⊓ y ⊓ z : Diamond) = bot from by decide,
+    show (x ⊓ y : Diamond) = bot from by decide,
+    show (x ⊓ z : Diamond) = bot from by decide,
+    show (y ⊓ z : Diamond) = bot from by decide,
+    show (x ⊔ y ⊔ z : Diamond) = top from by decide]
+  show (s - r) + (s - q) + (s - p) - 0 - 0 - 0 + 0 - (s + s - p - q - r) = s
+  abel
+
+/-- Round trip one: the inverse realizes every quadruple in `A⁴`. -/
+theorem canonicalDatum_reconstruct (p q r s : A) :
+    canonicalDatum (reconstruct p q r s) = (p, q, r, s) := by
+  simp [canonicalDatum]
+
+/-- Round trip two: adjoining the bottom value to the canonical datum
+reconstructs the entire field. -/
+theorem reconstruct_canonicalDatum_add_const (K : ContextField Diamond A) :
+    reconstruct (defect K x y) (defect K x z) (defect K y z)
+        (defect3 K x y z)
+      + ContextField.const Diamond (K bot) = K := by
+  have hP : defect K x y = K x + K y - K bot - K top := by
+    rw [defect_def, show (x ⊓ y : Diamond) = bot from by decide,
+      show (x ⊔ y : Diamond) = top from by decide]
+  have hQ : defect K x z = K x + K z - K bot - K top := by
+    rw [defect_def, show (x ⊓ z : Diamond) = bot from by decide,
+      show (x ⊔ z : Diamond) = top from by decide]
+  have hR : defect K y z = K y + K z - K bot - K top := by
+    rw [defect_def, show (y ⊓ z : Diamond) = bot from by decide,
+      show (y ⊔ z : Diamond) = top from by decide]
+  have hS : defect3 K x y z
+      = K x + K y + K z - K bot - K bot - K bot + K bot - K top := by
+    rw [defect3_def, show (x ⊓ y ⊓ z : Diamond) = bot from by decide,
+      show (x ⊓ y : Diamond) = bot from by decide,
+      show (x ⊓ z : Diamond) = bot from by decide,
+      show (y ⊓ z : Diamond) = bot from by decide,
+      show (x ⊔ y ⊔ z : Diamond) = top from by decide]
+  funext u
+  cases u
+  · show (0 : A) + K bot = K bot
+    rw [zero_add]
+  · show defect3 K x y z - defect K y z + K bot = K x
+    rw [hS, hR]
+    abel
+  · show defect3 K x y z - defect K x z + K bot = K y
+    rw [hS, hQ]
+    abel
+  · show defect3 K x y z - defect K x y + K bot = K z
+    rw [hS, hP]
+    abel
+  · show defect3 K x y z + defect3 K x y z - defect K x y - defect K x z
+        - defect K y z + K bot = K top
+    rw [hS, hP, hQ, hR]
+    abel
+
+/-- The inverse lands in the class it reconstructs. -/
+theorem observable3_mk_reconstruct (K : ContextField Diamond A) :
+    Observable3.mk (reconstruct (defect K x y) (defect K x z)
+        (defect K y z) (defect3 K x y z))
+      = Observable3.mk K := by
+  rw [observable3_mk_eq_mk_iff]
+  refine ⟨-K bot, ?_⟩
+  have h := reconstruct_canonicalDatum_add_const K
+  funext u
+  have hu := congrFun h u
+  simp only [Pi.add_apply, ContextField.const_apply] at hu
+  simp only [Pi.sub_apply, ContextField.const_apply]
+  rw [← hu]
+  abel
+
+/-! ### Irredundancy: deleting any coordinate destroys completeness -/
+
+/-- Without `s`: two fields agreeing in `p, q, r` with different final
+observables. -/
+theorem exists_pqr_eq_mk_ne [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K x y = defect K' x y ∧ defect K x z = defect K' x z ∧
+        defect K y z = defect K' y z ∧
+        Observable3.mk K ≠ Observable3.mk K' := by
+  obtain ⟨e, he⟩ := exists_ne (0 : A)
+  refine ⟨0, reconstruct 0 0 0 e, by simp, by simp, by simp, fun hmk => ?_⟩
+  have hcomp := congrArg (fun t => t.2.2.2) (canonicalDatum_eq_iff.mpr hmk)
+  simp [canonicalDatum] at hcomp
+  exact he hcomp.symm
+
+/-- Without `p`: two fields agreeing in `q, r, s` with different final
+observables. -/
+theorem exists_qrs_eq_mk_ne [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K x z = defect K' x z ∧ defect K y z = defect K' y z ∧
+        defect3 K x y z = defect3 K' x y z ∧
+        Observable3.mk K ≠ Observable3.mk K' := by
+  obtain ⟨e, he⟩ := exists_ne (0 : A)
+  refine ⟨0, reconstruct e 0 0 0, by simp, by simp, by simp, fun hmk => ?_⟩
+  have hcomp := congrArg (fun t => t.1) (canonicalDatum_eq_iff.mpr hmk)
+  simp [canonicalDatum] at hcomp
+  exact he hcomp.symm
+
+/-- Without `q`: two fields agreeing in `p, r, s` with different final
+observables. -/
+theorem exists_prs_eq_mk_ne [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K x y = defect K' x y ∧ defect K y z = defect K' y z ∧
+        defect3 K x y z = defect3 K' x y z ∧
+        Observable3.mk K ≠ Observable3.mk K' := by
+  obtain ⟨e, he⟩ := exists_ne (0 : A)
+  refine ⟨0, reconstruct 0 e 0 0, by simp, by simp, by simp, fun hmk => ?_⟩
+  have hcomp := congrArg (fun t => t.2.1) (canonicalDatum_eq_iff.mpr hmk)
+  simp [canonicalDatum] at hcomp
+  exact he hcomp.symm
+
+/-- Without `r`: two fields agreeing in `p, q, s` with different final
+observables. -/
+theorem exists_pqs_eq_mk_ne [Nontrivial A] :
+    ∃ K K' : ContextField Diamond A,
+      defect K x y = defect K' x y ∧ defect K x z = defect K' x z ∧
+        defect3 K x y z = defect3 K' x y z ∧
+        Observable3.mk K ≠ Observable3.mk K' := by
+  obtain ⟨e, he⟩ := exists_ne (0 : A)
+  refine ⟨0, reconstruct 0 0 e 0, by simp, by simp, by simp, fun hmk => ?_⟩
+  have hcomp := congrArg (fun t => t.2.2.1) (canonicalDatum_eq_iff.mpr hmk)
+  simp [canonicalDatum] at hcomp
+  exact he hcomp.symm
 
 end Classification
 
