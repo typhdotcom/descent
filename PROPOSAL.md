@@ -299,10 +299,34 @@ same complete pairwise defect can have different triple defect. Thus the first
 higher observable is carrier-sensitive rather than a universal strict
 extension of pairwise observation.
 
-The hierarchy above order 3 remains open. Before an order-(k) construction
-earns observable or interaction terminology, it must state its nondegeneracy
-or order-separation datum, characterize its cumulative gauge, prove descent
-through that gauge, and exhibit information not reducible to lower orders.
+Order 4 supplies the next cumulative layer and exposes the obstruction to
+continuing the distributive recurrence on an arbitrary lattice. Its exact law
+is
+
+\[
+\\begin{aligned}
+D^{(4)}(a,b,c,d)
+={}&D^{(3)}(a,b,c)+D(a\\vee b\\vee c,d)
+-D^{(3)}(a\\wedge d,b\\wedge d,c\\wedge d)\\\\
+&+K((a\\vee b\\vee c)\\wedge d)
+-K((a\\wedge d)\\vee(b\\wedge d)\\vee(c\\wedge d)).
+\\end{aligned}
+\]
+
+The last line is the exact field gap across a distributivity-defect interval.
+The cumulative datum through order 4 is (D,D^{(3)},D^{(4)}), with its own
+kernel and injectively observed quotient. For a field in the order-(\\le 3)
+gauge, every term above except the distributivity gap vanishes. Consequently,
+strict refinement at order 4 is exactly the existence of an order-(\\le 3)
+gauge field that detects such an interval. Distributive lattices cannot do so,
+and lattices without a four-element antichain stabilize at order 3.
+
+Whether the order-(\\le 4) gauge can be strictly smaller than the
+order-(\\le 3) gauge is now the singular open question. The hierarchy above
+order 4 must not be generalized before that question establishes whether the
+observable tower actually grows. At every later order, observable or
+interaction terminology still requires an explicit order-separation datum,
+cumulative gauge, descent theorem, and strictness or stabilization result.
 
 Questions include:
 
@@ -423,7 +447,7 @@ Distinguish, for example:
 - one infinite row;
 - a finite collection of entries;
 - the raw mixed-difference table;
-- the cumulative order-(\\le 3) datum, or a later order-separated datum with its
+- the cumulative order-(\\le 4) datum, or a later order-separated datum with its
   gauge already characterized;
 - either observable datum plus explicit normalization.
 
@@ -705,11 +729,14 @@ The current mathematics exposes a conceptual stratification inside the core:
 
 The mixed-difference calculus belongs to the first layer and consumes a
 join-semilattice; pairwise defect belongs to the second and consumes a lattice.
-The next layer consumes the cumulative pair (D,D^{(3)}): its kernel defines
-the order-(\\le 3) gauge and its quotient is the cumulative observable. On
-distributive lattices this layer collapses to the pairwise observable; on the
-diamond it is strictly finer. No analogous order-(k) interface for (k\\ge 4)
-should be introduced until its defining theorems are known.
+The next layers consume the cumulative data (D,D^{(3)}) and
+(D,D^{(3)},D^{(4)}), whose kernels define the order-(\\le 3) and
+order-(\\le 4) gauges. On distributive lattices both collapse to the pairwise
+observable. On the diamond order 3 is strictly finer and order 4 stabilizes.
+The exact arbitrary-lattice order-4 recurrence identifies the remaining
+strictness question with detection of a distributivity-defect interval by an
+order-(\\le 3) gauge field. No order-(k) interface for (k\\ge 5) should be
+introduced until that question is settled.
 
 ______________________________________________________________________
 
@@ -1022,9 +1049,9 @@ Prove:
 - impossibility under weaker observation or normalization data.
 
 M3 preserved the order-separated higher observable exposed as missing by M2
-without manufacturing a quotient. The later order-3 development identifies
-the first such datum and gauge exactly; the same discipline remains binding
-above order 3.
+without manufacturing a quotient. The later order-3 and order-4 developments
+identify their cumulative data and gauges exactly; the same discipline remains
+binding above order 4.
 
 The project should seek explicit reconstruction algorithms as well as
 existential statements.
@@ -1114,12 +1141,13 @@ Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 
 ### Q4 — Higher interaction
 
-At order 3 the cumulative datum is (D,D^{(3)}). Its gauge is the joint
-kernel; it collapses to the pairwise gauge on distributive lattices and is
-strictly finer on the diamond. Above order 3, what cumulative
-inclusion--exclusion hierarchy isolates raw mixed differences from lower-order
-faces, what is its gauge, and for which carriers does each new order contain
-information not reducible to the preceding ones?
+At order 3 the cumulative gauge collapses to the pairwise gauge on
+distributive lattices and is strictly finer on the diamond. At order 4 the
+exact recurrence reduces strictness to detection of a distributivity-defect
+interval by an order-(\\le 3) gauge field; distributive lattices and lattices
+without a four-element antichain stabilize. Does any lattice admit such a
+field, making the order-(\\le 4) gauge strictly smaller? Generalization above
+order 4 waits on this answer.
 
 ### Q5 — Realizability
 
