@@ -52,10 +52,18 @@ On distributive lattices the collapse persists through the recurrence
     D₄(a,b,c,d) = D₃(a,b,c) + D₂(a ⊔ b ⊔ c, d) - D₃(a ⊓ d, b ⊓ d, c ⊓ d)
 
 (`defect4_decompose`), the same shape as `defect3_decompose` one order
-down: `gauge4 = gauge` distributively. Without a 4-antichain order 4
-adds nothing beyond order 3 (`defect4_eq_zero_of_defect3_eq_zero`), so
-the diamond stabilizes at order 3; whether any carrier strictly
-separates order 4 from cumulative order ≤ 3 is open.
+down: `gauge4 = gauge` distributively.
+
+The separation question at order 4 is settled negatively, on every
+lattice: the order-≤3 gauge is blind to every two-variable
+distributivity-defect interval (`apply_eq_of_mem_gauge3`), the blindness
+propagates through the valuation law to the three-variable interval of
+the order-4 criterion, and the order-4 defect vanishes on the order-≤3
+gauge (`defect4_eq_zero_of_mem_gauge3`). Saturation:
+`gauge4 = gauge3` unconditionally (`gauge4_eq_gauge3`), cumulative
+equivalence through order 4 is cumulative equivalence through order 3,
+and the order-4 datum is a function of the order-≤3 datum on every
+carrier.
 -/
 
 namespace Descent
@@ -169,6 +177,28 @@ theorem defect3_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
     (K : ContextField R' A) (a b c : R) :
     defect3 (K ∘ f) a b c = defect3 K (f a) (f b) (f c) := by
   simp [defect3, Function.comp_apply, map_inf, map_sup]
+
+/-- The exact recurrence at order 3 on an arbitrary lattice: the
+distributive decomposition plus the field gap across the two-variable
+distributivity-defect interval `[(a ⊓ c) ⊔ (b ⊓ c), (a ⊔ b) ⊓ c]`. -/
+theorem defect3_recurrence (K : ContextField R A) (a b c : R) :
+    defect3 K a b c
+      = defect K a b + defect K (a ⊔ b) c - defect K (a ⊓ c) (b ⊓ c)
+        + (K ((a ⊔ b) ⊓ c) - K ((a ⊓ c) ⊔ (b ⊓ c))) := by
+  have hm : (a ⊓ c) ⊓ (b ⊓ c) = a ⊓ b ⊓ c := by
+    rw [inf_assoc a c, inf_comm c (b ⊓ c), inf_assoc b c, inf_idem, ← inf_assoc]
+  simp only [defect3, defect_def, hm]
+  abel
+
+/-- The order-3 search criterion: on the pairwise gauge the order-3
+defect is exactly the field gap across the two-variable
+distributivity-defect interval. -/
+theorem defect3_eq_of_mem_gauge {K : ContextField R A} (hK : K ∈ gauge R A)
+    (a b c : R) :
+    defect3 K a b c = K ((a ⊔ b) ⊓ c) - K ((a ⊓ c) ⊔ (b ⊓ c)) := by
+  have h2 := mem_gauge_iff.mp hK
+  rw [defect3_recurrence, h2 a b, h2 (a ⊔ b) c, h2 (a ⊓ c) (b ⊓ c)]
+  abel
 
 /-! ### Order 4 -/
 
@@ -475,20 +505,6 @@ theorem mem_gauge4_iff {K : ContextField R A} :
     funext a b c d
     exact h a b c d
 
-/-- Stabilization without a 4-antichain, generically: if every quadruple
-contains a comparable pair, the order-≤4 gauge is the order-≤3 gauge. -/
-theorem gauge4_eq_gauge3
-    (h : ∀ a b c d : R,
-      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
-        Comparable b d ∨ Comparable c d) :
-    gauge4 R A = gauge3 R A := by
-  refine le_antisymm inf_le_left fun K hK => ?_
-  rw [gauge4, AddSubgroup.mem_inf]
-  refine ⟨hK, ?_⟩
-  rw [AddMonoidHom.mem_ker]
-  funext a b c d
-  exact defect4_eq_zero_of_defect3_eq_zero (mem_gauge3_iff.mp hK).2 (h a b c d)
-
 /-- The search criterion for order-4 strictness: on the order-≤3 gauge
 everything in the recurrence dies except the remainder, so the order-4
 defect is exactly the field gap across the distributivity-defect
@@ -502,6 +518,57 @@ theorem defect4_eq_of_mem_gauge3 {K : ContextField R A}
   rw [defect4_recurrence, h3 a b c, h2 (a ⊔ b ⊔ c) d,
     h3 (a ⊓ d) (b ⊓ d) (c ⊓ d)]
   abel
+
+/-- Two-variable blindness of the order-≤3 gauge: its fields do not
+separate any two-variable distributivity-defect interval. -/
+theorem apply_eq_of_mem_gauge3 {K : ContextField R A} (hK : K ∈ gauge3 R A)
+    (a b c : R) : K ((a ⊔ b) ⊓ c) = K ((a ⊓ c) ⊔ (b ⊓ c)) := by
+  obtain ⟨h2, h3⟩ := mem_gauge3_iff.mp hK
+  have h := defect3_eq_of_mem_gauge (mem_gauge_iff.mpr h2) a b c
+  rw [h3 a b c] at h
+  exact sub_eq_zero.mp h.symm
+
+/-- Saturation: on the order-≤3 gauge the order-4 defect vanishes, on
+every lattice. Two-variable blindness propagates through the valuation
+law to the three-variable interval, so no order-≤3 gauge field detects
+it. -/
+theorem defect4_eq_zero_of_mem_gauge3 {K : ContextField R A}
+    (hK : K ∈ gauge3 R A) (a b c d : R) : defect4 K a b c d = 0 := by
+  have h2 := (mem_gauge3_iff.mp hK).1
+  have hG := apply_eq_of_mem_gauge3 hK
+  have hval : ∀ x y : R, K (x ⊔ y) = K x + K y - K (x ⊓ y) := fun x y => by
+    have h := h2 x y
+    rw [defect_def] at h
+    exact (sub_eq_zero.mp h).symm
+  have e1 : ((a ⊔ b) ⊓ d) ⊓ (c ⊓ d) = (a ⊔ b) ⊓ (c ⊓ d) := by
+    rw [inf_assoc, inf_eq_right.mpr inf_le_right]
+  have e3 : (a ⊓ d) ⊓ (c ⊓ d) = a ⊓ (c ⊓ d) := by
+    rw [inf_assoc, inf_eq_right.mpr inf_le_right]
+  have e4 : (b ⊓ d) ⊓ (c ⊓ d) = b ⊓ (c ⊓ d) := by
+    rw [inf_assoc, inf_eq_right.mpr inf_le_right]
+  rw [defect4_eq_of_mem_gauge3 hK, sub_eq_zero]
+  calc K ((a ⊔ b ⊔ c) ⊓ d)
+      = K (((a ⊔ b) ⊓ d) ⊔ (c ⊓ d)) := hG (a ⊔ b) c d
+    _ = K ((a ⊔ b) ⊓ d) + K (c ⊓ d) - K ((a ⊔ b) ⊓ (c ⊓ d)) := by
+        rw [hval, e1]
+    _ = K ((a ⊓ d) ⊔ (b ⊓ d)) + K (c ⊓ d)
+          - K ((a ⊓ (c ⊓ d)) ⊔ (b ⊓ (c ⊓ d))) := by
+        rw [hG a b d, hG a b (c ⊓ d)]
+    _ = K ((a ⊓ d) ⊔ (b ⊓ d)) + K (c ⊓ d)
+          - K (((a ⊓ d) ⊔ (b ⊓ d)) ⊓ (c ⊓ d)) := by
+        rw [hG (a ⊓ d) (b ⊓ d) (c ⊓ d), e3, e4]
+    _ = K ((a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d)) := (hval _ _).symm
+
+/-- The saturation theorem: the order-≤4 gauge is the order-≤3 gauge on
+every lattice and for every target. Cumulative observation cannot become
+strictly finer at order 4. -/
+theorem gauge4_eq_gauge3 : gauge4 R A = gauge3 R A := by
+  refine le_antisymm inf_le_left fun K hK => ?_
+  rw [gauge4, AddSubgroup.mem_inf]
+  refine ⟨hK, ?_⟩
+  rw [AddMonoidHom.mem_ker]
+  funext a b c d
+  exact defect4_eq_zero_of_mem_gauge3 hK a b c d
 
 /-- Cumulative defect equivalence through order 4. -/
 def Defect4Equiv (K K' : ContextField R A) : Prop :=
@@ -582,6 +649,20 @@ theorem datum_injective : Function.Injective (datum : Observable4 R A → _) := 
           congrArg (fun p => p.2.2) h⟩
 
 end Observable4
+
+/-- Saturation at the level of equivalences: cumulative equivalence
+through order 4 is cumulative equivalence through order 3, on every
+lattice. -/
+theorem defect4Equiv_iff_defect3Equiv {K K' : ContextField R A} :
+    Defect4Equiv K K' ↔ Defect3Equiv K K' := by
+  rw [defect4Equiv_iff_sub_mem_gauge4, defect3Equiv_iff_sub_mem_gauge3,
+    gauge4_eq_gauge3]
+
+/-- The order-4 datum is a function of the cumulative order-≤3 datum, on
+every lattice. -/
+theorem defect4_eq_of_defect3Equiv {K K' : ContextField R A}
+    (h : Defect3Equiv K K') : defect4 K = defect4 K' :=
+  (defect4Equiv_iff_defect3Equiv.mpr h).2
 
 end Lattice
 

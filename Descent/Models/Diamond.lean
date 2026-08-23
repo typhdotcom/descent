@@ -126,19 +126,6 @@ theorem observable3_mk_height_ne :
   rw [defect3_height] at h0
   simp [defect3_zero] at h0
 
-/-- The diamond has no 4-antichain: every quadruple contains a comparable
-pair. -/
-theorem four_comparable :
-    ∀ a b c d : Diamond,
-      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
-        Comparable b d ∨ Comparable c d := by
-  decide
-
-/-- The diamond stabilizes at order 3: a corollary of the generic
-stabilization theorem, since it has no 4-antichain. -/
-theorem gauge4_eq_gauge3 : gauge4 Diamond ℤ = gauge3 Diamond ℤ :=
-  Descent.gauge4_eq_gauge3 four_comparable
-
 end Diamond
 
 end Descent

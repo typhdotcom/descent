@@ -1015,25 +1015,42 @@ example {D : Type*} [DistribLattice D] {K K' : ContextField D A} :
     Defect4Equiv K K' ↔ DefectEquiv K K' :=
   defect4Equiv_iff_defectEquiv
 
-/-- README: without a 4-antichain, order 4 adds nothing beyond order 3
---- generically, for any context lattice and target. -/
-example
-    (h : ∀ a b c d : R,
-      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
-        Comparable b d ∨ Comparable c d) :
-    gauge4 R A = gauge3 R A :=
-  gauge4_eq_gauge3 h
+/-- README: the order-3 recurrence on an arbitrary lattice, and its
+criterion --- on the pairwise gauge the order-3 defect is exactly the
+two-variable distributivity gap. -/
+example (K : ContextField R A) (a b c : R) :
+    defect3 K a b c
+      = defect K a b + defect K (a ⊔ b) c - defect K (a ⊓ c) (b ⊓ c)
+        + (K ((a ⊔ b) ⊓ c) - K ((a ⊓ c) ⊔ (b ⊓ c))) :=
+  defect3_recurrence K a b c
 
-/-- README: the diamond has no 4-antichain and stabilizes, as a
-corollary. -/
-example :
-    ∀ a b c d : Diamond,
-      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
-        Comparable b d ∨ Comparable c d :=
-  Diamond.four_comparable
+example {K : ContextField R A} (hK : K ∈ gauge R A) (a b c : R) :
+    defect3 K a b c = K ((a ⊔ b) ⊓ c) - K ((a ⊓ c) ⊔ (b ⊓ c)) :=
+  defect3_eq_of_mem_gauge hK a b c
 
-example : gauge4 Diamond ℤ = gauge3 Diamond ℤ :=
-  Diamond.gauge4_eq_gauge3
+/-- README: saturation --- order-≤3 gauge fields are blind to every
+two-variable distributivity interval, the blindness propagates, and the
+order-4 defect vanishes on the order-≤3 gauge, on every lattice. -/
+example {K : ContextField R A} (hK : K ∈ gauge3 R A) (a b c : R) :
+    K ((a ⊔ b) ⊓ c) = K ((a ⊓ c) ⊔ (b ⊓ c)) :=
+  apply_eq_of_mem_gauge3 hK a b c
+
+example {K : ContextField R A} (hK : K ∈ gauge3 R A) (a b c d : R) :
+    defect4 K a b c d = 0 :=
+  defect4_eq_zero_of_mem_gauge3 hK a b c d
+
+/-- README: the saturation theorem --- the order-≤4 gauge is the order-≤3
+gauge on every lattice and target: cumulative observation cannot become
+strictly finer at order 4. -/
+example : gauge4 R A = gauge3 R A :=
+  gauge4_eq_gauge3
+
+example {K K' : ContextField R A} : Defect4Equiv K K' ↔ Defect3Equiv K K' :=
+  defect4Equiv_iff_defect3Equiv
+
+example {K K' : ContextField R A} (h : Defect3Equiv K K') :
+    defect4 K = defect4 K' :=
+  defect4_eq_of_defect3Equiv h
 
 /-- README: chains kill order 4 identically. -/
 example {C : Type*} [LinearOrder C] (K : ContextField C A) (a b c d : C) :

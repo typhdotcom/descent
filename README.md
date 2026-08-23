@@ -352,20 +352,23 @@ order-4 defect is the failure of fourfold inclusion–exclusion:
   equivalence, and its injective quotient observation `Observable4`.
 - The exact recurrence holds on any lattice, with a named remainder:
   `D₄(a,b,c,d) = D₃(a,b,c) + D₂(a⊔b⊔c, d) − D₃(a⊓d, b⊓d, c⊓d) + (K((a⊔b⊔c)⊓d) − K((a⊓d)⊔(b⊓d)⊔(c⊓d)))` — the field gap across the
-  distributivity-defect interval. On the order-≤3 gauge everything but
-  the remainder dies: for `K` in `gauge3` the order-4 defect *is* that
-  gap. This is the search criterion for order-4 strictness: cumulative
-  observation is strictly finer at order 4 precisely when some order-≤3
-  gauge field detects a distributivity-defect interval.
-- On distributive lattices the remainder vanishes, so the collapse
-  persists — the same decomposition shape as order 3 over order 2 — and
-  the order-≤4 gauge is still the pairwise gauge; the arithmetic
-  antichain `2, 3, 5, 7` instantiates the recurrence with its meets
-  degenerating.
-- Without a 4-antichain, order 4 adds nothing beyond order 3 — a
-  generic theorem: on any context lattice where every quadruple contains
-  a comparable pair, `gauge4 = gauge3`. The diamond has no 4-antichain —
-  itself a theorem — and stabilizes as a corollary.
+  distributivity-defect interval — and one order down the same holds:
+  `D₃` is its distributive decomposition plus the two-variable gap. On
+  the pairwise gauge the order-3 defect *is* the two-variable gap; on
+  the order-≤3 gauge the order-4 defect *is* the three-variable gap.
+- On distributive lattices the remainders vanish, so the collapse
+  persists — the same decomposition shape at each order — and the
+  order-≤4 gauge is still the pairwise gauge; the arithmetic antichain
+  `2, 3, 5, 7` instantiates the recurrence with its meets degenerating.
+- **Saturation.** The separation question at order 4 is settled
+  negatively, on every lattice: order-≤3 gauge fields are blind to every
+  two-variable distributivity interval — that is exactly their order-3
+  criterion — and the blindness propagates through the valuation law to
+  the three-variable interval, so the order-4 defect vanishes on the
+  whole order-≤3 gauge. Unconditionally, `gauge4 = gauge3`: cumulative
+  observation never becomes strictly finer at order 4, cumulative
+  equivalence through order 4 collapses to order 3, and the order-4
+  datum is a function of the order-≤3 datum on every carrier.
 
 ## Working on it
 
@@ -384,15 +387,15 @@ installs on first use.
 order 4: cumulative data, gauges, and injective quotient observations at
 orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
 the two-regime architecture — distributive contexts add nothing at
-either order, the diamond is strictly finer at order 3 and stabilizes at
-order 4 for want of a 4-antichain. The next question is singular: settle
-whether cumulative observation can become strictly finer at order 4 —
-whether any lattice, target, and field lie in `gauge3` but not `gauge4`.
-The search criterion is committed
-(`defect4_eq_of_mem_gauge3`): a witness is exactly an order-≤3 gauge
-field detecting a distributivity-defect interval, which requires a
-4-antichain; the diamond and chains are ruled out. Either a strict
-finite witness or a theorem excluding separation settles it, and the
-hierarchy is not generalized to arbitrary order before then. Behind it: kernel classification beyond the
+either order, the diamond is strictly finer at order 3.
+The order-4 separation question is
+settled: no lattice, target, and field lie in `gauge3` but not `gauge4`
+— the saturation theorem `gauge4 = gauge3` holds unconditionally,
+because order-≤3 gauge fields are blind to every two-variable
+distributivity interval and that blindness propagates to the
+three-variable one. The natural sequel is whether the same propagation
+closes every higher order — making order 3 the final refinement of
+defect observation on all lattices — but the hierarchy is not
+generalized until directed. Behind it: kernel classification beyond the
 solved models, Hilbert embedding of sampled conditional negativity, and
 carriers that pay the admission fee.
