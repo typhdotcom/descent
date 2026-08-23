@@ -367,6 +367,15 @@ value determines the field, and every class has a unique representative
 vanishing at a chosen context. This is the full inverse cycle on the first
 carrier where order 3 is genuinely new.
 
+The final observable is also sparse and explicit on the diamond. Its canonical
+datum is the quadruple consisting of the three pairwise defects at the
+incomparable atom pairs and the order-3 defect at the atom triple. Equality of
+these four coordinates is exactly equality of final observable classes, every
+quadruple occurs, and adjoining the bottom value reconstructs the field by an
+explicit inverse. For every nontrivial additive commutative target, deleting
+any one coordinate destroys completeness. Thus the final observable is four
+irredundant measurements, not the full table in disguise.
+
 The closure removes the question whether this hierarchy keeps producing new
 observables. Questions about the completed datum still include:
 
@@ -1184,12 +1193,12 @@ itself?
 Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 (\\ker D_S=\\ker D)?
 
-The immediate program is the canonical sparse datum for the final observable
-on the diamond. Prove that the three pairwise defects at the incomparable atom
-pairs together with the order-3 defect at the atom triple determine the
-complete observable datum. Derive explicit reconstruction formulas after one
-normalization, and prove for every nontrivial additive commutative target that
-each of the four measurements is essential.
+The diamond case is solved. The three pairwise defects at the incomparable
+atom pairs together with the order-3 defect at the atom triple determine the
+complete observable datum and every higher finite-family defect. Every
+quadruple occurs, adjoining one normalization reconstructs the field, and for
+every nontrivial additive commutative target each of the four measurements is
+essential.
 
 Concretely, with
 
@@ -1207,9 +1216,9 @@ K(z)-K(\\bot)&=s-p, & K(\\top)-K(\\bot)&=2s-p-q-r.
 \\end{aligned}
 \]
 
-The formal result should package these as a reconstruction map with both
-round-trip laws. Minimality requires a strict witness after deleting each one
-of (p), (q), (r), and (s), not merely a dimension count.
+These identities are packaged as a reconstruction map with both round-trip
+laws. Minimality is witnessed strictly after deleting each one of (p), (q),
+(r), and (s), rather than inferred from a dimension count.
 
 ### Q4 — Higher interaction
 
@@ -1225,6 +1234,44 @@ order-(\\le 3) gauge on every lattice and for every additive commutative target.
 ### Q5 — Realizability
 
 Which finite-family defect profiles arise from positive weighted realizations?
+
+The immediate program is the finite Gibbs image of the canonical Diamond
+datum. First prove the carrier theorem: every lattice homomorphism from the
+diamond into any distributive lattice is constant. Apply it to the finite-set
+state map and prove that every finite Gibbs realization on the diamond has
+constant state spaces, partition function, and log-partition. Deduce the exact
+classifications
+
+\[
+\\operatorname{Realizable}(K)
+\\quad\\Longleftrightarrow\\quad
+K \\text{ is constant}
+\]
+
+and
+
+\[
+\\operatorname{CanonicalDatumRealizable}(p,q,r,s)
+\\quad\\Longleftrightarrow\\quad
+(p,q,r,s)=(0,0,0,0),
+\]
+
+where realizability of the canonical datum must be named directly rather than
+routed through pairwise `DefectRealizable`.
+
+Finally use the explicit positive field
+
+\[
+Z(\\bot)=1,\\qquad Z(x)=Z(y)=Z(z)=2,\\qquad Z(\\top)=3,
+\\qquad K=\\log\\circ Z.
+\]
+
+Prove that (K) is nonconstant and monotone, that (\\exp\\circ K=Z) is a
+valuation, and that all its pairwise defects are nonnegative, yet (K) is not
+realizable. This finite witness must isolate distributive structure in the
+state map as the obstruction, rather than convergence, cardinality, or energy.
+Do not alter the realization interface in this milestone; first state exactly
+what it excludes.
 
 ### Q6 — Definiteness
 

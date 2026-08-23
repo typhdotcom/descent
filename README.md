@@ -429,5 +429,12 @@ observation. The diamond is finished: its final observable's gauge is
 exactly the constants; the equality criterion and one-point
 normalization follow; and sparse reconstruction identifies the
 observable with the canonical datum — four irredundant measurements
-carrying an explicit normalized inverse. Direction for the next §21
-program is pending.
+carrying an explicit normalized inverse. The next continuation is
+singular: classify which of these canonical Diamond data arise from the
+finite Gibbs realization. Prove first that every lattice homomorphism
+from the diamond into a distributive lattice is constant; apply this to
+the finite-set state map to classify the realizable fields and canonical
+data; then exhibit a nonconstant Diamond field satisfying the existing
+order and exponential-valuation conditions but excluded by this
+distributivity obstruction. Do not redesign the realization class until
+this obstruction is completely stated. The other §21 programs wait.
