@@ -27,6 +27,17 @@ the final order-≤3 observable classes of their logarithmic cardinality
 fields. Complete defect observation retains only the net cardinal
 obstruction; the diamond classification and the second code system in
 `Descent.Models.DiamondCode` make the blindness exact.
+
+The extension profile `ext f b = |{a : f a = b}|` recovers what the
+scalar term discards. Its total mass is `|A|`; positivity is
+reachedness, vanishing is missedness; injectivity, surjectivity, and
+bijectivity are the pointwise bounds `≤ 1`, `> 0`, `= 1`; redundancy is
+the total fiber excess `∑ (ext f b − 1)`. The reconstruction limit:
+two finite maps into the same codomain have equal extension profiles
+exactly when an equivalence of their domains carries one to the other
+over the codomain --- the conditioned profile determines a finite map
+up to relabeling within its fibers. The scalar comparison term is only
+the coarse statistic of the profile's sum against the codomain size.
 -/
 
 namespace Descent
@@ -121,6 +132,118 @@ theorem surjective_iff_card_missed_eq_zero :
   · intro h b
     by_contra hb
     exact h.elim ⟨b, fun a ha => hb ⟨a, ha⟩⟩
+
+/-! ### The extension profile -/
+
+/-- The extension profile of a finite map: each codomain value's number
+of extensions. -/
+def ext (b : B) : ℕ :=
+  Fintype.card { a : A // f a = b }
+
+/-- Total mass: the extension profile sums to the domain size. -/
+theorem sum_ext : ∑ b : B, ext f b = Fintype.card A := by
+  simp only [ext]
+  rw [← Fintype.card_sigma]
+  exact Fintype.card_congr (Equiv.sigmaFiberEquiv f)
+
+omit [Fintype B] in
+/-- A codomain value is reached exactly when its extension count is
+positive. -/
+theorem ext_pos_iff (b : B) : 0 < ext f b ↔ ∃ a, f a = b := by
+  simp only [ext]
+  rw [Fintype.card_pos_iff]
+  exact nonempty_subtype
+
+omit [Fintype B] in
+/-- A codomain value is missed exactly when its extension count is
+zero. -/
+theorem ext_eq_zero_iff (b : B) : ext f b = 0 ↔ ∀ a, f a ≠ b := by
+  simp only [ext]
+  rw [Fintype.card_eq_zero_iff]
+  exact isEmpty_subtype _
+
+omit [Fintype B] in
+/-- Injectivity is exactly extension counts at most one. -/
+theorem injective_iff_ext_le_one :
+    Function.Injective f ↔ ∀ b, ext f b ≤ 1 := by
+  constructor
+  · intro h b
+    simp only [ext]
+    rw [Fintype.card_le_one_iff]
+    rintro ⟨a, ha⟩ ⟨a', ha'⟩
+    exact Subtype.ext (h (ha.trans ha'.symm))
+  · intro h a a' haa
+    have hone : Fintype.card { s : A // f s = f a } ≤ 1 := h (f a)
+    exact congrArg Subtype.val
+      (Fintype.card_le_one_iff.mp hone ⟨a, rfl⟩ ⟨a', haa.symm⟩)
+
+omit [Fintype B] in
+/-- Surjectivity is exactly positive extension counts. -/
+theorem surjective_iff_ext_pos :
+    Function.Surjective f ↔ ∀ b, 0 < ext f b := by
+  constructor
+  · intro h b
+    exact (ext_pos_iff f b).mpr (h b)
+  · intro h b
+    exact (ext_pos_iff f b).mp (h b)
+
+omit [Fintype B] in
+/-- Bijectivity is exactly extension counts one. -/
+theorem bijective_iff_ext_eq_one :
+    Function.Bijective f ↔ ∀ b, ext f b = 1 := by
+  constructor
+  · rintro ⟨hinj, hsurj⟩ b
+    have h1 := (injective_iff_ext_le_one f).mp hinj b
+    have h2 := (surjective_iff_ext_pos f).mp hsurj b
+    omega
+  · intro h
+    refine ⟨(injective_iff_ext_le_one f).mpr fun b => (h b).le,
+      (surjective_iff_ext_pos f).mpr fun b => ?_⟩
+    rw [h b]
+    exact Nat.one_pos
+
+/-- Redundancy is the total fiber excess. -/
+theorem redundancy_eq_sum_ext_sub_one :
+    redundancy f = ∑ b : B, (ext f b - 1) := by
+  have hpt : ∀ b : B, (ext f b - 1) + (if 0 < ext f b then 1 else 0)
+      = ext f b := by
+    intro b
+    by_cases h : 0 < ext f b
+    · simp only [if_pos h]
+      omega
+    · simp only [if_neg h]
+      omega
+  have hR : Fintype.card (Reached f)
+      = ∑ b : B, if 0 < ext f b then 1 else 0 := by
+    have e : Reached f ≃ { b : B // 0 < ext f b } :=
+      Equiv.subtypeEquivRight fun b => (ext_pos_iff f b).symm
+    rw [Fintype.card_congr e, Fintype.card_subtype, Finset.card_filter]
+  have hA := sum_ext f
+  have hsplit : ((∑ b : B, (ext f b - 1))
+        + ∑ b : B, if 0 < ext f b then 1 else 0)
+      = ∑ b : B, ext f b := by
+    rw [← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun b _ => hpt b
+  have hle := card_reached_le f
+  simp only [redundancy]
+  omega
+
+omit [Fintype B] in
+/-- The reconstruction limit: two finite maps into the same codomain
+have equal extension profiles exactly when an equivalence of their
+domains carries one to the other over the codomain. The conditioned
+profile determines a finite map up to relabeling within its fibers. -/
+theorem ext_eq_iff_exists_equiv {C : Type*} [Fintype C] (g : C → B) :
+    (∀ b, ext f b = ext g b) ↔ ∃ e : A ≃ C, ∀ a, g (e a) = f a := by
+  constructor
+  · intro h
+    have e_b : ∀ b, { a : A // f a = b } ≃ { c : C // g c = b } := fun b =>
+      Fintype.equivOfCardEq (h b)
+    exact ⟨(Equiv.sigmaFiberEquiv f).symm.trans
+      ((Equiv.sigmaCongrRight e_b).trans (Equiv.sigmaFiberEquiv g)),
+      fun a => (e_b (f a) ⟨a, rfl⟩).2⟩
+  · rintro ⟨e, he⟩ b
+    exact Fintype.card_congr (Equiv.subtypeEquiv e fun a => by rw [he a])
 
 end Incidence
 
@@ -306,6 +429,44 @@ theorem compare3_surjective_iff (a b c : R) :
     Function.Surjective (F.compare3 a b c)
       ↔ Fintype.card (Incidence.Missed (F.compare3 a b c)) = 0 :=
   Incidence.surjective_iff_card_missed_eq_zero _
+
+/-! ### The comparison term as a coarse profile statistic -/
+
+/-- The scalar comparison term is only the coarse statistic of the
+extension profile: the codomain size against the profile's total
+mass. -/
+theorem comparisonTerm_eq_ext_sum (a b : R) :
+    F.comparisonTerm a b
+      = Real.log ((Fintype.card (F.Compat a b) : ℝ)
+          / ((∑ p : F.Compat a b, Incidence.ext (F.compare a b) p : ℕ) : ℝ)) := by
+  simp only [comparisonTerm]
+  rw [← Incidence.sum_ext (F.compare a b)]
+
+/-- The scalar triple comparison term is the same coarse statistic. -/
+theorem comparisonTerm3_eq_ext_sum (a b c : R) :
+    F.comparisonTerm3 a b c
+      = Real.log ((Fintype.card (F.Compat3 a b c) : ℝ)
+          / ((∑ t : F.Compat3 a b c,
+              Incidence.ext (F.compare3 a b c) t : ℕ) : ℝ)) := by
+  simp only [comparisonTerm3]
+  rw [← Incidence.sum_ext (F.compare3 a b c)]
+
+/-- The reconstruction limit at a comparison: two maps of global states
+into the same compatible local states have equal extension profiles
+exactly when a relabeling of global states over the compatible pairs
+carries one to the other. -/
+theorem compare_ext_eq_iff (a b : R) {S T : Type*} [Fintype S] [Fintype T]
+    (f : S → F.Compat a b) (g : T → F.Compat a b) :
+    (∀ p, Incidence.ext f p = Incidence.ext g p)
+      ↔ ∃ e : S ≃ T, ∀ s, g (e s) = f s :=
+  Incidence.ext_eq_iff_exists_equiv f g
+
+/-- The reconstruction limit at a triple comparison. -/
+theorem compare3_ext_eq_iff (a b c : R) {S T : Type*} [Fintype S] [Fintype T]
+    (f : S → F.Compat3 a b c) (g : T → F.Compat3 a b c) :
+    (∀ t, Incidence.ext f t = Incidence.ext g t)
+      ↔ ∃ e : S ≃ T, ∀ s, g (e s) = f s :=
+  Incidence.ext_eq_iff_exists_equiv f g
 
 end FiniteRestriction
 

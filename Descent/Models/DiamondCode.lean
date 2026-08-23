@@ -42,6 +42,13 @@ surjective --- but its `(x, y)` comparison reaches two pairs, misses
 two, with redundancy one, while the first system reaches three, misses
 one, with redundancy zero. One comparison is injective, the other is
 not, under identical complete observation.
+
+The extension profile closes the inverse problem: the two `(x, y)`
+comparisons target the same compatible pairs with equal scalar terms,
+but their profiles are `{0, 1, 1, 1}` and `{0, 0, 1, 2}`, and by the
+reconstruction limit no relabeling of codewords carries one comparison
+to the other. Conditioning on compatible local states recovers exactly
+the incidence that defect observation discarded.
 -/
 
 namespace Descent
@@ -575,6 +582,95 @@ theorem card_incidence_missed_xy :
 /-- …and identifies nothing: redundancy zero. -/
 theorem redundancy_xy : Incidence.redundancy (codeSystem.compare x y) = 0 := by
   decide
+
+/-! ### The extension profile distinguishes the systems -/
+
+/-- The two `(x, y)` comparisons target the same compatible pairs. -/
+theorem compat_codeSystem2_xy : codeSystem2.Compat x y = codeSystem.Compat x y :=
+  rfl
+
+/-- The scalar `(x, y)` comparison terms of the two systems agree. -/
+theorem comparisonTerm_codeSystem2_xy :
+    codeSystem2.comparisonTerm x y = codeSystem.comparisonTerm x y := by
+  simp only [FiniteRestriction.comparisonTerm]
+  rw [show Fintype.card (codeSystem2.Compat x y) = 4 from by decide, card_compat_xy,
+    show Fintype.card (codeSystem2.states (x ⊔ y)) = 3 from by decide,
+    show Fintype.card (codeSystem.states (x ⊔ y)) = 3 from by decide]
+
+/-- The extension profile of the first `(x, y)` comparison is
+`{0, 1, 1, 1}`: three pairs extended once… -/
+theorem card_ext_xy_eq_one :
+    Fintype.card
+      {p : codeSystem.Compat x y //
+        Incidence.ext (codeSystem.compare x y) p = 1} = 3 := by
+  decide
+
+/-- …one not at all. -/
+theorem card_ext_xy_eq_zero :
+    Fintype.card
+      {p : codeSystem.Compat x y //
+        Incidence.ext (codeSystem.compare x y) p = 0} = 1 := by
+  decide
+
+/-- The extension profile of the second `(x, y)` comparison is
+`{0, 0, 1, 2}`: one pair extended twice… -/
+theorem card_ext2_xy_eq_two :
+    Fintype.card
+      {p : codeSystem2.Compat x y //
+        Incidence.ext (codeSystem2.compare x y) p = 2} = 1 := by
+  decide
+
+/-- …one extended once… -/
+theorem card_ext2_xy_eq_one :
+    Fintype.card
+      {p : codeSystem2.Compat x y //
+        Incidence.ext (codeSystem2.compare x y) p = 1} = 1 := by
+  decide
+
+/-- …two not at all. -/
+theorem card_ext2_xy_eq_zero :
+    Fintype.card
+      {p : codeSystem2.Compat x y //
+        Incidence.ext (codeSystem2.compare x y) p = 0} = 2 := by
+  decide
+
+/-- The profiles differ: the compatible pair `(0, 0)` is extended once
+by the first system and twice by the second. -/
+theorem ext_compare_xy_ne :
+    ¬∀ p : codeSystem.Compat x y,
+        Incidence.ext (codeSystem.compare x y) p
+          = Incidence.ext (codeSystem2.compare x y) p := by
+  intro h
+  have h1 : Incidence.ext (codeSystem.compare x y)
+      (⟨(false, false), rfl⟩ : codeSystem.Compat x y) = 1 := by
+    decide
+  have h2 : Incidence.ext (codeSystem2.compare x y)
+      (⟨(false, false), rfl⟩ : codeSystem2.Compat x y) = 2 := by
+    decide
+  have hp := h ⟨(false, false), rfl⟩
+  rw [h1] at hp
+  exact absurd (hp.trans h2) (by norm_num)
+
+/-- Conditioning recovers the discarded incidence: by the reconstruction
+limit, no relabeling of the codewords carries one comparison to the
+other, although complete defect observation cannot tell the systems
+apart. -/
+theorem not_exists_relabel_xy :
+    ¬∃ e : Code ≃ Code,
+        ∀ s, codeSystem2.compare x y (e s) = codeSystem.compare x y s := by
+  rintro ⟨e, he⟩
+  have hprof :=
+    (Incidence.ext_eq_iff_exists_equiv (codeSystem.compare x y)
+        (codeSystem2.compare x y)).mpr ⟨e, he⟩
+  have h1 : Incidence.ext (codeSystem.compare x y)
+      (⟨(false, false), rfl⟩ : codeSystem.Compat x y) = 1 := by
+    decide
+  have h2 : Incidence.ext (codeSystem2.compare x y)
+      (⟨(false, false), rfl⟩ : codeSystem2.Compat x y) = 2 := by
+    decide
+  have hp := hprof ⟨(false, false), rfl⟩
+  rw [h1] at hp
+  exact absurd (hp.trans h2) (by norm_num)
 
 end Diamond
 

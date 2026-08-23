@@ -1845,4 +1845,146 @@ example : Function.Injective (Diamond.codeSystem.compare Diamond.x Diamond.y) :=
 example : ¬Function.Injective (Diamond.codeSystem2.compare Diamond.x Diamond.y) :=
   Diamond.not_injective_compare2_xy
 
+/-! ## The extension profile (Q10)
+
+The claims below correspond to the extension-profile paragraphs of the
+"Order separation" section of `README.md`.
+-/
+
+/-- README: the extension profile sums to the domain size. -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    ∑ b : B, Incidence.ext f b = Fintype.card A :=
+  Incidence.sum_ext f
+
+/-- README: a codomain value is reached exactly when its extension
+count is positive… -/
+example {A B : Type*} [Fintype A] [DecidableEq B] (f : A → B) (b : B) :
+    0 < Incidence.ext f b ↔ ∃ a, f a = b :=
+  Incidence.ext_pos_iff f b
+
+/-- README: …and missed exactly when it is zero. -/
+example {A B : Type*} [Fintype A] [DecidableEq B] (f : A → B) (b : B) :
+    Incidence.ext f b = 0 ↔ ∀ a, f a ≠ b :=
+  Incidence.ext_eq_zero_iff f b
+
+/-- README: injectivity is exactly extension counts at most one… -/
+example {A B : Type*} [Fintype A] [DecidableEq B] (f : A → B) :
+    Function.Injective f ↔ ∀ b, Incidence.ext f b ≤ 1 :=
+  Incidence.injective_iff_ext_le_one f
+
+/-- README: …surjectivity exactly positive counts… -/
+example {A B : Type*} [Fintype A] [DecidableEq B] (f : A → B) :
+    Function.Surjective f ↔ ∀ b, 0 < Incidence.ext f b :=
+  Incidence.surjective_iff_ext_pos f
+
+/-- README: …bijectivity exactly counts one. -/
+example {A B : Type*} [Fintype A] [DecidableEq B] (f : A → B) :
+    Function.Bijective f ↔ ∀ b, Incidence.ext f b = 1 :=
+  Incidence.bijective_iff_ext_eq_one f
+
+/-- README: redundancy is the total fiber excess. -/
+example {A B : Type*} [Fintype A] [Fintype B] [DecidableEq B] (f : A → B) :
+    Incidence.redundancy f = ∑ b : B, (Incidence.ext f b - 1) :=
+  Incidence.redundancy_eq_sum_ext_sub_one f
+
+/-- README: the reconstruction limit --- equal extension profiles are
+exactly an equivalence of domains over the codomain; the conditioned
+profile determines a finite map up to relabeling within its fibers. -/
+example {A B C : Type*} [Fintype A] [DecidableEq B] [Fintype C]
+    (f : A → B) (g : C → B) :
+    (∀ b, Incidence.ext f b = Incidence.ext g b)
+      ↔ ∃ e : A ≃ C, ∀ a, g (e a) = f a :=
+  Incidence.ext_eq_iff_exists_equiv f g
+
+/-- README: the scalar comparison term is only the coarse statistic of
+the profile's total mass against the codomain size. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.comparisonTerm a b
+      = Real.log ((Fintype.card (F.Compat a b) : ℝ)
+          / ((∑ p : F.Compat a b,
+              Incidence.ext (F.compare a b) p : ℕ) : ℝ)) :=
+  F.comparisonTerm_eq_ext_sum a b
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R) :
+    F.comparisonTerm3 a b c
+      = Real.log ((Fintype.card (F.Compat3 a b c) : ℝ)
+          / ((∑ t : F.Compat3 a b c,
+              Incidence.ext (F.compare3 a b c) t : ℕ) : ℝ)) :=
+  F.comparisonTerm3_eq_ext_sum a b c
+
+/-- README: the profile determines a comparison map up to global-state
+relabeling over the compatible locals. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R)
+    {S T : Type*} [Fintype S] [Fintype T]
+    (f : S → F.Compat a b) (g : T → F.Compat a b) :
+    (∀ p, Incidence.ext f p = Incidence.ext g p)
+      ↔ ∃ e : S ≃ T, ∀ s, g (e s) = f s :=
+  F.compare_ext_eq_iff a b f g
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R)
+    {S T : Type*} [Fintype S] [Fintype T]
+    (f : S → F.Compat3 a b c) (g : T → F.Compat3 a b c) :
+    (∀ t, Incidence.ext f t = Incidence.ext g t)
+      ↔ ∃ e : S ≃ T, ∀ s, g (e s) = f s :=
+  F.compare3_ext_eq_iff a b c f g
+
+/-- README: the two diamond `(x, y)` scalar comparison terms agree. -/
+example :
+    Diamond.codeSystem2.comparisonTerm Diamond.x Diamond.y
+      = Diamond.codeSystem.comparisonTerm Diamond.x Diamond.y :=
+  Diamond.comparisonTerm_codeSystem2_xy
+
+/-- README: the first profile is `{0, 1, 1, 1}`… -/
+example :
+    Fintype.card
+      {p : Diamond.codeSystem.Compat Diamond.x Diamond.y //
+        Incidence.ext (Diamond.codeSystem.compare Diamond.x Diamond.y) p = 1}
+      = 3 :=
+  Diamond.card_ext_xy_eq_one
+
+example :
+    Fintype.card
+      {p : Diamond.codeSystem.Compat Diamond.x Diamond.y //
+        Incidence.ext (Diamond.codeSystem.compare Diamond.x Diamond.y) p = 0}
+      = 1 :=
+  Diamond.card_ext_xy_eq_zero
+
+/-- README: …the second is `{0, 0, 1, 2}`. -/
+example :
+    Fintype.card
+      {p : Diamond.codeSystem2.Compat Diamond.x Diamond.y //
+        Incidence.ext (Diamond.codeSystem2.compare Diamond.x Diamond.y) p = 2}
+      = 1 :=
+  Diamond.card_ext2_xy_eq_two
+
+example :
+    Fintype.card
+      {p : Diamond.codeSystem2.Compat Diamond.x Diamond.y //
+        Incidence.ext (Diamond.codeSystem2.compare Diamond.x Diamond.y) p = 1}
+      = 1 :=
+  Diamond.card_ext2_xy_eq_one
+
+example :
+    Fintype.card
+      {p : Diamond.codeSystem2.Compat Diamond.x Diamond.y //
+        Incidence.ext (Diamond.codeSystem2.compare Diamond.x Diamond.y) p = 0}
+      = 2 :=
+  Diamond.card_ext2_xy_eq_zero
+
+/-- README: the profiles differ… -/
+example :
+    ¬∀ p : Diamond.codeSystem.Compat Diamond.x Diamond.y,
+        Incidence.ext (Diamond.codeSystem.compare Diamond.x Diamond.y) p
+          = Incidence.ext (Diamond.codeSystem2.compare Diamond.x Diamond.y) p :=
+  Diamond.ext_compare_xy_ne
+
+/-- README: …so by the reconstruction limit no relabeling of codewords
+carries one comparison to the other: conditioning recovers exactly the
+incidence that defect observation discarded. -/
+example :
+    ¬∃ e : Diamond.Code ≃ Diamond.Code,
+        ∀ s, Diamond.codeSystem2.compare Diamond.x Diamond.y (e s)
+          = Diamond.codeSystem.compare Diamond.x Diamond.y s :=
+  Diamond.not_exists_relabel_xy
+
 end Descent.Status

@@ -558,6 +558,30 @@ defect observation retains the net cardinal obstruction while
 forgetting how missing local states and identified global states
 cancel.
 
+The extension profile recovers exactly what was forgotten
+(`ext f b = |{a : f a = b}|`, in
+`Descent/Realization/Incidence.lean`). Its finite-map package is
+complete: the profile sums to the domain size; positivity is
+reachedness and vanishing is missedness; injectivity, surjectivity, and
+bijectivity are the pointwise laws `≤ 1`, `> 0`, `= 1`; and redundancy
+is the total fiber excess `∑ (ext f b − 1)`. The reconstruction limit
+is exact: two finite maps into the same codomain have equal extension
+profiles precisely when an equivalence of their domains carries one to
+the other over the codomain — the conditioned profile determines a
+finite map up to relabeling within its fibers, and no further.
+Instantiated at the comparisons, the scalar term is only the coarse
+statistic of the profile — its total mass against the codomain size —
+while the full profile determines the comparison map up to global-state
+relabeling over the compatible locals. On the diamond this closes the
+inverse problem left open by observational equivalence: the two code
+systems' `(x, y)` comparisons target the same compatible pairs with
+equal scalar terms, but their profiles are `{0, 1, 1, 1}` and
+`{0, 0, 1, 2}` — one pair extended twice in the second system, none in
+the first — so by the reconstruction limit no relabeling of codewords
+carries one comparison to the other. Conditioning on compatible local
+states recovers precisely the incidence that defect observation
+discarded.
+
 ## Working on it
 
 ```nu
@@ -615,10 +639,11 @@ cardinality profile; and the second three-codeword system witnesses the
 blindness — identical complete defect observation, different comparison
 incidence. The epistemic boundary is exact: defect observation keeps
 the net cardinal obstruction and forgets how missed local states and
-identified global states cancel. The final program is Q10: refine the
-scalar comparison observation to the extension profile that assigns
-each compatible local state its number of global extensions. Prove that
-this conditioned profile reconstructs a finite comparison map exactly
-up to relabeling inside its fibers, then distinguish the two diamond
-systems by the profiles `{0,1,1,1}` and `{0,0,1,2}`. Do not add
-probability or weights; this is a finite inverse theorem.
+identified global states cancel. Q10 is closed, and with it the
+program ladder of `PROPOSAL.md` §21: the extension profile carries the
+complete finite-map package with its exact reconstruction limit — a
+finite inverse theorem, no probability and no weights — the scalar
+comparison term is its coarse statistic, and the two diamond systems
+are separated by `{0,1,1,1}` versus `{0,0,1,2}`: conditioning recovers
+precisely the incidence that defect observation discarded. Direction
+is pending.
