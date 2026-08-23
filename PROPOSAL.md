@@ -1312,46 +1312,67 @@ canonical datum with the four comparison-cardinality ratios
 \\log\\frac 83\\right).
 \]
 
-The immediate continuation is the generic pairwise recognition theorem. For an
-arbitrary finite restriction system, prove the exact decomposition
-
-\[
-\\begin{aligned}
-D\_{\\log |X|}(a,b)
-&=\\log\\frac{|\\operatorname{Compat}(a,b)|}{|X\_{a\\vee b}|}\\\\
-&\\quad+\\log\\frac{|X_a|\\,|X_b|}
-{|X\_{a\\wedge b}|\\,|\\operatorname{Compat}(a,b)|}.
-\\end{aligned}
-\]
-
-The first summand is the comparison-cardinality term. The second is the exact
-fiber-balance residue that prevents an arbitrary logarithmic cardinality defect
-from being a pure gluing obstruction.
-
-Define the missed compatible states generically. Under injectivity of the
-comparison, prove that the comparison term is
-
-\[
-\\log\\left(1+
-\\frac{|\\operatorname{Missed}(a,b)|}{|X\_{a\\vee b}|}\\right),
-\]
-
-hence is nonnegative and vanishes exactly when the comparison is surjective.
-Characterize vanishing of the residue by the exact cardinal balance
+The pairwise recognition theorem is complete. For every finite restriction
+system, the `logCard` defect is exactly the comparison-cardinality term plus
+a fiber-balance residue. Under injectivity, the first term counts missed
+compatible states, is nonnegative, and vanishes exactly at surjectivity. The
+residue vanishes exactly under the cardinal balance
 
 \[
 |\\operatorname{Compat}(a,b)|\\,|X\_{a\\wedge b}|
 =|X_a|\\,|X_b|,
 \]
 
-and prove that constant finite fiber cardinality of either restriction leg to
-the meet is sufficient for this balance. Finally instantiate the theorem on
-the three diamond atom pairs and derive their defect coordinates from the
-generic result.
+which constant finite fiber cardinality of either restriction leg forces. The
+three diamond pair coordinates now derive from this generic result.
 
-This milestone isolates gluing failure from fiber imbalance. Do not generalize
-to triples, add weights, or introduce a sheaf layer until the pairwise
-decomposition and its sharp zero criterion are established.
+The immediate continuation is the order-3 recognition theorem. This is the
+final realization layer demanded by the abstract hierarchy: order 3 is the
+last refinement of defect observation, so do not build recognition terms
+above it. Define the triple comparison-cardinality term, missed compatible
+triples, and the exact triple residue, then prove
+
+\[
+\\begin{aligned}
+D^{(3)}\_{\\log |X|}(a,b,c)
+&=\\log\\frac{|\\operatorname{Compat3}(a,b,c)|}
+{|X\_{a\\vee b\\vee c}|}\\\\
+&\\quad+
+\\log\\frac{|X_a|\\,|X_b|\\,|X_c|\\,|X\_{a\\wedge b\\wedge c}|}
+{|X\_{a\\wedge b}|\\,|X\_{a\\wedge c}|\\,|X\_{b\\wedge c}|
+\\,|\\operatorname{Compat3}(a,b,c)|}.
+\\end{aligned}
+\]
+
+Under injectivity of the triple comparison, identify its first term with
+
+\[
+\\log\\left(1+
+\\frac{|\\operatorname{Missed3}(a,b,c)|}
+{|X\_{a\\vee b\\vee c}|}\\right),
+\]
+
+prove nonnegativity, and prove that it vanishes exactly at surjectivity. Prove
+that the triple residue vanishes exactly under
+
+\[
+\\begin{aligned}
+|\\operatorname{Compat3}(a,b,c)|
+&\\,|X\_{a\\wedge b}|\\,|X\_{a\\wedge c}|\\,|X\_{b\\wedge c}|\\\\
+&=|X_a|\\,|X_b|\\,|X_c|\\,|X\_{a\\wedge b\\wedge c}|.
+\\end{aligned}
+\]
+
+Give this balance structural content: when all three pairwise meets coincide,
+constant finite fiber cardinality for any two of the three restriction legs to
+that common meet must imply the triple balance. Instantiate the theorem on the
+diamond atom triple, derive its order-3 coordinate as
+(\\log(1+5/3)=\\log(8/3)), and make the complete canonical-datum bridge follow
+from the generic pairwise and triple recognition theorems.
+
+Do not add weights, a sheaf layer, or a general finite-family recognition
+tower. The abstract hierarchy already proves there is no new observable above
+order 3.
 
 ### Q10 — Restricted data
 

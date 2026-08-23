@@ -532,7 +532,12 @@ comparison-cardinality term and the fiber-balance residue — the first
 counting missed compatible states under an injective comparison,
 nonnegative, zero exactly at surjectivity; the second vanishing exactly
 at the cardinal balance, which constant fibers force — and the diamond
-pair coordinates follow by instantiation. Open next: the triple —
-whether the order-3 defect of `logCard` recognizes the same way against
-`Compat3`, a comparison term over the triple fiber product with its own
-exact residue. Direction is pending.
+pair coordinates follow by instantiation. The next program is the
+order-3 recognition theorem against `Compat3`. Decompose the
+order-3 `logCard` defect into the triple comparison-cardinality term
+and its exact fiber-balance residue; under injectivity, identify the
+first with missed compatible triples and its sharp zero law; then
+characterize and structurally force the triple balance. The diamond
+order-3 coordinate and complete canonical datum must follow by
+instantiation. Recognition stops at order 3, because the abstract
+hierarchy proves that no higher order refines the observable.
