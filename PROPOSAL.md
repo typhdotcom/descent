@@ -1291,6 +1291,60 @@ Which theorems survive replacement of the realization while keeping only the abs
 
 For each datum class, what is the exact equivalence relation on realizations induced by indistinguishability?
 
+This is the next program. Recognition under an injective comparison identifies
+the comparison term with missed compatible states. Remove injectivity and
+determine exactly what the same term sees.
+
+Develop the finite-map bookkeeping once, below restriction systems. For a map
+(f:A\\to B) between nonempty finite types, define its reached codomain,
+missed codomain, and redundancy
+
+\[
+\\operatorname{red}(f)=|A|-|\\operatorname{range}(f)|.
+\]
+
+Prove the exact partitions
+
+\[
+|B|=|\\operatorname{range}(f)|+|\\operatorname{missed}(f)|,
+\\qquad
+|A|=|\\operatorname{range}(f)|+\\operatorname{red}(f),
+\]
+
+and instantiate them for both `compare` and `compare3`. Their comparison
+terms must become
+
+\[
+\\log
+\\frac{|\\operatorname{range}(f)|+|\\operatorname{missed}(f)|}
+{|\\operatorname{range}(f)|+\\operatorname{red}(f)}.
+\]
+
+Derive the complete chamber statement: the term is positive, zero, or negative
+exactly when missed states outnumber, equal, or are outnumbered by redundancy.
+Injectivity is the specialization (\\operatorname{red}(f)=0); surjectivity is
+the specialization (|\\operatorname{missed}(f)|=0). Thus zero comparison term
+means equal undercoverage and overidentification in general, not gluing.
+
+Name observational equivalence of finite restriction systems by equality of
+their final order-(\\le 3) observable classes. On the diamond, classify it
+exactly by proportional state-cardinality profiles, expressed without
+logarithms by cross multiplication against the bottom cardinality. Restriction
+maps themselves must disappear from this criterion.
+
+Then prove the blindness strictly. Build a second diamond code system with the
+same state types and the three codewords (\\{000,001,110\\}). Its restrictions
+to every atom are surjective and its `logCard` field, complete defect datum,
+and every higher finite-family defect equal those of the existing code system.
+But its (x,y) comparison has two reached pairs, two missed pairs, and redundancy
+one, while the existing system has three reached, one missed, and redundancy
+zero. In particular one comparison is injective and the other is not.
+
+This milestone must prove that complete defect observation retains the net
+cardinality obstruction while forgetting how missing local states and
+identified global states cancel. Do not add weights, probabilistic language,
+or categorical equivalence machinery.
+
 ### Q9 — Local/global correspondence
 
 When is a failure of compositional valuation equivalent to a local-to-global obstruction in an underlying realization?
@@ -1326,53 +1380,17 @@ residue vanishes exactly under the cardinal balance
 which constant finite fiber cardinality of either restriction leg forces. The
 three diamond pair coordinates now derive from this generic result.
 
-The immediate continuation is the order-3 recognition theorem. This is the
-final realization layer demanded by the abstract hierarchy: order 3 is the
-last refinement of defect observation, so do not build recognition terms
-above it. Define the triple comparison-cardinality term, missed compatible
-triples, and the exact triple residue, then prove
+The order-3 recognition theorem is also complete. The order-3 `logCard`
+defect decomposes into the triple comparison-cardinality term and an exact
+triple fiber-balance residue. Under injectivity the first term counts missed
+compatible triples with its sharp zero law at surjectivity; the residue
+vanishes exactly at the triple cardinal balance. When the three pairwise meets
+coincide, constant finite fiber cardinality of any two restriction legs forces
+that balance. The diamond order-3 coordinate and the complete canonical-datum
+bridge now derive from the generic pairwise and triple recognition theorems.
 
-\[
-\\begin{aligned}
-D^{(3)}\_{\\log |X|}(a,b,c)
-&=\\log\\frac{|\\operatorname{Compat3}(a,b,c)|}
-{|X\_{a\\vee b\\vee c}|}\\\\
-&\\quad+
-\\log\\frac{|X_a|\\,|X_b|\\,|X_c|\\,|X\_{a\\wedge b\\wedge c}|}
-{|X\_{a\\wedge b}|\\,|X\_{a\\wedge c}|\\,|X\_{b\\wedge c}|
-\\,|\\operatorname{Compat3}(a,b,c)|}.
-\\end{aligned}
-\]
-
-Under injectivity of the triple comparison, identify its first term with
-
-\[
-\\log\\left(1+
-\\frac{|\\operatorname{Missed3}(a,b,c)|}
-{|X\_{a\\vee b\\vee c}|}\\right),
-\]
-
-prove nonnegativity, and prove that it vanishes exactly at surjectivity. Prove
-that the triple residue vanishes exactly under
-
-\[
-\\begin{aligned}
-|\\operatorname{Compat3}(a,b,c)|
-&\\,|X\_{a\\wedge b}|\\,|X\_{a\\wedge c}|\\,|X\_{b\\wedge c}|\\\\
-&=|X_a|\\,|X_b|\\,|X_c|\\,|X\_{a\\wedge b\\wedge c}|.
-\\end{aligned}
-\]
-
-Give this balance structural content: when all three pairwise meets coincide,
-constant finite fiber cardinality for any two of the three restriction legs to
-that common meet must imply the triple balance. Instantiate the theorem on the
-diamond atom triple, derive its order-3 coordinate as
-(\\log(1+5/3)=\\log(8/3)), and make the complete canonical-datum bridge follow
-from the generic pairwise and triple recognition theorems.
-
-Do not add weights, a sheaf layer, or a general finite-family recognition
-tower. The abstract hierarchy already proves there is no new observable above
-order 3.
+Recognition stops here. The abstract hierarchy proves that no order above 3
+refines the observable.
 
 ### Q10 — Restricted data
 

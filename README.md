@@ -568,4 +568,10 @@ coincident meets with two constant legs, and the diamond order-3
 coordinate and the complete canonical-datum bridge follow from the
 pairwise and triple recognition theorems alone. Recognition stops at
 order 3, because the abstract hierarchy proves that no higher order
-refines the observable. Direction is pending.
+refines the observable. The next program is observational equivalence
+for finite restriction systems: remove injectivity from the comparison
+interpretation, separate missed compatible states from redundant global
+identifications, and prove the exact positive/zero/negative chambers of
+their net cardinality term. A second three-codeword diamond system with
+the same cardinal profile must then witness the blindness sharply:
+identical complete defect observation, different comparison incidence.
