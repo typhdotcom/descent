@@ -329,23 +329,43 @@ on every lattice and for every target. Order 4 never refines cumulative
 observation beyond order 3; its datum is already a function of the
 order-(\\le 3) class.
 
-The singular open question is now all-order saturation: does the same
-finite-join propagation force every order above 3 to add no observable
-information? A general hierarchy should be introduced only in service of
-proving or refuting that stabilization theorem. At every later order,
-observable or interaction terminology still requires an explicit
-order-separation datum, cumulative gauge, descent theorem, and strictness or
-stabilization result.
+The finite hierarchy is now closed by one general construction rather than a
+sequence of named layers. For every nonempty finite family,
+`inclusionExclusion` is the signed sum over meets of nonempty subfamilies and
+`defectFam` is its failure to reach the family join. The construction is
+presentation-independent, a comparable pair anywhere in the family collapses
+the defect one order, and the defect is natural under pullback along lattice
+homomorphisms. Its arity-2, arity-3, and arity-4 instances recover (D),
+(D^{(3)}), and (D^{(4)}), while its arbitrary-lattice recurrence carries the
+finite distributivity-defect remainder
 
-Questions include:
+\[
+K((\\bigvee\_{x\\in F}x)\\wedge d)-K(\\bigvee\_{x\\in F}(x\\wedge d)).
+\]
 
-- What condition separates a genuine order-(k) cube from lower-order
-  degeneracy?
+Binary distributivity blindness for fields in the order-(\\le 3) gauge extends
+to every finite join. The recurrence therefore forces every finite-family
+defect to vanish on that gauge. Conversely, the arity-2 and arity-3 instances
+recover its defining data, so
+
+\[
+\\operatorname{gauge}_{\\mathrm{finite}}=
+\\operatorname{gauge}_{\\le 3}
+\]
+
+on every lattice and for every target. Order 3 is the final refinement of
+finite inclusion--exclusion defect observation. This closes Q4: pairwise
+observation suffices on distributive contexts, order 3 can strictly refine it
+off distributivity, and no higher finite order adds information beyond order
+3\.
+
+The closure removes the question whether this hierarchy keeps producing new
+observables. Questions about the completed datum still include:
+
 - When does vanishing above order (k) characterize a finite interaction order?
 - Which sign patterns are forced or impossible after order separation?
 - How does an order-separated construction transform under coarse-graining?
-- Which higher observables are determined by lower ones?
-- Which order-separated hierarchies arise from concrete realizations?
+- Which finite-family defect profiles arise from concrete realizations?
 
 The last question is the higher-order **realizability problem**.
 
@@ -456,8 +476,8 @@ Distinguish, for example:
 - one infinite row;
 - a finite collection of entries;
 - the raw mixed-difference table;
-- the cumulative order-(\\le 4) datum, or a later order-separated datum with its
-  gauge already characterized;
+- the complete finite-family inclusion--exclusion datum, whose gauge is
+  exactly the order-(\\le 3) gauge;
 - either observable datum plus explicit normalization.
 
 Two inverse results consuming different data are different results even if their conclusions match.
@@ -738,16 +758,17 @@ The current mathematics exposes a conceptual stratification inside the core:
 
 The mixed-difference calculus belongs to the first layer and consumes a
 join-semilattice; pairwise defect belongs to the second and consumes a lattice.
-The next layers consume the cumulative data (D,D^{(3)}) and
-(D,D^{(3)},D^{(4)}), whose kernels define the order-(\\le 3) and
-order-(\\le 4) gauges. On distributive lattices both collapse to the pairwise
-observable. On the diamond order 3 is strictly finer and order 4 stabilizes.
-The exact arbitrary-lattice recurrence reduces order-4 strictness to detection
-of a distributivity-defect interval by an order-(\\le 3) gauge field; the
-saturation theorem proves that every such field is blind to it, so the two
-gauges coincide on every lattice. The next interface for (k\\ge 5) should be
-introduced only as part of settling whether this saturation persists at every
-higher order.
+The order-separated lattice layer begins with the cumulative data
+(D,D^{(3)}). Its kernel is the order-(\\le 3) gauge. On distributive lattices
+this collapses to the pairwise observable; on the diamond it is strictly
+finer. The general finite-family inclusion--exclusion defect then replaces a
+ladder of further interfaces. It is symmetric in the family, degenerates
+under comparable entries, is natural under lattice homomorphisms, and obeys
+an exact arbitrary-lattice recurrence with a finite distributivity-defect
+remainder. Finite-join blindness proves that its complete gauge is exactly the
+order-(\\le 3) gauge on every lattice. Thus order 3 is the final refinement of
+this observation architecture rather than merely the first unresolved step
+of an indefinite tower.
 
 ______________________________________________________________________
 
@@ -1060,9 +1081,9 @@ Prove:
 - impossibility under weaker observation or normalization data.
 
 M3 preserved the order-separated higher observable exposed as missing by M2
-without manufacturing a quotient. The later order-3 and order-4 developments
-identify their cumulative data and gauges exactly; the same discipline remains
-binding above order 4.
+without manufacturing a quotient. The later finite-family development
+identifies the complete datum and its gauge exactly: order 3 is the final
+refinement, and all higher inclusion--exclusion defects vanish on its gauge.
 
 The project should seek explicit reconstruction algorithms as well as
 existential statements.
@@ -1137,7 +1158,12 @@ The first edition of the research program should revolve around questions of thi
 
 ### Q1 — Kernel
 
-For which context systems can the complete kernel of the pairwise defect operator be classified?
+For which context systems can the complete kernel of an established defect datum be classified?
+
+The immediate program is the final gauge on the diamond: classify
+`gauge3 Diamond A` for an arbitrary additive commutative group (A), prove that
+its fields are exactly the constants, and derive the equality criterion and
+one-point normalization for the final observable there.
 
 ### Q2 — Reconstruction
 
@@ -1152,17 +1178,18 @@ Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 
 ### Q4 — Higher interaction
 
-At order 3 the cumulative gauge collapses to the pairwise gauge on
-distributive lattices and is strictly finer on the diamond. At order 4 the
-exact recurrence reduces strictness to detection of a distributivity-defect
-interval by an order-(\\le 3) gauge field, and the saturation theorem proves
-that every such field is blind to it. Thus the order-(\\le 4) and
-order-(\\le 3) gauges agree on every lattice. Does the same propagation force
-all cumulative gauges above order 3 to agree with it?
+Resolved. At order 3 the cumulative gauge collapses to the pairwise gauge on
+distributive lattices and is strictly finer on the diamond. The general
+finite-family inclusion--exclusion defect is presentation-independent,
+degenerating, and natural; its arbitrary-lattice recurrence carries exactly a
+finite distributivity-defect remainder. Binary blindness extends to finite
+joins, forcing every higher finite-family defect to vanish on the
+order-(\\le 3) gauge. The complete hierarchy gauge therefore equals the
+order-(\\le 3) gauge on every lattice and for every additive commutative target.
 
 ### Q5 — Realizability
 
-Which order-separated defect hierarchies arise from positive weighted realizations?
+Which finite-family defect profiles arise from positive weighted realizations?
 
 ### Q6 — Definiteness
 
