@@ -113,6 +113,12 @@ theorem defect3_sub (K K' : ContextField R A) (a b c : R) :
   simp only [defect3, Pi.sub_apply]
   abel
 
+@[simp]
+theorem defect3_const (c : A) : defect3 (ContextField.const R c) = 0 := by
+  funext x y z
+  simp only [defect3, ContextField.const_apply, Pi.zero_apply]
+  abel
+
 /-- The exact gauge law at order 3: shifting by any field with vanishing
 order-3 defect moves nothing. -/
 theorem defect3_add_of_eq_zero {G : ContextField R A}

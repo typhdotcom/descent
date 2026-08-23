@@ -391,6 +391,18 @@ the valuation-visible distributivity-gap information, and can strictly
 refine pairwise observation; higher inclusion–exclusion orders add
 nothing beyond it, anywhere.
 
+The final observable is solved on the diamond, for every additive
+commutative group: `gauge3 Diamond A` is exactly the constant fields —
+the pair valuations at the atom triple equalize the atoms, and the
+vanishing order-3 defect pins them to the bottom. Hence two diamond
+fields share the final observable exactly when they differ by a
+constant; the observable class together with the field's value at any
+one context determines the field; and every class contains exactly one
+representative normalized to zero at a chosen context. On the diamond
+the inverse problem of the final observable is solved: defect data of
+all orders determines the field up to one constant, and one
+normalization recovers it exactly.
+
 ## Working on it
 
 ```nu
@@ -413,8 +425,7 @@ Q4 is closed: the
 inclusion–exclusion hierarchy carries one general defect — symmetric,
 degenerating, natural — whose gauge equals the order-≤3 gauge on every
 lattice and target; order 3 is the final refinement of defect
-observation. The next continuation is singular: classify
-`gauge3 Diamond A` for an arbitrary additive commutative group `A`.
-Prove that its fields are exactly the constant fields, then derive the
-resulting equality criterion and one-point normalization for the final
-observable on the diamond. The other §21 programs wait.
+observation. The diamond classification is complete: the final
+observable's gauge there is exactly the constants, with the equality
+criterion and one-point normalization that follow. Direction for the
+next §21 program is pending.

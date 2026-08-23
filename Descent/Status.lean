@@ -1146,4 +1146,36 @@ example {K : ContextField R A} :
 example : gaugeFam R A = gauge3 R A :=
   gaugeFam_eq_gauge3
 
+/-! ## The final observable on the diamond (classification)
+
+The claims below correspond to the closing paragraph of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: the order-≤3 gauge of the diamond is exactly the constant
+fields, for every additive commutative group. -/
+example {K : ContextField Diamond A} :
+    K ∈ gauge3 Diamond A ↔ ∃ c : A, K = ContextField.const Diamond c :=
+  Diamond.mem_gauge3_iff_exists_const
+
+/-- README: two diamond fields share the final observable exactly when
+they differ by a constant. -/
+example {K K' : ContextField Diamond A} :
+    Observable3.mk K = Observable3.mk K'
+      ↔ ∃ c : A, K - K' = ContextField.const Diamond c :=
+  Diamond.observable3_mk_eq_mk_iff
+
+/-- README: the observable class and the value at any one context
+determine the field. -/
+example {K K' : ContextField Diamond A} (p : Diamond)
+    (h : Observable3.mk K = Observable3.mk K') (hp : K p = K' p) : K = K' :=
+  Diamond.eq_of_mk_eq_of_apply_eq p h hp
+
+/-- README: every class contains exactly one field normalized to zero at
+a chosen context. -/
+example (p : Diamond) (K : ContextField Diamond A) :
+    ∃! K₀ : ContextField Diamond A,
+      Observable3.mk K₀ = Observable3.mk K ∧ K₀ p = 0 :=
+  Diamond.existsUnique_mk_eq_and_apply_eq_zero p K
+
 end Descent.Status
