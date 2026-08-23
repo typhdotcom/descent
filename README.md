@@ -502,6 +502,10 @@ monotone valuations, in which the excluded witness lies. Restriction
 data is now observable: the diamond code system realizes that witness
 as a finite restriction system whose comparison losses are the four
 irredundant measurements exactly — the canonical coordinates count the
-failures of pairwise and triple gluing. Generalization waits for these
-theorems to reveal what the restriction model actually consumes.
-Direction is pending.
+failures of pairwise and triple gluing. The next program is the generic
+pairwise recognition theorem: decompose every `logCard` defect into
+the logarithmic comparison-cardinality term and the exact fiber-balance
+residue; under an injective comparison, identify the first term with the
+number of missed compatible states, and characterize when the residue
+vanishes. The diamond pair coordinates must then follow by
+instantiation. Triple generalization waits on this theorem.

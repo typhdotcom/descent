@@ -1295,50 +1295,63 @@ For each datum class, what is the exact equivalence relation on realizations ind
 
 When is a failure of compositional valuation equivalent to a local-to-global obstruction in an underlying realization?
 
-This is the next program. Define a finite restriction system over a preorder,
-with a nonempty finite state type (X_r) at each context and maps
+The first model is complete. `FiniteRestriction` assigns nonempty finite state
+types to a preorder with functorial restriction toward coarser contexts.
+Lattice structure enters only to form compatible local states as a fiber
+product over the meet and the canonical comparison from global states over the
+join. On the diamond, bottom is (\\mathbf 1), the atoms are (\\mathbf 2), and
+the top consists of the three codewords (\\{000,011,101\\}). Every atom
+restriction is surjective; each atom-pair comparison embeds three global states
+into four compatible pairs and misses one; the triple comparison embeds three
+into eight and misses five. The logarithmic cardinality field is exactly
+`Diamond.logCountField`, and one bridge theorem identifies its complete
+canonical datum with the four comparison-cardinality ratios
 
 \[
-\\rho\_{a\\le b}:X_b\\longrightarrow X_a
+\\left(\\log\\frac 43,\\log\\frac 43,\\log\\frac 43,
+\\log\\frac 83\\right).
 \]
 
-satisfying identity and composition. Add lattice structure only when defining,
-for a pair (a,b), the compatible local states as the fiber product of (X_a) and
-(X_b) over (X\_{a\\wedge b}), and the canonical comparison map from
-(X\_{a\\vee b}) by restriction. The comparison map, its injectivity, and its
-surjectivity are the structural data; do not impose cardinality identities that
-erase their failure.
-
-Build the first model on the diamond with
+The immediate continuation is the generic pairwise recognition theorem. For an
+arbitrary finite restriction system, prove the exact decomposition
 
 \[
-X\_\\bot=\\mathbf 1,\\qquad X_x=X_y=X_z=\\mathbf 2,
+\\begin{aligned}
+D\_{\\log |X|}(a,b)
+&=\\log\\frac{|\\operatorname{Compat}(a,b)|}{|X\_{a\\vee b}|}\\\\
+&\\quad+\\log\\frac{|X_a|\\,|X_b|}
+{|X\_{a\\wedge b}|\\,|\\operatorname{Compat}(a,b)|}.
+\\end{aligned}
 \]
 
-and three global assignments inside (\\mathbf 2^3), for example
+The first summand is the comparison-cardinality term. The second is the exact
+fiber-balance residue that prevents an arbitrary logarithmic cardinality defect
+from being a pure gluing obstruction.
+
+Define the missed compatible states generically. Under injectivity of the
+comparison, prove that the comparison term is
 
 \[
-X\_\\top=\\{000,011,101\\}.
+\\log\\left(1+
+\\frac{|\\operatorname{Missed}(a,b)|}{|X\_{a\\vee b}|}\\right),
 \]
 
-Restrictions from the top are the coordinate projections and restrictions to
-the bottom are unique. Prove the functor laws, and then prove rather than
-suggest the local-to-global obstruction:
+hence is nonnegative and vanishes exactly when the comparison is surjective.
+Characterize vanishing of the residue by the exact cardinal balance
 
-- restriction from the top onto each atom is surjective;
-- every atom-pair comparison embeds three global states into four compatible
-  local pairs and misses exactly one;
-- the triple comparison embeds the same three global states into eight
-  compatible atom triples and misses exactly five;
-- the logarithmic cardinality field is exactly the existing
-  `Diamond.logCountField`;
-- its three pairwise canonical coordinates are each (\\log(4/3)), and its
-  order-3 coordinate is (\\log(8/3)).
+\[
+|\\operatorname{Compat}(a,b)|\\,|X\_{a\\wedge b}|
+=|X_a|\\,|X_b|,
+\]
 
-This milestone must make the four irredundant observable coordinates literal
-local-to-global losses. It must not add weights, a general sheaf library, or a
-second abstract defect calculus. Generalization waits until this model shows
-which restriction-system hypotheses the defect formulas actually consume.
+and prove that constant finite fiber cardinality of either restriction leg to
+the meet is sufficient for this balance. Finally instantiate the theorem on
+the three diamond atom pairs and derive their defect coordinates from the
+generic result.
+
+This milestone isolates gluing failure from fiber imbalance. Do not generalize
+to triples, add weights, or introduce a sheaf layer until the pairwise
+decomposition and its sharp zero criterion are established.
 
 ### Q10 — Restricted data
 
