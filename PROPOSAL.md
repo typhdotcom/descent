@@ -316,17 +316,26 @@ D^{(4)}(a,b,c,d)
 The last line is the exact field gap across a distributivity-defect interval.
 The cumulative datum through order 4 is (D,D^{(3)},D^{(4)}), with its own
 kernel and injectively observed quotient. For a field in the order-(\\le 3)
-gauge, every term above except the distributivity gap vanishes. Consequently,
-strict refinement at order 4 is exactly the existence of an order-(\\le 3)
-gauge field that detects such an interval. Distributive lattices cannot do so,
-and lattices without a four-element antichain stabilize at order 3.
+gauge, every term above except the distributivity gap vanishes. But membership
+in that gauge also gives blindness to every two-variable distributivity
+interval, and the valuation law propagates this blindness to the
+three-variable interval above. Hence the gap always vanishes:
 
-Whether the order-(\\le 4) gauge can be strictly smaller than the
-order-(\\le 3) gauge is now the singular open question. The hierarchy above
-order 4 must not be generalized before that question establishes whether the
-observable tower actually grows. At every later order, observable or
-interaction terminology still requires an explicit order-separation datum,
-cumulative gauge, descent theorem, and strictness or stabilization result.
+\[
+\\operatorname{gauge}_{\\le 4}=\\operatorname{gauge}_{\\le 3}
+\]
+
+on every lattice and for every target. Order 4 never refines cumulative
+observation beyond order 3; its datum is already a function of the
+order-(\\le 3) class.
+
+The singular open question is now all-order saturation: does the same
+finite-join propagation force every order above 3 to add no observable
+information? A general hierarchy should be introduced only in service of
+proving or refuting that stabilization theorem. At every later order,
+observable or interaction terminology still requires an explicit
+order-separation datum, cumulative gauge, descent theorem, and strictness or
+stabilization result.
 
 Questions include:
 
@@ -733,10 +742,12 @@ The next layers consume the cumulative data (D,D^{(3)}) and
 (D,D^{(3)},D^{(4)}), whose kernels define the order-(\\le 3) and
 order-(\\le 4) gauges. On distributive lattices both collapse to the pairwise
 observable. On the diamond order 3 is strictly finer and order 4 stabilizes.
-The exact arbitrary-lattice order-4 recurrence identifies the remaining
-strictness question with detection of a distributivity-defect interval by an
-order-(\\le 3) gauge field. No order-(k) interface for (k\\ge 5) should be
-introduced until that question is settled.
+The exact arbitrary-lattice recurrence reduces order-4 strictness to detection
+of a distributivity-defect interval by an order-(\\le 3) gauge field; the
+saturation theorem proves that every such field is blind to it, so the two
+gauges coincide on every lattice. The next interface for (k\\ge 5) should be
+introduced only as part of settling whether this saturation persists at every
+higher order.
 
 ______________________________________________________________________
 
@@ -1144,10 +1155,10 @@ Which rows, rays, chains, prime-indexed subsets, or finite samples (S) satisfy
 At order 3 the cumulative gauge collapses to the pairwise gauge on
 distributive lattices and is strictly finer on the diamond. At order 4 the
 exact recurrence reduces strictness to detection of a distributivity-defect
-interval by an order-(\\le 3) gauge field; distributive lattices and lattices
-without a four-element antichain stabilize. Does any lattice admit such a
-field, making the order-(\\le 4) gauge strictly smaller? Generalization above
-order 4 waits on this answer.
+interval by an order-(\\le 3) gauge field, and the saturation theorem proves
+that every such field is blind to it. Thus the order-(\\le 4) and
+order-(\\le 3) gauges agree on every lattice. Does the same propagation force
+all cumulative gauges above order 3 to agree with it?
 
 ### Q5 — Realizability
 
