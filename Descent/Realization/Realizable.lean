@@ -10,10 +10,11 @@ import Mathlib.Data.Set.Countable
 The inverse problem for the finite Gibbs class: which fields are
 log-partitions?
 
-`Realizable K` names the datum: a realization whose log-partition is exactly
-`K`. The necessary conditions are the M4 laws read in field coordinates ---
-`K` is monotone, `Real.exp ∘ K` is a valuation, the defect of `K` is
-nonnegative --- and positivity is absorbed by the exponential.
+`Realizable K` names the field datum --- a realization whose log-partition
+is exactly `K` --- and `DefectRealizable D` the defect datum. The necessary
+conditions are the M4 laws read in field coordinates --- `K` is monotone,
+`Real.exp ∘ K` is a valuation, the defect of `K` is nonnegative --- and
+positivity is absorbed by the exponential.
 
 The results separate the axes of the inverse problem:
 
@@ -21,11 +22,16 @@ The results separate the axes of the inverse problem:
   (`realizable_bool_iff`: realizable exactly when monotone, the valuation
   law being vacuous on a chain) and on the square (`Square.realizable_iff`:
   realizable exactly when monotone and exponentially a valuation);
-* they are not sufficient in general: on the chain `ℝ` the identity field
-  is monotone and exponentially a valuation, but no family of finite state
-  spaces grows strictly along an uncountable chain
-  (`exists_monotone_isValuation_not_realizable`) --- finiteness is a
-  separate axis;
+* the classification descends to defect data: on the square the defect
+  datum of any field is one number (`Square.defect_eq_defectData`), and it
+  is realizable exactly when that number is nonnegative
+  (`Square.defectRealizable_iff`);
+* order and algebra are not sufficient in general: on the chain `ℝ` the
+  identity field is monotone and exponentially a valuation, but no family
+  of finite state spaces grows strictly along an uncountable chain
+  (`exists_monotone_isValuation_not_realizable`) --- a cardinality
+  obstruction, since every sum in this class is finite and convergence is
+  automatic;
 * uniqueness lives at the level of the partition function alone: the field
   determines it (`partition_eq_of_logPartition_eq`), while distinct
   realizations share a log-partition (`exists_logPartition_eq_of_ne`) and
@@ -60,6 +66,23 @@ theorem Realizable.isValuation_exp {K : ContextField R ℝ} (h : Realizable K) :
 /-- The universal sign, as a necessary condition on the field datum. -/
 theorem Realizable.defect_nonneg {K : ContextField R ℝ} (h : Realizable K) (a b : R) :
     0 ≤ defect K a b := by
+  obtain ⟨Ω, _, X, rfl⟩ := h
+  exact X.defect_logPartition_nonneg a b
+
+/-- Defect data is realizable when it is the pairwise defect of the
+log-partition of a finite Gibbs realization. -/
+def DefectRealizable (D : R → R → ℝ) : Prop :=
+  ∃ (Ω : Type) (_ : DecidableEq Ω) (X : FiniteGibbs R Ω), defect X.logPartition = D
+
+/-- A realizable field realizes its defect data. -/
+theorem Realizable.defectRealizable {K : ContextField R ℝ} (h : Realizable K) :
+    DefectRealizable (defect K) := by
+  obtain ⟨Ω, i, X, rfl⟩ := h
+  exact ⟨Ω, i, X, rfl⟩
+
+/-- The universal sign, as a necessary condition on the defect datum. -/
+theorem DefectRealizable.nonneg {D : R → R → ℝ} (h : DefectRealizable D) (a b : R) :
+    0 ≤ D a b := by
   obtain ⟨Ω, _, X, rfl⟩ := h
   exact X.defect_logPartition_nonneg a b
 
@@ -342,6 +365,94 @@ theorem realizable_iff {K : ContextField Square ℝ} :
     show Real.log ((sqGibbs K).partition p) = K p
     rw [partition_sqGibbs K hm hv' p, Real.log_exp]
 
+/-! #### Defect data on the square
+
+The defect datum of any square field is one number, so defect realizability
+is a condition on that number. The universal sign rejects negative values;
+an explicit field realizes every nonnegative one. -/
+
+/-- A field with prescribed defect `d` at the nondegenerate square, monotone
+and exponentially a valuation whenever `0 ≤ d`. -/
+noncomputable def defectField (d : ℝ) : ContextField Square ℝ
+  | (false, false) => 0
+  | (true, false) => 2 * d
+  | (false, true) => Real.log (1 + Real.exp d)
+  | (true, true) => d + Real.log (1 + Real.exp d)
+
+private theorem defectField_bot (d : ℝ) : defectField d ⊥ = 0 := by
+  rw [show (⊥ : Square) = (false, false) from by decide]
+  rfl
+
+private theorem defectField_left (d : ℝ) : defectField d left = 2 * d := rfl
+
+private theorem defectField_right (d : ℝ) :
+    defectField d right = Real.log (1 + Real.exp d) := rfl
+
+private theorem defectField_top (d : ℝ) :
+    defectField d ⊤ = d + Real.log (1 + Real.exp d) := by
+  rw [show (⊤ : Square) = (true, true) from by decide]
+  rfl
+
+private theorem defectField_mono {d : ℝ} (hd : 0 ≤ d) : Monotone (defectField d) := by
+  have hlog : d ≤ Real.log (1 + Real.exp d) := by
+    have h := Real.log_le_log (Real.exp_pos d)
+      (by linarith [Real.exp_pos d] : Real.exp d ≤ 1 + Real.exp d)
+    rwa [Real.log_exp] at h
+  refine monotone_iff.mpr ⟨?_, ?_, ?_, ?_⟩
+  · rw [defectField_bot, defectField_left]
+    linarith
+  · rw [defectField_bot, defectField_right]
+    linarith
+  · rw [defectField_left, defectField_top]
+    linarith
+  · rw [defectField_right, defectField_top]
+    linarith
+
+private theorem isValuation_exp_defectField (d : ℝ) :
+    IsValuation (Real.exp ∘ defectField d) := by
+  have hpos : (0 : ℝ) < 1 + Real.exp d := by linarith [Real.exp_pos d]
+  rw [isValuation_iff]
+  simp only [Function.comp_apply]
+  rw [defectField_bot, defectField_left, defectField_right, defectField_top,
+    Real.exp_log hpos, Real.exp_zero, Real.exp_add, Real.exp_log hpos, two_mul,
+    Real.exp_add]
+  ring
+
+/-- The prescribed value is the defect. -/
+theorem defect_defectField (d : ℝ) : defect (defectField d) left right = d := by
+  rw [defect_left_right, defectField_bot, defectField_left, defectField_right,
+    defectField_top]
+  ring
+
+/-- Every nonnegative value is realized: the explicit field with prescribed
+defect is a log-partition. -/
+theorem realizable_defectField {d : ℝ} (hd : 0 ≤ d) : Realizable (defectField d) :=
+  realizable_iff.mpr ⟨defectField_mono hd, isValuation_exp_defectField d⟩
+
+/-- A square defect datum with a negative nondegenerate value is the defect
+of no realization's log-partition, over any state carrier. -/
+theorem defectData_not_defect_logPartition {d : ℝ} (hd : d < 0)
+    {Ω : Type*} [DecidableEq Ω] (X : FiniteGibbs Square Ω) :
+    defect X.logPartition ≠ defectData d := by
+  intro h
+  have h0 := X.defect_logPartition_nonneg left right
+  rw [h, defectData_left_right] at h0
+  exact absurd h0 (not_le.mpr hd)
+
+/-- Defect realizability on the square, characterized: a defect datum is
+realizable exactly when its sole nondegenerate value is nonnegative. -/
+theorem defectRealizable_iff {D : Square → Square → ℝ} :
+    DefectRealizable D ↔ ∃ d : ℝ, 0 ≤ d ∧ D = defectData d := by
+  constructor
+  · rintro ⟨Ω, i, X, rfl⟩
+    exact ⟨defect X.logPartition left right,
+      X.defect_logPartition_nonneg left right,
+      defect_eq_defectData X.logPartition⟩
+  · rintro ⟨d, hd, rfl⟩
+    obtain ⟨Ω, i, X, hX⟩ := realizable_defectField hd
+    refine ⟨Ω, i, X, ?_⟩
+    rw [hX, defect_eq_defectData, defect_defectField]
+
 end Square
 
 /-! ### Finiteness
@@ -349,9 +460,10 @@ end Square
 Order and algebra are not the entire obstruction in general. On the chain
 `ℝ` every field is exponentially a valuation and the identity field is
 monotone, but a realization of it would need finite state spaces growing
-strictly along an uncountable chain, and no such family exists. In the
-finite class, the analytic axis of the inverse problem appears as this
-finiteness obstruction. -/
+strictly along an uncountable chain, and no such family exists. This is a
+cardinality obstruction, not analytic convergence: every sum in this class
+is finite, so convergence is automatic and the analytic axis is absent. It
+belongs to a summable realization class, when one exists. -/
 
 /-- The identity field on the chain `ℝ` is the log-partition of no
 realization over any state carrier: its partition function would be

@@ -475,6 +475,31 @@ example {K : ContextField Square ℝ} :
     Realizable K ↔ Monotone K ∧ IsValuation (Real.exp ∘ K) :=
   Square.realizable_iff
 
+/-- README: on the square, the defect datum of any field is its single
+value at the nondegenerate square. -/
+example (K : ContextField Square A) :
+    defect K = Square.defectData (defect K Square.left Square.right) :=
+  Square.defect_eq_defectData K
+
+/-- README: defect realizability on the square is sharp --- exactly the
+nonnegative single values. -/
+example {D : Square → Square → ℝ} :
+    DefectRealizable D ↔ ∃ d : ℝ, 0 ≤ d ∧ D = Square.defectData d :=
+  Square.defectRealizable_iff
+
+/-- README: every nonnegative value is realized by an explicit field with
+that defect. -/
+example {d : ℝ} (hd : 0 ≤ d) : Realizable (Square.defectField d) :=
+  Square.realizable_defectField hd
+
+example (d : ℝ) : defect (Square.defectField d) Square.left Square.right = d :=
+  Square.defect_defectField d
+
+/-- README: negative values are rejected over any state carrier. -/
+example {d : ℝ} (hd : d < 0) {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Square Ω') :
+    defect X'.logPartition ≠ Square.defectData d :=
+  Square.defectData_not_defect_logPartition hd X'
+
 /-- README: on the chain `ℝ`, the identity field is the log-partition of no
 realization over any state carrier. -/
 example {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs ℝ Ω') :

@@ -189,12 +189,20 @@ then separate:
   three-state carrier — one shared state, one state private to each side of
   the nondegenerate square, included exactly when its side strictly
   increases mass.
+- **The classification descends to defect data.** `DefectRealizable D`
+  names the defect datum. On the square the defect of any field is one
+  number — its value at the nondegenerate square — and the class realizes
+  exactly the nonnegative ones: every `d ≥ 0` is the defect of an explicit
+  realizable field, and negative values are rejected over any state carrier
+  by the universal sign.
 - **Finiteness is a separate axis.** On the chain `ℝ` the identity field is
   monotone and exponentially a valuation, yet it is the log-partition of no
   realization over any state carrier: its partition function would be
   strictly monotone, forcing finite state spaces to grow strictly along an
-  uncountable chain. This is where the analytic part of the inverse problem
-  appears in the finite class.
+  uncountable chain. This is a cardinality obstruction, not analytic
+  convergence — every sum in the class is finite, so convergence is
+  automatic and the analytic axis is absent here; it belongs to a future
+  summable realization class.
 - **Uniqueness lives at the partition function.** The field datum determines
   the partition function exactly. It does not determine the realization —
   two realizations with different energies share a log-partition — and
@@ -215,10 +223,12 @@ installs on first use.
 ## Next
 
 `PROPOSAL.md` §20 sequences the work. M2 through M4 are built. M5 is built
-at this level: realizability is characterized on the solved models — order
-alone on the minimal chain, order plus the exponential valuation law on the
-square — refuted as a general characterization by the finiteness obstruction
-on the chain `ℝ`, and uniqueness is located at the partition function. Open:
+at this level: realizability is characterized on the solved models at both
+observational levels — for fields, order alone on the minimal chain and
+order plus the exponential valuation law on the square; for defect data,
+exactly the nonnegative single values on the square — refuted as a general
+characterization by the cardinality obstruction on the chain `ℝ`, with
+uniqueness located at the partition function. Open:
 realizability on richer finite lattices, where the pairwise valuation law
 need not control the higher inclusion–exclusion the state maps impose — the
 same higher-observable gap M2 exposed. Completeness and adequacy on richer
