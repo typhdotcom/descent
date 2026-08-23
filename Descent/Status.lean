@@ -939,4 +939,87 @@ example :
         defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5) ≠ 0 :=
   Arith.exists_defect_eq_zero_defect3_ne_zero
 
+/-! ## Order 4 (Q4, continued)
+
+The claims below correspond to the order-4 paragraph of the "Order
+separation" section of `README.md`.
+-/
+
+/-- README: degeneracy collapses the order-4 defect to an order-3 face. -/
+example (K : ContextField R A) {a b : R} (h : a ≤ b) (c d : R) :
+    defect4 K a b c d = defect3 K b c d :=
+  defect4_of_le K h c d
+
+/-- README: isolation --- the raw order-4 cube is alternating order-3 and
+order-2 face data minus the order-4 defect, exactly, at the meet base. -/
+example (K : ContextField R A) (a b c d : R) :
+    mixedDiff [a, b, c, d] K (a ⊓ b ⊓ c ⊓ d)
+      = defect3 K a b c + defect3 K a b d + defect3 K a c d + defect3 K b c d
+        - (defect K a b + defect K a c + defect K a d + defect K b c
+            + defect K b d + defect K c d)
+        - defect4 K a b c d :=
+  mixedDiff_quad_inf K a b c d
+
+/-- README: the cumulative datum through order 4 --- gauge, equivalence,
+injective quotient observation. -/
+example {K : ContextField R A} :
+    K ∈ gauge4 R A ↔ IsValuation K ∧ (∀ a b c, defect3 K a b c = 0) ∧
+      ∀ a b c d, defect4 K a b c d = 0 :=
+  mem_gauge4_iff
+
+example {K K' : ContextField R A} :
+    Defect4Equiv K K' ↔ K - K' ∈ gauge4 R A :=
+  defect4Equiv_iff_sub_mem_gauge4
+
+example (K : ContextField R A) :
+    Observable4.datum (Observable4.mk K) = (defect K, defect3 K, defect4 K) :=
+  Observable4.datum_mk K
+
+example : Function.Injective (Observable4.datum : Observable4 R A → _) :=
+  Observable4.datum_injective
+
+/-- README: the recurrence --- on distributive lattices the order-4 defect
+decomposes through order 3 in the same shape as order 3 through order 2,
+and the collapse persists. -/
+example {D : Type*} [DistribLattice D] (K : ContextField D A) (a b c d : D) :
+    defect4 K a b c d
+      = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
+        - defect3 K (a ⊓ d) (b ⊓ d) (c ⊓ d) :=
+  defect4_decompose K a b c d
+
+example {D : Type*} [DistribLattice D] {K : ContextField D A}
+    (h : IsValuation K) (a b c d : D) : defect4 K a b c d = 0 :=
+  defect4_eq_zero_of_isValuation h a b c d
+
+example {D : Type*} [DistribLattice D] : gauge4 D A = gauge D A :=
+  gauge4_eq_gauge
+
+example {D : Type*} [DistribLattice D] {K K' : ContextField D A} :
+    Defect4Equiv K K' ↔ DefectEquiv K K' :=
+  defect4Equiv_iff_defectEquiv
+
+/-- README: without a 4-antichain, order 4 adds nothing beyond order 3;
+the diamond has no 4-antichain and stabilizes. -/
+example :
+    ∀ a b c d : Diamond,
+      Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
+        Comparable b d ∨ Comparable c d :=
+  Diamond.four_comparable
+
+example : gauge4 Diamond ℤ = gauge3 Diamond ℤ :=
+  Diamond.gauge4_eq_gauge3
+
+/-- README: chains kill order 4 identically. -/
+example {C : Type*} [LinearOrder C] (K : ContextField C A) (a b c d : C) :
+    defect4 K a b c d = 0 :=
+  defect4_eq_zero_of_linearOrder K a b c d
+
+/-- README: the recurrence instantiated at the arithmetic antichain
+`2, 3, 5, 7`. -/
+example (K : ContextField Arith ℝ) :
+    defect4 K (Arith.of 2) (Arith.of 3) (Arith.of 5) (Arith.of 7)
+      = defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5)
+        + defect K (Arith.of 30) (Arith.of 7) :=
+  Arith.defect4_two_three_five_seven K
+
 end Descent.Status

@@ -39,6 +39,23 @@ The separation theorems:
   diamond the gauges are strictly nested and two fields share the
   pairwise observable while the cumulative observable separates them
   (`Descent.Models.Diamond`).
+
+Order 4 repeats the pattern exactly, and reveals the recurrence.
+`defect4` is the failure of fourfold inclusion–exclusion; degeneracy
+collapses it to an order-3 face (`defect4_of_le`); the raw order-4 cube
+decomposes exactly into alternating order-3 and order-2 faces, the
+order-4 defect, and the base residue (`mixedDiff_quad_add_defect4`); the
+cumulative datum `(D₂, D₃, D₄)` has gauge `gauge4`, equivalence
+`Defect4Equiv`, and injective quotient observation `Observable4.datum`.
+On distributive lattices the collapse persists through the recurrence
+
+    D₄(a,b,c,d) = D₃(a,b,c) + D₂(a ⊔ b ⊔ c, d) - D₃(a ⊓ d, b ⊓ d, c ⊓ d)
+
+(`defect4_decompose`), the same shape as `defect3_decompose` one order
+down: `gauge4 = gauge` distributively. Without a 4-antichain order 4
+adds nothing beyond order 3 (`defect4_eq_zero_of_defect3_eq_zero`), so
+the diamond stabilizes at order 3; whether any carrier strictly
+separates order 4 from cumulative order ≤ 3 is open.
 -/
 
 namespace Descent
@@ -153,6 +170,163 @@ theorem defect3_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
     defect3 (K ∘ f) a b c = defect3 K (f a) (f b) (f c) := by
   simp [defect3, Function.comp_apply, map_inf, map_sup]
 
+/-! ### Order 4 -/
+
+/-- The order-4 defect of `K`: the failure of fourfold
+inclusion–exclusion. -/
+def defect4 (K : ContextField R A) (a b c d : R) : A :=
+  K a + K b + K c + K d
+    - K (a ⊓ b) - K (a ⊓ c) - K (a ⊓ d) - K (b ⊓ c) - K (b ⊓ d) - K (c ⊓ d)
+    + K (a ⊓ b ⊓ c) + K (a ⊓ b ⊓ d) + K (a ⊓ c ⊓ d) + K (b ⊓ c ⊓ d)
+    - K (a ⊓ b ⊓ c ⊓ d) - K (a ⊔ b ⊔ c ⊔ d)
+
+theorem defect4_def (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d
+      = K a + K b + K c + K d
+        - K (a ⊓ b) - K (a ⊓ c) - K (a ⊓ d) - K (b ⊓ c) - K (b ⊓ d) - K (c ⊓ d)
+        + K (a ⊓ b ⊓ c) + K (a ⊓ b ⊓ d) + K (a ⊓ c ⊓ d) + K (b ⊓ c ⊓ d)
+        - K (a ⊓ b ⊓ c ⊓ d) - K (a ⊔ b ⊔ c ⊔ d) :=
+  rfl
+
+theorem defect4_comm_left (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d = defect4 K b a c d := by
+  simp only [defect4, inf_comm a b, sup_comm a b]
+  abel
+
+theorem defect4_comm_mid (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d = defect4 K a c b d := by
+  simp only [defect4, inf_comm b c, inf_right_comm a b c, sup_right_comm a b c]
+  abel
+
+theorem defect4_comm_right (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d = defect4 K a b d c := by
+  simp only [defect4, inf_comm c d, inf_right_comm a c d, inf_right_comm b c d,
+    inf_right_comm (a ⊓ b) c d, sup_right_comm (a ⊔ b) c d]
+  abel
+
+@[simp]
+theorem defect4_zero : defect4 (0 : ContextField R A) = 0 := by
+  funext a b c d
+  simp [defect4]
+
+theorem defect4_add (K K' : ContextField R A) (a b c d : R) :
+    defect4 (K + K') a b c d = defect4 K a b c d + defect4 K' a b c d := by
+  simp only [defect4, Pi.add_apply]
+  abel
+
+theorem defect4_sub (K K' : ContextField R A) (a b c d : R) :
+    defect4 (K - K') a b c d = defect4 K a b c d - defect4 K' a b c d := by
+  simp only [defect4, Pi.sub_apply]
+  abel
+
+/-- On a degenerate quadruple the order-4 defect is the order-3 defect of
+the surviving triple: no raw field data is retained. -/
+theorem defect4_of_le (K : ContextField R A) {a b : R} (h : a ≤ b) (c d : R) :
+    defect4 K a b c d = defect3 K b c d := by
+  simp only [defect4, defect3, inf_eq_left.mpr h, sup_eq_right.mpr h]
+  abel
+
+theorem defect4_self (K : ContextField R A) (a c d : R) :
+    defect4 K a a c d = defect3 K a c d :=
+  defect4_of_le K le_rfl c d
+
+/-- If every order-3 defect vanishes, the order-4 defect vanishes on any
+quadruple containing a comparable pair: without a 4-antichain, order 4
+adds nothing beyond order 3. -/
+theorem defect4_eq_zero_of_defect3_eq_zero {K : ContextField R A}
+    (h3 : ∀ a b c, defect3 K a b c = 0) {a b c d : R}
+    (h : Comparable a b ∨ Comparable a c ∨ Comparable a d ∨ Comparable b c ∨
+      Comparable b d ∨ Comparable c d) :
+    defect4 K a b c d = 0 := by
+  have red : ∀ p q u v : R, p ≤ q → defect4 K p q u v = 0 := fun p q u v hpq => by
+    rw [defect4_of_le K hpq]
+    exact h3 q u v
+  rcases h with (h | h) | (h | h) | (h | h) | (h | h) | (h | h) | (h | h)
+  · exact red a b c d h
+  · rw [defect4_comm_left]
+    exact red b a c d h
+  · rw [defect4_comm_mid]
+    exact red a c b d h
+  · rw [defect4_comm_mid, defect4_comm_left]
+    exact red c a b d h
+  · rw [defect4_comm_right, defect4_comm_mid]
+    exact red a d b c h
+  · rw [defect4_comm_right, defect4_comm_mid, defect4_comm_left]
+    exact red d a b c h
+  · rw [defect4_comm_left, defect4_comm_mid]
+    exact red b c a d h
+  · rw [defect4_comm_mid, defect4_comm_left, defect4_comm_mid]
+    exact red c b a d h
+  · rw [defect4_comm_left, defect4_comm_right, defect4_comm_mid]
+    exact red b d a c h
+  · rw [defect4_comm_left, defect4_comm_right, defect4_comm_mid, defect4_comm_left]
+    exact red d b a c h
+  · rw [defect4_comm_mid, defect4_comm_left, defect4_comm_right, defect4_comm_mid]
+    exact red c d a b h
+  · rw [defect4_comm_mid, defect4_comm_left, defect4_comm_right, defect4_comm_mid,
+      defect4_comm_left]
+    exact red d c a b h
+
+/-- The exact isolation identity at an arbitrary base: the raw order-4
+mixed difference is its order-3 faces, minus its order-2 faces, minus the
+order-4 defect of the translated quadruple, plus the base-point
+residue. -/
+theorem mixedDiff_quad_add_defect4 (K : ContextField R A) (a b c d r : R) :
+    mixedDiff [a, b, c, d] K r
+        + defect4 K (r ⊔ a) (r ⊔ b) (r ⊔ c) (r ⊔ d)
+      = defect3 K (r ⊔ a) (r ⊔ b) (r ⊔ c) + defect3 K (r ⊔ a) (r ⊔ b) (r ⊔ d)
+          + defect3 K (r ⊔ a) (r ⊔ c) (r ⊔ d) + defect3 K (r ⊔ b) (r ⊔ c) (r ⊔ d)
+        - (defect K (r ⊔ a) (r ⊔ b) + defect K (r ⊔ a) (r ⊔ c)
+            + defect K (r ⊔ a) (r ⊔ d) + defect K (r ⊔ b) (r ⊔ c)
+            + defect K (r ⊔ b) (r ⊔ d) + defect K (r ⊔ c) (r ⊔ d))
+        + (K r - K ((r ⊔ a) ⊓ (r ⊔ b) ⊓ (r ⊔ c) ⊓ (r ⊔ d))) := by
+  have hstep : ∀ x q : R, r ≤ x → x ⊔ (r ⊔ q) = x ⊔ q := fun x q hx => by
+    rw [← sup_assoc, sup_eq_left.mpr hx]
+  have h1 : (r ⊔ a) ⊔ (r ⊔ b) = r ⊔ a ⊔ b := hstep _ _ le_sup_left
+  have h2 : (r ⊔ a) ⊔ (r ⊔ c) = r ⊔ a ⊔ c := hstep _ _ le_sup_left
+  have h3 : (r ⊔ a) ⊔ (r ⊔ d) = r ⊔ a ⊔ d := hstep _ _ le_sup_left
+  have h4 : (r ⊔ b) ⊔ (r ⊔ c) = r ⊔ b ⊔ c := hstep _ _ le_sup_left
+  have h5 : (r ⊔ b) ⊔ (r ⊔ d) = r ⊔ b ⊔ d := hstep _ _ le_sup_left
+  have h6 : (r ⊔ c) ⊔ (r ⊔ d) = r ⊔ c ⊔ d := hstep _ _ le_sup_left
+  have t1 : (r ⊔ a ⊔ b) ⊔ (r ⊔ c) = r ⊔ a ⊔ b ⊔ c :=
+    hstep _ _ (le_sup_left.trans le_sup_left)
+  have t2 : (r ⊔ a ⊔ b) ⊔ (r ⊔ d) = r ⊔ a ⊔ b ⊔ d :=
+    hstep _ _ (le_sup_left.trans le_sup_left)
+  have t3 : (r ⊔ a ⊔ c) ⊔ (r ⊔ d) = r ⊔ a ⊔ c ⊔ d :=
+    hstep _ _ (le_sup_left.trans le_sup_left)
+  have t4 : (r ⊔ b ⊔ c) ⊔ (r ⊔ d) = r ⊔ b ⊔ c ⊔ d :=
+    hstep _ _ (le_sup_left.trans le_sup_left)
+  have q1 : (r ⊔ a ⊔ b ⊔ c) ⊔ (r ⊔ d) = r ⊔ a ⊔ b ⊔ c ⊔ d :=
+    hstep _ _ ((le_sup_left.trans le_sup_left).trans le_sup_left)
+  simp only [mixedDiff_cons, mixedDiff_nil, supDiff_apply, defect4, defect3,
+    defect_def, h1, h2, h3, h4, h5, h6, t1, t2, t3, t4, q1]
+  abel
+
+/-- At the meet base the residue vanishes: the raw order-4 mixed
+difference is exactly alternating face data minus the order-4 defect. -/
+theorem mixedDiff_quad_inf (K : ContextField R A) (a b c d : R) :
+    mixedDiff [a, b, c, d] K (a ⊓ b ⊓ c ⊓ d)
+      = defect3 K a b c + defect3 K a b d + defect3 K a c d + defect3 K b c d
+        - (defect K a b + defect K a c + defect K a d + defect K b c
+            + defect K b d + defect K c d)
+        - defect4 K a b c d := by
+  have h := mixedDiff_quad_add_defect4 K a b c d (a ⊓ b ⊓ c ⊓ d)
+  have ha : a ⊓ b ⊓ c ⊓ d ⊔ a = a :=
+    sup_eq_right.mpr ((inf_le_left.trans inf_le_left).trans inf_le_left)
+  have hb : a ⊓ b ⊓ c ⊓ d ⊔ b = b :=
+    sup_eq_right.mpr ((inf_le_left.trans inf_le_left).trans inf_le_right)
+  have hc : a ⊓ b ⊓ c ⊓ d ⊔ c = c :=
+    sup_eq_right.mpr (inf_le_left.trans inf_le_right)
+  have hd : a ⊓ b ⊓ c ⊓ d ⊔ d = d :=
+    sup_eq_right.mpr inf_le_right
+  rw [ha, hb, hc, hd, sub_self, add_zero] at h
+  exact eq_sub_of_add_eq h
+
+theorem defect4_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
+    (K : ContextField R' A) (a b c d : R) :
+    defect4 (K ∘ f) a b c d = defect4 K (f a) (f b) (f c) (f d) := by
+  simp [defect4, Function.comp_apply, map_inf, map_sup]
+
 /-! ### The cumulative observation through order 3 -/
 
 /-- The order-3 defect operator, packaged as an additive homomorphism. -/
@@ -255,6 +429,118 @@ theorem datum_injective : Function.Injective (datum : Observable3 R A → _) := 
 
 end Observable3
 
+/-! ### The cumulative observation through order 4 -/
+
+/-- The order-4 defect operator, packaged as an additive homomorphism. -/
+def defect4Hom : ContextField R A →+ (R → R → R → R → A) where
+  toFun K := defect4 K
+  map_zero' := defect4_zero
+  map_add' K K' := by
+    funext a b c d
+    exact defect4_add K K' a b c d
+
+@[simp]
+theorem defect4Hom_apply (K : ContextField R A) : defect4Hom K = defect4 K :=
+  rfl
+
+/-- The order-≤4 gauge: the kernel of cumulative observation through
+order 4. -/
+def gauge4 (R A : Type*) [Lattice R] [AddCommGroup A] :
+    AddSubgroup (ContextField R A) :=
+  gauge3 R A ⊓ defect4Hom.ker
+
+theorem mem_gauge4_iff {K : ContextField R A} :
+    K ∈ gauge4 R A ↔ IsValuation K ∧ (∀ a b c, defect3 K a b c = 0) ∧
+      ∀ a b c d, defect4 K a b c d = 0 := by
+  rw [gauge4, AddSubgroup.mem_inf, mem_gauge3_iff, AddMonoidHom.mem_ker, and_assoc]
+  refine and_congr Iff.rfl (and_congr Iff.rfl ?_)
+  constructor
+  · exact fun h a b c d =>
+      congrFun (congrFun (congrFun (congrFun h a) b) c) d
+  · intro h
+    funext a b c d
+    exact h a b c d
+
+/-- Cumulative defect equivalence through order 4. -/
+def Defect4Equiv (K K' : ContextField R A) : Prop :=
+  Defect3Equiv K K' ∧ defect4 K = defect4 K'
+
+theorem Defect4Equiv.refl (K : ContextField R A) : Defect4Equiv K K :=
+  ⟨Defect3Equiv.refl K, rfl⟩
+
+theorem Defect4Equiv.symm {K K' : ContextField R A} (h : Defect4Equiv K K') :
+    Defect4Equiv K' K :=
+  ⟨h.1.symm, h.2.symm⟩
+
+theorem Defect4Equiv.trans {K K' K'' : ContextField R A}
+    (h : Defect4Equiv K K') (h' : Defect4Equiv K' K'') : Defect4Equiv K K'' :=
+  ⟨h.1.trans h'.1, h.2.trans h'.2⟩
+
+/-- Equal cumulative data through order 4 is exactly a difference in the
+order-≤4 gauge. -/
+theorem defect4Equiv_iff_sub_mem_gauge4 {K K' : ContextField R A} :
+    Defect4Equiv K K' ↔ K - K' ∈ gauge4 R A := by
+  rw [gauge4, AddSubgroup.mem_inf, AddMonoidHom.mem_ker, Defect4Equiv,
+    ← defect3Equiv_iff_sub_mem_gauge3]
+  refine and_congr Iff.rfl ?_
+  constructor
+  · intro h
+    funext a b c d
+    show defect4 (K - K') a b c d = 0
+    rw [defect4_sub, congrFun (congrFun (congrFun (congrFun h a) b) c) d,
+      sub_self]
+  · intro h
+    funext a b c d
+    have h0 : defect4 (K - K') a b c d = 0 :=
+      congrFun (congrFun (congrFun (congrFun h a) b) c) d
+    rw [defect4_sub] at h0
+    exact sub_eq_zero.mp h0
+
+/-- Cumulative equivalence through order 4 as a setoid. -/
+def defect4Setoid (R A : Type*) [Lattice R] [AddCommGroup A] :
+    Setoid (ContextField R A) where
+  r := Defect4Equiv
+  iseqv := ⟨Defect4Equiv.refl, Defect4Equiv.symm, Defect4Equiv.trans⟩
+
+/-- The cumulative observable quotient through order 4. -/
+def Observable4 (R A : Type*) [Lattice R] [AddCommGroup A] : Type _ :=
+  Quotient (defect4Setoid R A)
+
+namespace Observable4
+
+/-- The cumulative class of a field. -/
+def mk (K : ContextField R A) : Observable4 R A :=
+  Quotient.mk (defect4Setoid R A) K
+
+theorem mk_eq_mk {K K' : ContextField R A} :
+    mk K = mk K' ↔ Defect4Equiv K K' :=
+  Quotient.eq (r := defect4Setoid R A)
+
+/-- The cumulative datum through order 4, descended to the quotient. -/
+def datum :
+    Observable4 R A → (R → R → A) × (R → R → R → A) × (R → R → R → R → A) :=
+  Quotient.lift (fun K => (Descent.defect K, defect3 K, defect4 K)) fun _ _ h =>
+    Prod.ext h.1.1 (Prod.ext h.1.2 h.2)
+
+@[simp]
+theorem datum_mk (K : ContextField R A) :
+    datum (mk K) = (Descent.defect K, defect3 K, defect4 K) :=
+  rfl
+
+/-- Cumulative observation through order 4 is injective on its
+quotient. -/
+theorem datum_injective : Function.Injective (datum : Observable4 R A → _) := by
+  intro u v h
+  induction u using Quotient.inductionOn with
+  | _ K =>
+    induction v using Quotient.inductionOn with
+    | _ K' =>
+      exact mk_eq_mk.mpr
+        ⟨⟨congrArg Prod.fst h, congrArg (fun p => p.2.1) h⟩,
+          congrArg (fun p => p.2.2) h⟩
+
+end Observable4
+
 end Lattice
 
 /-! ### Descent on distributive contexts -/
@@ -311,6 +597,66 @@ theorem gauge3_eq_gauge : gauge3 R A = gauge R A := by
   refine le_antisymm inf_le_left fun K hK => mem_gauge3_iff.mpr ?_
   exact ⟨mem_gauge_iff.mp hK,
     defect3_eq_zero_of_isValuation (mem_gauge_iff.mp hK)⟩
+
+/-! On a distributive lattice the recurrence continues one order up, and
+the collapse persists. -/
+
+/-- The recurrence: on a distributive lattice the order-4 defect
+decomposes exactly through order 3 --- the same shape as
+`defect3_decompose` one order down. -/
+theorem defect4_decompose (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d
+      = defect3 K a b c + defect K (a ⊔ b ⊔ c) d
+        - defect3 K (a ⊓ d) (b ⊓ d) (c ⊓ d) := by
+  have hd : (a ⊔ b ⊔ c) ⊓ d = (a ⊓ d) ⊔ (b ⊓ d) ⊔ (c ⊓ d) := by
+    rw [inf_sup_right, inf_sup_right]
+  have hm : ∀ x y : R, (x ⊓ d) ⊓ (y ⊓ d) = x ⊓ y ⊓ d := fun x y => by
+    rw [inf_assoc x d, inf_comm d (y ⊓ d), inf_assoc y d, inf_idem, ← inf_assoc]
+  simp only [defect4, defect3, defect_def, hd, hm]
+  abel
+
+/-- Pairwise valuations have no order-4 defect on distributive
+contexts: the collapse persists at order 4. -/
+theorem defect4_eq_zero_of_isValuation {K : ContextField R A}
+    (h : IsValuation K) (a b c d : R) : defect4 K a b c d = 0 := by
+  rw [defect4_decompose, defect3_eq_zero_of_isValuation h,
+    defect3_eq_zero_of_isValuation h, h (a ⊔ b ⊔ c) d]
+  abel
+
+/-- The descent law at order 4 on distributive contexts. -/
+theorem defect4_eq_of_defectEquiv {K K' : ContextField R A}
+    (h : DefectEquiv K K') : defect4 K = defect4 K' := by
+  funext a b c d
+  have hG := defectEquiv_iff_sub_isValuation.mp h
+  have h0 := defect4_eq_zero_of_isValuation hG a b c d
+  rw [defect4_sub] at h0
+  exact sub_eq_zero.mp h0
+
+/-- On distributive contexts the order-4 defect is an observable of the
+pairwise class. -/
+def Observable.defect4 : Observable R A → (R → R → R → R → A) :=
+  Quotient.lift (fun K => Descent.defect4 K) fun _ _ h => defect4_eq_of_defectEquiv h
+
+@[simp]
+theorem Observable.defect4_mk (K : ContextField R A) :
+    Observable.defect4 (Observable.mk K) = Descent.defect4 K :=
+  rfl
+
+/-- On distributive contexts cumulative equivalence through order 4
+collapses to pairwise equivalence. -/
+theorem defect4Equiv_iff_defectEquiv {K K' : ContextField R A} :
+    Defect4Equiv K K' ↔ DefectEquiv K K' :=
+  ⟨fun h => h.1.1, fun h =>
+    ⟨⟨h, defect3_eq_of_defectEquiv h⟩, defect4_eq_of_defectEquiv h⟩⟩
+
+/-- On distributive contexts the order-≤4 gauge is the pairwise gauge:
+order 4 still adds nothing. -/
+theorem gauge4_eq_gauge : gauge4 R A = gauge R A := by
+  rw [gauge4, gauge3_eq_gauge, inf_eq_left]
+  intro K hK
+  rw [AddMonoidHom.mem_ker]
+  funext a b c d
+  exact defect4_eq_zero_of_isValuation (mem_gauge_iff.mp hK) a b c d
 
 end DistribLattice
 

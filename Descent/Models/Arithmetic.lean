@@ -376,6 +376,19 @@ theorem exists_defect_eq_zero_defect3_ne_zero :
     norm_num [show of 2 ≠ of 30 from by decide, show of 3 ≠ of 30 from by decide,
       show of 5 ≠ of 30 from by decide, show of 1 ≠ of 30 from by decide]
 
+/-- The recurrence instantiated at the antichain `2, 3, 5, 7`: the
+order-4 defect is the order-3 defect plus one derived square, since the
+meets with `7` degenerate. -/
+theorem defect4_two_three_five_seven {A : Type*} [AddCommGroup A]
+    (K : ContextField Arith A) :
+    defect4 K (of 2) (of 3) (of 5) (of 7)
+      = defect3 K (of 2) (of 3) (of 5) + defect K (of 30) (of 7) := by
+  rw [defect4_decompose, show (of 2 ⊔ of 3 ⊔ of 5 : Arith) = of 30 from by decide,
+    show (of 2 ⊓ of 7 : Arith) = of 1 from by decide,
+    show (of 3 ⊓ of 7 : Arith) = of 1 from by decide,
+    show (of 5 ⊓ of 7 : Arith) = of 1 from by decide,
+    defect3_self, defect_self, sub_zero]
+
 /-- The log divisor count carries the same defect data as the zero
 field. -/
 theorem defectEquiv_zero_logDivisorCount :

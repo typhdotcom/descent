@@ -55,6 +55,12 @@ theorem defect3_eq_zero_of_linearOrder (K : ContextField R A) (a b c : R) :
   · rw [defect3_comm_left, defect3_of_le K h c]
     exact isValuation_of_linearOrder K a c
 
+/-- On a chain the order-4 defect vanishes identically as well. -/
+theorem defect4_eq_zero_of_linearOrder (K : ContextField R A) (a b c d : R) :
+    defect4 K a b c d = 0 :=
+  defect4_eq_zero_of_defect3_eq_zero (defect3_eq_zero_of_linearOrder K)
+    (Or.inl (le_total a b))
+
 /-- On a chain the gauge is everything. -/
 theorem gauge_eq_top_of_linearOrder : gauge R A = ⊤ :=
   eq_top_iff.mpr fun K _ => mem_gauge_iff.mpr (isValuation_of_linearOrder K)

@@ -341,6 +341,24 @@ order-3 defect — the failure of triple inclusion–exclusion,
   defects zero and order-3 defect one. The triple's boundary never
   determines its order-3 defect — complete pairwise observation does.
 
+Order 4 repeats the pattern exactly and reveals the recurrence. The
+order-4 defect is the failure of fourfold inclusion–exclusion:
+
+- Degeneracy collapses it to an order-3 face, so chains kill it
+  identically; the raw order-4 cube decomposes exactly into alternating
+  order-3 and order-2 face data, the order-4 defect, and a base residue
+  that vanishes at the meet base.
+- The cumulative datum `(D₂, D₃, D₄)` has its gauge `gauge4`, its
+  equivalence, and its injective quotient observation `Observable4`.
+- On distributive lattices the collapse persists, through the recurrence
+  `D₄(a,b,c,d) = D₃(a,b,c) + D₂(a⊔b⊔c, d) − D₃(a⊓d, b⊓d, c⊓d)` — the
+  same shape as the order-3 decomposition one order down — so the
+  order-≤4 gauge is still the pairwise gauge; the arithmetic antichain
+  `2, 3, 5, 7` instantiates the recurrence with its meets degenerating.
+- Without a 4-antichain, order 4 adds nothing beyond order 3: the
+  diamond has no 4-antichain — a theorem — and stabilizes,
+  `gauge4 = gauge3` there.
+
 ## Working on it
 
 ```nu
@@ -354,15 +372,16 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20's ladder M0–M7 is built, and Q4's order-3 program with
-it: the cumulative datum through order 3, its gauge, its injective
-quotient observation, the exact isolation of the order-3 defect from face
-data, and the two-regime architecture — distributive contexts add nothing
-at order 3, the diamond is strictly finer. Open in Q4: the order-k
-hierarchy above 3 —
-the k-fold inclusion–exclusion defect, its face isolation, and whether
-distributive descent persists at every order. Behind it in the queue:
-kernel classification beyond the solved models and Hilbert embedding of
-sampled conditional negativity on richer lattices. Further carriers —
-graph cohomology, local-to-global constraint systems — enter when they
-pay the same admission fee: a theorem the abstract level cannot see.
+`PROPOSAL.md` §20's ladder M0–M7 is built, and Q4 with it through
+order 4: cumulative data, gauges, and injective quotient observations at
+orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
+the two-regime architecture — distributive contexts add nothing at
+either order, the diamond is strictly finer at order 3 and stabilizes at
+order 4 for want of a 4-antichain. Order 4 revealed the recurrence
+`D_{k+1}(a₁…a_k, d) = D_k(a₁…a_k) + D₂(⊔aᵢ, d) − D_k(a₁⊓d, …, a_k⊓d)`;
+the general-k hierarchy should now be built from it. Open besides: a
+carrier strictly separating order 4 from cumulative order ≤ 3 — it needs
+a 4-antichain and a distributivity gap invisible below — kernel
+classification beyond the solved models, and Hilbert embedding of
+sampled conditional negativity. Further carriers enter when they pay the
+admission fee: a theorem the abstract level cannot see.
