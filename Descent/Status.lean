@@ -7,6 +7,7 @@ import Descent.Models.Square
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Overlap
 import Descent.Geometry.Chambers
+import Descent.Models.Arithmetic
 import Descent.Geometry.Definiteness
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
@@ -680,5 +681,82 @@ energy does not move the induced kernel. -/
 example (c : ℝ) :
     joinKernel (X.shift c).logPartition = joinKernel X.logPartition :=
   X.joinKernel_logPartition_shift c
+
+/-! ## Concrete carriers (milestone M7)
+
+The claims below correspond to the "Concrete carriers" section of
+`README.md`.
+-/
+
+/-- README: the meet side of the divisor system is exact --- divisors of
+the gcd are the shared divisors. -/
+example (a b : Arith) :
+    Arith.divisorSet (a ⊓ b) = Arith.divisorSet a ∩ Arith.divisorSet b :=
+  Arith.divisorSet_inf a b
+
+/-- README: the join side fails exactly off comparability, the lcm itself
+witnessing the gap. -/
+example (a b : Arith) :
+    Arith.divisorSet a ∪ Arith.divisorSet b ⊆ Arith.divisorSet (a ⊔ b) :=
+  Arith.divisorSet_union_subset a b
+
+example {a b : Arith} (h : ¬Comparable a b) :
+    Arith.divisorSet a ∪ Arith.divisorSet b ⊂ Arith.divisorSet (a ⊔ b) :=
+  Arith.divisorSet_sup_ssubset h
+
+/-- README: the divisor count is monotone and supermodular, and its defect
+is the measured failure of the join side. -/
+example : Monotone Arith.divisorCount :=
+  Arith.monotone_divisorCount
+
+example : Supermodular Arith.divisorCount :=
+  Arith.supermodular_divisorCount
+
+example (a b : Arith) :
+    defect Arith.divisorCount a b
+      = ((Arith.divisorSet a ∪ Arith.divisorSet b).card : ℝ)
+        - ((Arith.divisorSet (a ⊔ b)).card : ℝ) :=
+  Arith.defect_divisorCount a b
+
+/-- README: the chamber wall is hit exactly at comparability. -/
+example {a b : Arith} : defect Arith.divisorCount a b = 0 ↔ Comparable a b :=
+  Arith.defect_divisorCount_eq_zero_iff
+
+example {a b : Arith} : defect Arith.divisorCount a b < 0 ↔ ¬Comparable a b :=
+  Arith.defect_divisorCount_neg_iff
+
+open scoped symmDiff in
+/-- README: the M6 metric of the supermodular chamber is the divisor
+symmetric-difference distance. -/
+example (a b : Arith) :
+    meetKernel Arith.divisorCount a b
+      = ((Arith.divisorSet a ∆ Arith.divisorSet b).card : ℝ) :=
+  Arith.meetKernel_divisorCount a b
+
+example : (Arith.divisorPseudoMetric).toDist.dist = meetKernel Arith.divisorCount :=
+  Arith.dist_divisorPseudoMetric
+
+/-- README: divisor counts factor exactly through gcd and lcm, so the log
+divisor count is a monotone valuation --- in the gauge, invisible to every
+defect datum. -/
+example (a b : Arith) :
+    Arith.divisorCount (a ⊓ b) * Arith.divisorCount (a ⊔ b)
+      = Arith.divisorCount a * Arith.divisorCount b :=
+  Arith.divisorCount_inf_mul_sup a b
+
+example : Monotone Arith.logDivisorCount :=
+  Arith.monotone_logDivisorCount
+
+example : Arith.logDivisorCount ∈ gauge Arith ℝ :=
+  Arith.logDivisorCount_mem_gauge
+
+/-- README: yet it is the log-partition of no finite Gibbs realization
+over any state carrier. -/
+example {Ω' : Type*} [DecidableEq Ω'] (X' : FiniteGibbs Arith Ω') :
+    X'.logPartition ≠ Arith.logDivisorCount :=
+  Arith.not_logPartition_logDivisorCount X'
+
+example : ¬Realizable Arith.logDivisorCount :=
+  Arith.not_realizable_logDivisorCount
 
 end Descent.Status

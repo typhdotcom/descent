@@ -262,6 +262,34 @@ derived square plus two order gaps:
   from its log-partition, and the energy zero point — the constant gauge
   direction — does not move it.
 
+## Concrete carriers
+
+Milestone M7, in `Descent/Models/Arithmetic.lean`:
+
+The first demanding carrier: positive naturals ordered by divisibility —
+meet is gcd, join is lcm — with the divisor sets as the natural state
+system. The carrier earns its place with arithmetic theorems invisible at
+the abstract level:
+
+- **The divisor system is exactly half a state map.** Divisors of the gcd
+  are exactly the shared divisors, while the union of divisor sets falls
+  strictly short of the divisors of the lcm exactly off comparability —
+  the lcm itself is the missing witness.
+- **The divisor count reads the wall.** The divisor-count field is
+  monotone and supermodular, its defect is the negated count of the
+  missing divisors, and it vanishes exactly at comparable pairs. The
+  chamber machinery then instantiates on the arithmetic carrier: the M6
+  pseudometric of the supermodular chamber is exactly the divisor
+  symmetric-difference distance.
+- **The same field is multiplicatively exact** — divisor counts factor
+  through gcd and lcm as `d(a ⊓ b)·d(a ⊔ b) = d(a)·d(b)` — so the log
+  divisor count is a monotone valuation: a field in the gauge, invisible
+  to every defect datum. Yet it is the log-partition of no finite Gibbs
+  realization over any state carrier: exact factorization is degenerate,
+  and the divisor counts of `4`, `6`, and their gcd `2` refuse it. After
+  M5's order, sign, and cardinality obstructions this is a fourth species
+  of non-realizability witness — one no defect observation can certify.
+
 ## Working on it
 
 ```nu
@@ -275,18 +303,20 @@ installs on first use.
 
 ## Next
 
-`PROPOSAL.md` §20 sequences the work. M2 through M5 are built. M6 is built
-at this level: the sign chambers are mapped — cones exchanged by negation,
-wall exactly the gauge, one coordinate on the square, defects of both
-signs on a richer lattice. Defect data determines the chamber, and the
-milestone theorem separates what geometry consumes: the gauge-invariant
-sampled defect matrix supports conditional negativity — equivalent to a
-positive semidefinite centered Gram kernel, detecting the chamber at the
-two-point square sample and collapsing to the wall at the full sample —
-while the metric pseudogeometry of the derived kernels consumes a
-normalized representative, moving by an exact span term under gauge.
-Open: which sampled conditional-negativity observables embed in a Hilbert
-space on richer lattices, and the chamber structure there. Realizability on richer finite lattices remains open,
+`PROPOSAL.md` §20 sequences the work. M2 through M6 are built. M7 is built
+at this level: the arithmetic carrier — divisibility with divisor-set
+states — produces its own theorems: the exact meet side and sharply
+failing join side of the divisor system, the comparability wall of the
+divisor-count defect, the divisor symmetric-difference metric as the
+instantiated chamber geometry, and a defect-invisible non-realizability
+witness. With the milestone ladder of §20 built at first-edition level,
+the driving questions of §21 take over: kernel classification beyond the
+solved models (Q1), sparse reconstruction (Q3), the order-separated
+higher observable (Q4) — still open, raw mixed differences are not that
+object — Hilbert embedding of sampled conditional negativity (Q6), and
+observational equivalence of realizations (Q8). Further carriers (graph
+cohomology, local-to-global constraint systems) enter when they can pay
+the same admission fee: a theorem the abstract level cannot see. Realizability on richer finite lattices remains open,
 where the pairwise valuation law need not control the higher
 inclusion–exclusion the state maps impose — the same higher-observable gap
 M2 exposed; so do completeness and adequacy on richer context lattices and
