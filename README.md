@@ -615,4 +615,10 @@ cardinality profile; and the second three-codeword system witnesses the
 blindness — identical complete defect observation, different comparison
 incidence. The epistemic boundary is exact: defect observation keeps
 the net cardinal obstruction and forgets how missed local states and
-identified global states cancel. Direction is pending.
+identified global states cancel. The final program is Q10: refine the
+scalar comparison observation to the extension profile that assigns
+each compatible local state its number of global extensions. Prove that
+this conditioned profile reconstructs a finite comparison map exactly
+up to relabeling inside its fibers, then distinguish the two diamond
+systems by the profiles `{0,1,1,1}` and `{0,0,1,2}`. Do not add
+probability or weights; this is a finite inverse theorem.

@@ -1291,59 +1291,28 @@ Which theorems survive replacement of the realization while keeping only the abs
 
 For each datum class, what is the exact equivalence relation on realizations induced by indistinguishability?
 
-This is the next program. Recognition under an injective comparison identifies
-the comparison term with missed compatible states. Remove injectivity and
-determine exactly what the same term sees.
-
-Develop the finite-map bookkeeping once, below restriction systems. For a map
-(f:A\\to B) between nonempty finite types, define its reached codomain,
-missed codomain, and redundancy
-
-\[
-\\operatorname{red}(f)=|A|-|\\operatorname{range}(f)|.
-\]
-
-Prove the exact partitions
-
-\[
-|B|=|\\operatorname{range}(f)|+|\\operatorname{missed}(f)|,
-\\qquad
-|A|=|\\operatorname{range}(f)|+\\operatorname{red}(f),
-\]
-
-and instantiate them for both `compare` and `compare3`. Their comparison
-terms must become
+Resolved for finite restriction systems. Generic finite-map incidence splits a
+codomain into reached and missed values and a domain into reached values plus
+redundancy. Pairwise and triple comparison terms are exactly
 
 \[
 \\log
 \\frac{|\\operatorname{range}(f)|+|\\operatorname{missed}(f)|}
-{|\\operatorname{range}(f)|+\\operatorname{red}(f)}.
+{|\\operatorname{range}(f)|+\\operatorname{red}(f)},
 \]
 
-Derive the complete chamber statement: the term is positive, zero, or negative
-exactly when missed states outnumber, equal, or are outnumbered by redundancy.
-Injectivity is the specialization (\\operatorname{red}(f)=0); surjectivity is
-the specialization (|\\operatorname{missed}(f)|=0). Thus zero comparison term
-means equal undercoverage and overidentification in general, not gluing.
+with complete sign chambers: missed values versus redundancy decide positive,
+zero, and negative terms. Injectivity is zero redundancy and surjectivity zero
+missed cardinality, so a zero term means balanced undercoverage and
+overidentification in general, not gluing.
 
-Name observational equivalence of finite restriction systems by equality of
-their final order-(\\le 3) observable classes. On the diamond, classify it
-exactly by proportional state-cardinality profiles, expressed without
-logarithms by cross multiplication against the bottom cardinality. Restriction
-maps themselves must disappear from this criterion.
-
-Then prove the blindness strictly. Build a second diamond code system with the
-same state types and the three codewords (\\{000,001,110\\}). Its restrictions
-to every atom are surjective and its `logCard` field, complete defect datum,
-and every higher finite-family defect equal those of the existing code system.
-But its (x,y) comparison has two reached pairs, two missed pairs, and redundancy
-one, while the existing system has three reached, one missed, and redundancy
-zero. In particular one comparison is injective and the other is not.
-
-This milestone must prove that complete defect observation retains the net
-cardinality obstruction while forgetting how missing local states and
-identified global states cancel. Do not add weights, probabilistic language,
-or categorical equivalence machinery.
+Observational equivalence is equality of final order-(\\le 3) observable
+classes. On the diamond it is exactly proportional state-cardinality profiles;
+restriction maps disappear. Two three-codeword systems have literally equal
+`logCard` fields and all finite-family defect data while their (x,y)
+comparisons have incidence (reached, missed, redundancy) equal to (3,1,0) and
+(2,2,1). Complete defect observation retains the net cardinal obstruction and
+forgets how missing local states and identified global states cancel.
 
 ### Q9 — Local/global correspondence
 
@@ -1397,7 +1366,47 @@ refines the observable.
 How do localization or conditioning change the available defect data, and what are
 the exact reconstruction limits under those restrictions?
 
-Q10 is deliberately last.
+Q10 is deliberately last, and is now the next program. The scalar comparison
+term loses the fiber distribution of the comparison map. Recover exactly that
+missing datum by conditioning on compatible local states.
+
+For any map (f:A\\to B) of finite types, define the extension profile
+
+\[
+\\operatorname{ext}\_f(b)=|\\{a\\in A:f(a)=b\\}|.
+\]
+
+Prove its complete finite-map theorem package:
+
+- (\\sum\_{b\\in B}\\operatorname{ext}\_f(b)=|A|);
+- a codomain value is reached exactly when its extension count is positive,
+  and missed exactly when it is zero;
+- (f) is injective exactly when every extension count is at most one,
+  surjective exactly when every count is positive, and bijective exactly when
+  every count is one;
+- redundancy is the total fiber excess
+  (\\sum_b(\\operatorname{ext}\_f(b)-1));
+- for maps (f:A\\to B) and (g:C\\to B), equality of extension profiles is
+  equivalent to the existence of an equivalence (e:A\\simeq C) over (B):
+  (g(e(a))=f(a)) for every (a).
+
+The last theorem is the reconstruction limit: the full conditioned profile
+recovers a finite map exactly up to relabeling inside its fibers.
+
+Instantiate the profile for `compare` and `compare3`. Prove that the
+unconditioned comparison term is only the coarse statistic obtained from the
+sum of the profile and the size of its codomain, while the profile determines
+the comparison map up to global-state relabeling over the compatible locals.
+
+Finally return to the two observationally equivalent diamond code systems.
+Their (x,y) scalar comparison terms and complete defect observations agree,
+but their extension profiles must be proved different: the first has fiber
+multiset (\\{0,1,1,1\\}), the second (\\{0,0,1,2\\}). Thus conditioning
+recovers exactly the incidence that defect observation discarded.
+
+Do not introduce probability, weights, entropy terminology, or a general
+conditioning framework. First close the finite inverse theorem at the level
+of the maps already built.
 
 ______________________________________________________________________
 
