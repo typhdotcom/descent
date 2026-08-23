@@ -52,6 +52,49 @@ theorem supFam_comm (d a : R) (l : List R) :
     supFam d (a :: l) = supFam a l ⊔ d := by
   rw [supFam_cons, sup_comm a, ← supFam_sup, sup_comm d a, supFam_sup]
 
+/-- Every member of the family bounds below its join. -/
+theorem le_supFam {x a : R} {l : List R} (hx : x ∈ a :: l) :
+    x ≤ supFam a l := by
+  induction l with
+  | nil =>
+    rw [List.mem_singleton.mp hx, supFam_nil]
+  | cons b l ih =>
+    rw [supFam_cons]
+    rcases List.mem_cons.mp hx with rfl | hx'
+    · exact (ih (List.mem_cons_self ..)).trans le_sup_right
+    · rcases List.mem_cons.mp hx' with rfl | hx''
+      · exact le_sup_left
+      · exact (ih (List.mem_cons_of_mem a hx'')).trans le_sup_right
+
+theorem supFam_le {a y : R} {l : List R} (h : ∀ x ∈ a :: l, x ≤ y) :
+    supFam a l ≤ y := by
+  induction l with
+  | nil => exact h a (List.mem_cons_self ..)
+  | cons b l ih =>
+    rw [supFam_cons]
+    exact sup_le (h b (List.mem_cons_of_mem a (List.mem_cons_self ..)))
+      (ih fun x hx => h x (by
+        rcases List.mem_cons.mp hx with rfl | hx'
+        · exact List.mem_cons_self ..
+        · exact List.mem_cons_of_mem a (List.mem_cons_of_mem b hx')))
+
+/-- The join of a family depends only on the family, not its
+presentation. -/
+theorem supFam_perm {a b : R} {l l' : List R} (h : (a :: l).Perm (b :: l')) :
+    supFam a l = supFam b l' :=
+  le_antisymm (supFam_le fun _ hx => le_supFam (h.subset hx))
+    (supFam_le fun _ hx => le_supFam (h.symm.subset hx))
+
+/-- A family dominated by its head joins to the head. -/
+theorem supFam_of_forall_le {a : R} {l : List R} (h : ∀ x ∈ l, x ≤ a) :
+    supFam a l = a :=
+  le_antisymm
+    (supFam_le fun x hx => by
+      rcases List.mem_cons.mp hx with rfl | hx'
+      · exact le_rfl
+      · exact h x hx')
+    (le_supFam (List.mem_cons_self ..))
+
 /-- The inclusion–exclusion prediction of a family: the signed sum of `K`
 over the meets of its nonempty subfamilies. -/
 def inclusionExclusion (K : ContextField R A) : List R → A
@@ -83,6 +126,76 @@ theorem defectFam_cons (K : ContextField R A) (d a : R) (l : List R) :
     supFam_comm]
   abel
 
+/-! ### Symmetry: one defect for one family -/
+
+theorem inclusionExclusion_middle (K : ContextField R A) :
+    ∀ (s : List R) (a : R) (u : List R),
+      inclusionExclusion K (s ++ a :: u) = inclusionExclusion K (a :: (s ++ u)) := by
+  have hdeep : ∀ (t : List R) (x y : R),
+      (t.map (· ⊓ x)).map (· ⊓ (y ⊓ x)) = t.map (· ⊓ (y ⊓ x)) := fun t x y => by
+    rw [List.map_map]
+    congr 1
+    funext z
+    simp only [Function.comp_apply]
+    rw [inf_assoc, inf_eq_right.mpr inf_le_right]
+  suffices H : ∀ (n : ℕ) (s : List R), s.length = n → ∀ (a : R) (u : List R),
+      inclusionExclusion K (s ++ a :: u) = inclusionExclusion K (a :: (s ++ u)) from
+    fun s a u => H s.length s rfl a u
+  intro n
+  induction n with
+  | zero =>
+    intro s hs a u
+    rw [List.length_eq_zero_iff.mp hs]
+    rfl
+  | succ n ih =>
+    intro s hs a u
+    cases s with
+    | nil => simp at hs
+    | cons b s =>
+      have hs' : s.length = n := by simpa using hs
+      simp only [inclusionExclusion, List.cons_append, List.map_append,
+        List.map_cons]
+      rw [ih s hs' a u,
+        ih (s.map (· ⊓ b)) (by simpa using hs') (a ⊓ b) (u.map (· ⊓ b))]
+      simp only [inclusionExclusion, ← List.map_append]
+      rw [hdeep (s ++ u) b a, hdeep (s ++ u) a b]
+      simp only [inf_comm b a]
+      abel
+
+theorem inclusionExclusion_perm (K : ContextField R A) :
+    ∀ {l l' : List R}, l.Perm l' →
+      inclusionExclusion K l = inclusionExclusion K l' := by
+  suffices H : ∀ (n : ℕ) (l l' : List R), l.length = n → l.Perm l' →
+      inclusionExclusion K l = inclusionExclusion K l' from
+    fun {l l'} h => H l.length l l' rfl h
+  intro n
+  induction n with
+  | zero =>
+    intro l l' hl h
+    rw [List.length_eq_zero_iff.mp hl] at h ⊢
+    rw [List.length_eq_zero_iff.mp h.symm.length_eq]
+  | succ n ih =>
+    intro l l' hl h
+    cases l with
+    | nil => simp at hl
+    | cons a t =>
+      have ha : a ∈ l' := h.subset (List.mem_cons_self ..)
+      obtain ⟨s, u, rfl⟩ := List.append_of_mem ha
+      have ht : t.Perm (s ++ u) := (h.trans List.perm_middle).cons_inv
+      have hl' : t.length = n := by simpa using hl
+      rw [inclusionExclusion_middle K s a u]
+      simp only [inclusionExclusion]
+      rw [ih t (s ++ u) hl' ht,
+        ih (t.map (· ⊓ a)) ((s ++ u).map (· ⊓ a)) (by simpa using hl')
+          (ht.map (· ⊓ a))]
+
+/-- One defect for one family: any two list presentations of the same
+finite family have the same defect. -/
+theorem defectFam_perm (K : ContextField R A) {a b : R} {l l' : List R}
+    (h : (a :: l).Perm (b :: l')) :
+    defectFam K a l = defectFam K b l' := by
+  rw [defectFam, defectFam, inclusionExclusion_perm K h, supFam_perm h]
+
 /-! ### Arity recoveries -/
 
 theorem defectFam_pair (K : ContextField R A) (a d : R) :
@@ -111,6 +224,95 @@ theorem defectFam_quad (K : ContextField R A) (a b c d : R) :
   rw [defectFam_cons]
   simp only [List.map_cons, List.map_nil]
   rw [defectFam_triple, defectFam_triple, h1, h2, defect4_recurrence]
+
+/-! ### Degeneration: comparable entries collapse one order -/
+
+/-- A family dominated by its head predicts exactly. -/
+theorem inclusionExclusion_of_forall_le {K : ContextField R A} {a : R}
+    {l : List R} (h : ∀ x ∈ l, x ≤ a) :
+    inclusionExclusion K (a :: l) = K a := by
+  rw [inclusionExclusion,
+    show l.map (· ⊓ a) = l from
+      (List.map_congr_left fun x hx => inf_eq_left.mpr (h x hx)).trans l.map_id]
+  abel
+
+/-- A family dominated by its head has no defect. -/
+theorem defectFam_of_forall_le {K : ContextField R A} {a : R} {l : List R}
+    (h : ∀ x ∈ l, x ≤ a) : defectFam K a l = 0 := by
+  rw [defectFam, inclusionExclusion_of_forall_le h, supFam_of_forall_le h,
+    sub_self]
+
+/-- Degeneration: a comparable pair at the front collapses the family
+defect one order --- the smaller entry is absorbed. -/
+theorem defectFam_of_le (K : ContextField R A) {a b : R} (h : a ≤ b)
+    (l : List R) : defectFam K a (b :: l) = defectFam K b l := by
+  have hdom : ∀ x ∈ l.map (· ⊓ a), x ≤ a := by
+    intro x hx
+    obtain ⟨y, -, rfl⟩ := List.mem_map.mp hx
+    exact inf_le_right
+  rw [defectFam_cons, inf_eq_right.mpr h,
+    defect_of_ge K (h.trans (le_supFam (List.mem_cons_self ..))),
+    defectFam_of_forall_le hdom, supFam_of_forall_le hdom,
+    show supFam b l ⊓ a = a from
+      inf_eq_right.mpr (h.trans (le_supFam (List.mem_cons_self ..)))]
+  abel
+
+/-- The diagonal: a repeated entry collapses one order. -/
+theorem defectFam_cons_self (K : ContextField R A) (a : R) (l : List R) :
+    defectFam K a (a :: l) = defectFam K a l :=
+  defectFam_of_le K le_rfl l
+
+/-- Degeneration anywhere: through symmetry, a comparable pair in any
+position of any presentation collapses the family defect one order. -/
+theorem defectFam_of_perm_of_le (K : ContextField R A) {a b c : R}
+    {m l : List R} (h : a ≤ b) (hp : (c :: m).Perm (a :: b :: l)) :
+    defectFam K c m = defectFam K b l :=
+  (defectFam_perm K hp).trans (defectFam_of_le K h l)
+
+/-! ### Naturality -/
+
+theorem supFam_map {R' : Type*} [Lattice R'] (f : LatticeHom R R')
+    (a : R) (l : List R) : supFam (f a) (l.map f) = f (supFam a l) := by
+  induction l with
+  | nil => rfl
+  | cons b l ih =>
+    rw [List.map_cons, supFam_cons, supFam_cons, ih, map_sup]
+
+theorem inclusionExclusion_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
+    (K : ContextField R' A) :
+    ∀ l : List R, inclusionExclusion (K ∘ f) l = inclusionExclusion K (l.map f) := by
+  suffices H : ∀ (n : ℕ) (l : List R), l.length = n →
+      inclusionExclusion (K ∘ f) l = inclusionExclusion K (l.map f) from
+    fun l => H l.length l rfl
+  intro n
+  induction n with
+  | zero =>
+    intro l hl
+    rw [List.length_eq_zero_iff.mp hl]
+    simp [inclusionExclusion]
+  | succ n ih =>
+    intro l hl
+    cases l with
+    | nil => simp at hl
+    | cons a l =>
+      have hl' : l.length = n := by simpa using hl
+      rw [List.map_cons, inclusionExclusion, inclusionExclusion,
+        Function.comp_apply, ih l hl',
+        ih (l.map (· ⊓ a)) (by simpa using hl'),
+        show (l.map (· ⊓ a)).map f = (l.map f).map (· ⊓ f a) from by
+          rw [List.map_map, List.map_map]
+          congr 1
+          funext x
+          simp [map_inf]]
+
+/-- The family defect is natural: it commutes with pullback along lattice
+homomorphisms. -/
+theorem defectFam_comp {R' : Type*} [Lattice R'] (f : LatticeHom R R')
+    (K : ContextField R' A) (a : R) (l : List R) :
+    defectFam (K ∘ f) a l = defectFam K (f a) (l.map f) := by
+  rw [defectFam, defectFam, show inclusionExclusion K (f a :: l.map f)
+      = inclusionExclusion K ((a :: l).map f) from by rw [List.map_cons],
+    ← inclusionExclusion_comp f K, supFam_map, Function.comp_apply]
 
 /-! ### The hierarchy gauge -/
 

@@ -1105,6 +1105,38 @@ example {K : ContextField R A} (hK : K ∈ gauge3 R A) (l : List R) (a : R) :
     defectFam K a l = 0 :=
   defectFam_eq_zero_of_mem_gauge3 hK l a
 
+/-- README: one defect for one family --- any two list presentations of
+the same finite family have the same defect. -/
+example (K : ContextField R A) {a b : R} {l l' : List R}
+    (h : (a :: l).Perm (b :: l')) : defectFam K a l = defectFam K b l' :=
+  defectFam_perm K h
+
+/-- README: degeneration --- a comparable pair anywhere collapses the
+family defect one order, with repeated entries as the diagonal. -/
+example (K : ContextField R A) {a b : R} (h : a ≤ b) (l : List R) :
+    defectFam K a (b :: l) = defectFam K b l :=
+  defectFam_of_le K h l
+
+example (K : ContextField R A) (a : R) (l : List R) :
+    defectFam K a (a :: l) = defectFam K a l :=
+  defectFam_cons_self K a l
+
+example (K : ContextField R A) {a b c : R} {m l : List R} (h : a ≤ b)
+    (hp : (c :: m).Perm (a :: b :: l)) :
+    defectFam K c m = defectFam K b l :=
+  defectFam_of_perm_of_le K h hp
+
+/-- README: a family dominated by its head has no defect. -/
+example {K : ContextField R A} {a : R} {l : List R} (h : ∀ x ∈ l, x ≤ a) :
+    defectFam K a l = 0 :=
+  defectFam_of_forall_le h
+
+/-- README: the family defect is natural in the context system. -/
+example {R' : Type*} [Lattice R'] (f : LatticeHom R R') (K : ContextField R' A)
+    (a : R) (l : List R) :
+    defectFam (K ∘ f) a l = defectFam K (f a) (l.map f) :=
+  defectFam_comp f K a l
+
 /-- README: order 3 is the final refinement --- the gauge of the whole
 hierarchy is the order-≤3 gauge, on every lattice and target. -/
 example {K : ContextField R A} :

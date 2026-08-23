@@ -373,7 +373,12 @@ order-4 defect is the failure of fourfold inclusion–exclusion:
 The hierarchy closes at every order (`Descent/Core/Hierarchy.lean`). One
 defect serves every finite family — the inclusion–exclusion defect
 `defectFam`, whose arity-2, 3, and 4 specializations recover `defect`,
-`defect3`, and `defect4` — and its exact recurrence on an arbitrary
+`defect3`, and `defect4` — with the guarantees of the layers it
+replaces: any two list presentations of the same finite family have the
+same defect; a comparable pair anywhere collapses the family defect one
+order, repeated entries as the diagonal, and a family dominated by its
+head has no defect at all; and the family defect commutes with pullback
+along lattice homomorphisms. Its exact recurrence on an arbitrary
 lattice carries the finite distributivity-gap remainder
 `K(supFam a l ⊓ d) − K(supFam (a⊓d) (l.map (·⊓d)))`. Binary blindness
 extends to finite joins by induction through the valuation law, so every
@@ -381,9 +386,10 @@ field in the order-≤3 gauge has vanishing defect at every arity, and the
 gauge of the whole hierarchy is the order-≤3 gauge:
 `gaugeFam = gauge3`, on every lattice and every target. **Order 3 is the
 final refinement of defect observation.** The complete architecture:
-pairwise observation suffices on distributive contexts, order 3 adds
-exactly the non-distributive information, and no higher order adds
-anything, anywhere.
+pairwise observation suffices on distributive contexts; order 3 measures
+the valuation-visible distributivity-gap information, and can strictly
+refine pairwise observation; higher inclusion–exclusion orders add
+nothing beyond it, anywhere.
 
 ## Working on it
 
@@ -403,13 +409,12 @@ order 4: cumulative data, gauges, and injective quotient observations at
 orders ≤ 3 and ≤ 4; exact isolation of each defect from its face data;
 the two-regime architecture — distributive contexts add nothing at
 either order, the diamond is strictly finer at order 3.
-Q4 is closed. The order-4
-separation question was settled negatively, and the closure is now
-total: the inclusion–exclusion hierarchy carries one general defect
-whose gauge equals the order-≤3 gauge on every lattice and target —
-order 3 is the final refinement of defect observation. What remains of
-§21 now leads the queue: kernel classification beyond the solved models
-(Q1), sparse reconstruction (Q3), Hilbert embedding of sampled
-conditional negativity (Q6), observational equivalence of realizations
-(Q8), and carriers that pay the admission fee: a theorem the abstract
-level cannot see.
+Q4 is closed: the
+inclusion–exclusion hierarchy carries one general defect — symmetric,
+degenerating, natural — whose gauge equals the order-≤3 gauge on every
+lattice and target; order 3 is the final refinement of defect
+observation. The next continuation is singular: classify
+`gauge3 Diamond A` for an arbitrary additive commutative group `A`.
+Prove that its fields are exactly the constant fields, then derive the
+resulting equality criterion and one-point normalization for the final
+observable on the diamond. The other §21 programs wait.
