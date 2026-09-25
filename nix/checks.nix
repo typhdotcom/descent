@@ -15,7 +15,10 @@
     in
     {
       checks = {
-        statix = lint "statix" "${pkgs.statix}/bin/statix check ${self}";
+        # statix looks for statix.toml from the -c path, defaulting to the cwd,
+        # which in the sandbox is the build directory. Without -c a project's
+        # statix.toml is silently ignored and every lint stays enabled.
+        statix = lint "statix" "${pkgs.statix}/bin/statix check -c ${self} ${self}";
         deadnix = lint "deadnix" "${pkgs.deadnix}/bin/deadnix --fail ${self}";
         gitleaks = lint "gitleaks" "${pkgs.gitleaks}/bin/gitleaks dir --no-banner --redact ${self}";
 

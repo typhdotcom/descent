@@ -20,6 +20,7 @@
         # already safe -- nothing claims the .lock extension; listed here are
         # the generated files a formatter would claim.
         settings.global.excludes = [
+          ".copier-answers.yml" # copier
           "Manifest.toml" # julia
           "lake-manifest.json"
           "package-lock.json"
