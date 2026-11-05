@@ -1,6 +1,0 @@
-[marketplaces.typh-plugins]
-source_type = "git"
-source = "https://git.typh.com/typh/agent-config.git"
-
-[plugins."common@typh-plugins"]
-enabled = true
