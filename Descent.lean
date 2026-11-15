@@ -13,6 +13,7 @@ import Descent.Models.Chain
 import Descent.Models.Diamond
 import Descent.Models.DiamondCode
 import Descent.Models.Square
+import Descent.Realization.Amalgam
 import Descent.Realization.Envelope
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Incidence

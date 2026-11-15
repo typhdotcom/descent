@@ -581,6 +581,34 @@ carries one comparison to the other. Conditioning on compatible local
 states recovers precisely the incidence that defect observation
 discarded.
 
+## Restriction systems in Amalgam
+
+The restriction layer is the finite case of
+[Amalgam](https://git.typh.com/typh/amalgam), a Lake dependency
+(`Descent/Realization/Amalgam.lean`). A `FiniteRestriction` is an Amalgam
+`RestrictionSystem` with finite, nonempty, decidable state types; both
+read `a ≤ b` as `a` coarser than `b`
+(`FiniteRestriction.toRestrictionSystem`). Over a lattice:
+
+- `Compat a b` is, by definition, the pullback `Function.Pullback` of the
+  two restriction legs to the meet, and `compare a b` is its universal map
+  `Function.Pullback.lift` from the join.
+- Compatibility of any family reduces to agreement at pairwise meets, so
+  `Compat a b` and `Compat3 a b c` are Amalgam's compatible families over
+  `![a, b]` and `![a, b, c]`, and `compare`, `compare3` are Amalgam
+  restriction of the one-context family at the join.
+- The extension profile is the fiber cardinality,
+  `ext f b = Nat.card {a // f a = b}`; its pointwise laws `> 0`, `≤ 1`,
+  `= 1` are nonempty, subsingleton, and uniquely inhabited fibers, so
+  the counting characterizations of injectivity, surjectivity, and
+  bijectivity are Amalgam's fiber characterizations read through
+  cardinality, and a comparison's extension count is the number of global
+  states over the compatible pair.
+- Compatible pairs fiber two ways: `compatSigmaEquiv` over the meet, as
+  products of both legs' fibers; Amalgam's `fiberFstEquiv` over the left
+  state, by the right leg's fiber (`compatSigmaFstEquiv`). The two agree
+  only after regrouping left states by their restriction to the meet.
+
 ## Working on it
 
 ```nu

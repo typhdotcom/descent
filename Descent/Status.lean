@@ -13,6 +13,7 @@ import Descent.Models.Chain
 import Descent.Models.Diamond
 import Descent.Models.DiamondCode
 import Descent.Models.Square
+import Descent.Realization.Amalgam
 import Descent.Realization.Envelope
 import Descent.Realization.FiniteGibbs
 import Descent.Realization.Incidence
@@ -1990,5 +1991,96 @@ example :
         ∀ s, Diamond.codeSystem2.compare Diamond.x Diamond.y (e s)
           = Diamond.codeSystem.compare Diamond.x Diamond.y s :=
   Diamond.not_exists_relabel_xy
+
+/-! ## Restriction systems are Amalgam restriction systems -/
+
+/-- README: a finite restriction system is an Amalgam restriction system,
+with the same restriction maps. -/
+example {R : Type*} [Preorder R] (F : FiniteRestriction R) {a b : R} (h : a ≤ b)
+    (s : F.states b) :
+    F.toRestrictionSystem.State b = F.states b ∧ F.toRestrictionSystem.res h s = F.restrict h s :=
+  ⟨F.toRestrictionSystem_state b, F.toRestrictionSystem_res h s⟩
+
+/-- README: compatible pairs are the pullback of the restriction legs to
+the meet… -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.Compat a b
+      = Function.Pullback (F.toRestrictionSystem.res (inf_le_left : a ⊓ b ≤ a))
+          (F.toRestrictionSystem.res inf_le_right) :=
+  F.compat_eq_pullback a b
+
+/-- README: …and the comparison is its universal map from the join. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    F.compare a b
+      = Function.Pullback.lift (p := F.toRestrictionSystem.res (inf_le_left : a ⊓ b ≤ a))
+          (q := F.toRestrictionSystem.res inf_le_right)
+          (F.toRestrictionSystem.res le_sup_left) (F.toRestrictionSystem.res le_sup_right)
+          fun s => (F.restrict_restrict _ _ s).trans (F.restrict_restrict _ _ s).symm :=
+  F.compare_eq_lift a b
+
+/-- README: compatible pairs and triples are compatible families, and the
+comparisons are restriction from the join. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) (s : F.states (a ⊔ b)) :
+    F.compatEquivFamily a b (F.compare a b s)
+      = F.toRestrictionSystem.restrict (FiniteRestriction.joinPair a b)
+          (F.stateEquivFamily _ s) :=
+  F.compatEquivFamily_compare a b s
+
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b c : R)
+    (s : F.states (a ⊔ b ⊔ c)) :
+    F.compat3EquivFamily a b c (F.compare3 a b c s)
+      = F.toRestrictionSystem.restrict (FiniteRestriction.joinTriple a b c)
+          (F.stateEquivFamily _ s) :=
+  F.compat3EquivFamily_compare3 a b c s
+
+/-- README: over a lattice, compatibility is agreement at pairwise meets. -/
+example {R : Type*} [Lattice R] (S : RestrictionSystem R) {ι : Type*} (F : ι → R)
+    (x : ∀ i, S.State (F i)) :
+    S.Compatible F x ↔
+      ∀ i j, S.res (inf_le_left : F i ⊓ F j ≤ F i) (x i) = S.res inf_le_right (x j) :=
+  compatible_iff_res_inf S F x
+
+/-- README: compatible pairs fibered over the left state by the right
+leg's fiber. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) :
+    Fintype.card (F.Compat a b)
+      = ∑ s : F.states a,
+          Fintype.card
+            { u : F.states b // F.restrict inf_le_right u = F.restrict inf_le_left s } :=
+  F.card_compat_eq_sum_fst a b
+
+section Fiber
+
+variable {X Y : Type*} [Fintype X] [DecidableEq Y] (f : X → Y)
+
+/-- README: the extension profile is the fiber cardinality… -/
+example (y : Y) : Incidence.ext f y = Nat.card { x // f x = y } :=
+  Incidence.ext_eq_natCard_fiber f y
+
+/-- README: …so the counting laws are Amalgam's fiber laws. -/
+example (y : Y) : 0 < Incidence.ext f y ↔ y ∈ Set.range f :=
+  (Incidence.ext_pos_iff_nonempty_fiber f y).trans (Function.nonempty_fiber_iff_mem_range f y)
+
+example : Function.Injective f ↔ ∀ y, Incidence.ext f y ≤ 1 :=
+  (Function.injective_iff_subsingleton_fiber f).trans
+    (forall_congr' fun y => (Incidence.ext_le_one_iff_subsingleton_fiber f y).symm)
+
+example : Function.Surjective f ↔ ∀ y, 0 < Incidence.ext f y :=
+  (Function.surjective_iff_nonempty_fiber f).trans
+    (forall_congr' fun y => (Incidence.ext_pos_iff_nonempty_fiber f y).symm)
+
+example : Function.Bijective f ↔ ∀ y, Incidence.ext f y = 1 :=
+  (Function.bijective_iff_nonempty_unique_fiber f).trans
+    (forall_congr' fun y => (Incidence.ext_eq_one_iff_nonempty_unique_fiber f y).symm)
+
+end Fiber
+
+/-- README: a comparison's extension count is the number of global
+states over the compatible pair. -/
+example {R : Type*} [Lattice R] (F : FiniteRestriction R) (a b : R) (c : F.Compat a b) :
+    Incidence.ext (F.compare a b) c
+      = Fintype.card { s : F.states (a ⊔ b) //
+          F.restrict le_sup_left s = c.1.1 ∧ F.restrict le_sup_right s = c.1.2 } :=
+  Incidence.ext_compare_eq_card F a b c
 
 end Descent.Status
