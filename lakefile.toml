@@ -1,5 +1,5 @@
 name = "descent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Defect, reconstruction, and realizability: how much of a system is determined by the ways its partial descriptions fail to compose."
 keywords = ["math", "lattice-theory", "order-theory", "combinatorics"]
 homepage = "https://github.com/typhdotcom/descent"
