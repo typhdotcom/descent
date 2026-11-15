@@ -1,6 +1,9 @@
 name = "descent"
 version = "0.1.0"
-keywords = ["math"]
+description = "Defect, reconstruction, and realizability: how much of a system is determined by the ways its partial descriptions fail to compose."
+keywords = ["math", "lattice-theory", "order-theory", "combinatorics"]
+homepage = "https://github.com/typhdotcom/descent"
+license = "Apache-2.0"
 defaultTargets = ["Descent"]
 
 [leanOptions]
@@ -11,7 +14,7 @@ autoImplicit = false
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.33.1"
+rev = "v4.34.1"
 
 [[lean_lib]]
 name = "Descent"

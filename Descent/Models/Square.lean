@@ -78,7 +78,7 @@ def defectData (d : A) : Square → Square → A := fun a b =>
   if a = left ∧ b = right ∨ a = right ∧ b = left then d else 0
 
 theorem defectData_left_right (d : A) : defectData d left right = d :=
-  if_pos (Or.inl ⟨rfl, rfl⟩)
+  ite_eq_left (Or.inl ⟨rfl, rfl⟩)
 
 /-- On the square the pairwise defect observable is one number: the defect
 of any field is the datum carrying its value at the nondegenerate square. -/
@@ -91,10 +91,10 @@ theorem defect_eq_defectData (K : ContextField Square A) :
       · exact (by decide : ¬Comparable left right) hab
       · exact (by decide : ¬Comparable right left) hab
     rw [hab.defect_eq_zero K]
-    exact (if_neg hne).symm
+    exact (ite_eq_right hne).symm
   · exact (defectData_left_right _).symm
   · rw [defect_comm K right left]
-    exact (if_pos (Or.inr ⟨rfl, rfl⟩)).symm
+    exact (ite_eq_left (Or.inr ⟨rfl, rfl⟩)).symm
 
 /-- The valuation law on the square is one relation. -/
 theorem isValuation_iff {K : ContextField Square A} :
@@ -201,9 +201,9 @@ private theorem exists_valuation_pair {r s : Square} (hrs : r ≠ s) {e : A}
     rw [Pi.sub_apply, Pi.smul_apply, Pi.smul_apply, hf, hg, Pi.single_eq_same,
       Pi.single_eq_of_ne hrs, smul_zero, sub_zero, Pi.zero_apply] at hr
     by_cases hs : s.1 = s.2
-    · rw [show sgn s = -1 from if_pos hs, neg_one_zsmul, neg_eq_zero] at hr
+    · rw [show sgn s = -1 from ite_eq_left hs, neg_one_zsmul, neg_eq_zero] at hr
       exact he hr
-    · rw [show sgn s = 1 from if_neg hs, one_smul] at hr
+    · rw [show sgn s = 1 from ite_eq_right hs, one_smul] at hr
       exact he hr
   · intro t htr hts
     rw [Pi.sub_apply, Pi.smul_apply, Pi.smul_apply, hf, hg,

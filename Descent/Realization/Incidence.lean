@@ -209,9 +209,9 @@ theorem redundancy_eq_sum_ext_sub_one :
       = ext f b := by
     intro b
     by_cases h : 0 < ext f b
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       omega
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       omega
   have hR : Fintype.card (Reached f)
       = ∑ b : B, if 0 < ext f b then 1 else 0 := by

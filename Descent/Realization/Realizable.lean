@@ -551,7 +551,7 @@ theorem exists_logPartition_eq_of_ne :
     norm_num
   · have hE := congrArg (fun X : FiniteGibbs Bool (Fin 2) => X.energy 0) h
     simp only [pair] at hE
-    rw [if_true, if_true] at hE
+    rw [ite_true, ite_true] at hE
     have h32 : Real.log (3 / 2) = 0 := by linarith
     rcases Real.log_eq_zero.mp h32 with h' | h' | h' <;> norm_num at h'
 

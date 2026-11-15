@@ -1,5 +1,5 @@
 import Descent.Models.Square
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
