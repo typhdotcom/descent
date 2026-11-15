@@ -1,5 +1,6 @@
 import Descent.Geometry.Chambers
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.PosDef
 
 /-!
@@ -25,7 +26,10 @@ positive semidefiniteness, passes to every reindexed sample
 
 The sampled datum matters. On the square, conditional negativity at the
 essential two-point sample detects the submodular chamber exactly; on the
-full four-context sample it collapses to the chamber wall. Defect data
+full four-context sample it collapses to the chamber wall, the smallest
+case of a general collapse: on any sample with a least context,
+conditional negativity forces the defect matrix to vanish
+(`condNegSemidef_defectMatrix_iff_of_base`). Defect data
 determines a chamber; which geometry appears depends on the sampled
 observable consumed.
 -/
@@ -290,6 +294,26 @@ theorem condNegSemidef_iff_posSemidef_centeredGram {ι : Type*} [Fintype ι]
     have hq' : 0 ≤ dotProduct x ((centeredGram M i₀).mulVec x) := hq
     rw [hform] at hq'
     linarith
+
+/-- On a sample with a least context, conditional negativity of the
+defect matrix forces it to vanish: the defect against the base is zero,
+so the centered Gram kernel at the base is minus half the defect matrix,
+and that is positive semidefinite only when the matrix vanishes. -/
+theorem condNegSemidef_defectMatrix_iff_of_base [Fintype ι] [DecidableEq ι]
+    {K : ContextField R ℝ} {r : ι → R} {i₀ : ι} (hbase : ∀ i, r i₀ ≤ r i) :
+    CondNegSemidef (defectMatrix K r) ↔ defectMatrix K r = 0 := by
+  have hgram : centeredGram (defectMatrix K r) i₀ = (1 / 2 : ℝ) • -defectMatrix K r := by
+    ext i j
+    simp only [centeredGram_apply, defectMatrix_apply, defect_of_ge K (hbase i),
+      defect_of_le K (hbase j), Matrix.smul_apply, Matrix.neg_apply, smul_eq_mul]
+    ring
+  rw [condNegSemidef_iff_posSemidef_centeredGram (isHermitian_defectMatrix K r)
+    (defectMatrix_diag K r i₀), hgram, ← posSemidef_neg_defectMatrix_iff]
+  constructor
+  · intro h
+    have h2 := h.smul (show (0 : ℝ) ≤ 2 by norm_num)
+    rwa [smul_smul, show (2 : ℝ) * (1 / 2) = 1 by norm_num, one_smul] at h2
+  · exact fun h => h.smul (by norm_num)
 
 namespace Square
 

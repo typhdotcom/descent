@@ -637,6 +637,13 @@ example {K : ContextField Square ℝ} :
       ↔ IsValuation K :=
   Square.condNegSemidef_defectMatrix_square_iff
 
+/-- README: on any sample containing a least context, conditional
+negativity of the defect matrix forces it to vanish. -/
+example {ι : Type*} [Fintype ι] [DecidableEq ι] {K : ContextField R ℝ} {r : ι → R}
+    {i₀ : ι} (hbase : ∀ i, r i₀ ≤ r i) :
+    CondNegSemidef (defectMatrix K r) ↔ defectMatrix K r = 0 :=
+  condNegSemidef_defectMatrix_iff_of_base hbase
+
 /-- README: the derived kernels consume the field, not its defect
 observable --- shifting by a valuation moves both by exactly its span. -/
 example {G : ContextField R ℝ} (hG : IsValuation G) (K : ContextField R ℝ) (a b : R) :

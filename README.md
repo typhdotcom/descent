@@ -236,7 +236,10 @@ exactly positive semidefiniteness of the centered Gram kernel. The
 sampled datum decides what this observable sees: on the essential
 two-point square sample, conditional negativity detects the submodular
 chamber exactly; on the full four-context sample it collapses to the
-chamber wall. For any kernel `M` and constant `c`, the forms of `c·J − M`
+chamber wall. That collapse is the smallest case of a general one: on
+any sample containing a least context, conditional negativity of the
+defect matrix forces it to vanish, so nontrivial conditionally negative
+behaviour occurs only on samples without a base point. For any kernel `M` and constant `c`, the forms of `c·J − M`
 and `M` are opposite on centered vectors, so positive semidefiniteness
 of `c·J − M` forces conditional negativity of `M`. Both conditional
 negativity and positive semidefiniteness pass to every subsample: the
