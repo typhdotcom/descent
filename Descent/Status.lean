@@ -1992,6 +1992,85 @@ example :
           = Diamond.codeSystem.compare Diamond.x Diamond.y s :=
   Diamond.not_exists_relabel_xy
 
+/-! ## Definiteness transfer and subsamples -/
+
+/-- README: positive semidefiniteness of `c·J − M` forces conditional
+negativity of `M`, because the forms agree up to sign on centered
+vectors. -/
+example {ι : Type*} [Fintype ι] (M : Matrix ι ι ℝ) (c : ℝ) {x : ι → ℝ} (hx : ∑ i, x i = 0) :
+    dotProduct x ((Matrix.of (fun _ _ => c) - M).mulVec x) = -dotProduct x (M.mulVec x) :=
+  dotProduct_const_sub_mulVec_of_sum_eq_zero M c hx
+
+example {ι : Type*} [Fintype ι] {M : Matrix ι ι ℝ} (c : ℝ)
+    (h : (Matrix.of (fun _ _ => c) - M).PosSemidef) : CondNegSemidef M :=
+  condNegSemidef_of_posSemidef_const_sub c h
+
+/-- README: conditional negativity and positive semidefiniteness pass to
+every subsample. -/
+example {ι κ : Type*} [Fintype ι] [Fintype κ] {K : ContextField R ℝ} {r : ι → R}
+    (h : CondNegSemidef (defectMatrix K r)) (e : κ → ι) :
+    CondNegSemidef (defectMatrix K (r ∘ e)) :=
+  condNegSemidef_defectMatrix_comp h e
+
+example {ι κ : Type*} [Fintype ι] [Fintype κ] {K : ContextField R ℝ} {r : ι → R}
+    (h : (defectMatrix K r).PosSemidef) (e : κ → ι) :
+    (defectMatrix K (r ∘ e)).PosSemidef :=
+  defectMatrix_comp K r e ▸ h.submatrix e
+
+/-! ## The telescope -/
+
+/-- README: the peeling step without remainder. -/
+example (K : ContextField R A) {d a : R} {l : List R} (h : supFam a l ⊓ d ≤ a) :
+    defectFam K d (a :: l) = defectFam K a l + defect K (supFam a l) d :=
+  defectFam_cons_of_inf_le K h
+
+/-- README: a telescopic family's defect is its telescope, on any
+lattice… -/
+example (K : ContextField R A) {d : R} {l : List R} (h : Telescopic d l) :
+    defectFam K d l = telescope K d l :=
+  defectFam_eq_telescope K h
+
+/-- README: …independent of the presentation. -/
+example (K : ContextField R A) {d d' : R} {l l' : List R} (hp : (d :: l).Perm (d' :: l'))
+    (h : Telescopic d l) (h' : Telescopic d' l') : telescope K d l = telescope K d' l' :=
+  telescope_perm K hp h h'
+
+/-- README: in a distributive lattice pairwise disjoint families
+telescope, in any order. -/
+example {D : Type*} [DistribLattice D] [OrderBot D] {d : D} {l : List D}
+    (h : (d :: l).Pairwise Disjoint) : Telescopic d l :=
+  telescopic_of_pairwise_disjoint h
+
+example {D : Type*} [DistribLattice D] [OrderBot D] (K : ContextField D A) {d d' : D}
+    {l l' : List D} (hp : (d :: l).Perm (d' :: l')) (h : (d :: l).Pairwise Disjoint) :
+    telescope K d l = telescope K d' l' :=
+  telescope_perm_of_pairwise_disjoint K hp h
+
+/-- README: without distributivity pairwise disjointness does not
+telescope. -/
+example :
+    Diamond.x ⊓ Diamond.y = Diamond.bot ∧ Diamond.x ⊓ Diamond.z = Diamond.bot ∧
+      Diamond.y ⊓ Diamond.z = Diamond.bot ∧
+      defectFam Diamond.height Diamond.z [Diamond.y, Diamond.x]
+        ≠ telescope Diamond.height Diamond.z [Diamond.y, Diamond.x] :=
+  Diamond.defectFam_height_ne_telescope
+
+/-- README: on the arithmetic carrier disjointness is coprimality… -/
+example {a b : Arith} : Disjoint a b ↔ Nat.Coprime (Arith.num a) (Arith.num b) :=
+  Arith.disjoint_iff_coprime
+
+/-- README: …a pairwise coprime family joins to its product… -/
+example {d : Arith} {l : List Arith}
+    (h : (d :: l).Pairwise fun a b => Nat.Coprime (Arith.num a) (Arith.num b)) :
+    (Arith.num (supFam d l) : ℕ) = (Arith.num d : ℕ) * (l.map fun a => (Arith.num a : ℕ)).prod :=
+  Arith.num_supFam_of_pairwise_coprime h
+
+/-- README: …and its defect telescopes. -/
+example (K : ContextField Arith A) {d : Arith} {l : List Arith}
+    (h : (d :: l).Pairwise fun a b => Nat.Coprime (Arith.num a) (Arith.num b)) :
+    defectFam K d l = telescope K d l :=
+  Arith.defectFam_eq_telescope_of_pairwise_coprime K h
+
 /-! ## Restriction systems are Amalgam restriction systems -/
 
 /-- README: a finite restriction system is an Amalgam restriction system,

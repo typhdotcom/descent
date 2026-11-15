@@ -16,6 +16,12 @@ in either sign. The condition a hollow symmetric kernel does support is
 conditional negative semidefiniteness --- nonpositive quadratic form on
 centered vectors --- which is exactly positive semidefiniteness of the
 centered Gram kernel (`condNegSemidef_iff_posSemidef_centeredGram`).
+For any kernel `M` and constant `c` the forms of `c·J − M` and `M` are
+opposite on centered vectors, so positive semidefiniteness of `c·J − M`
+forces conditional negativity of `M`
+(`condNegSemidef_of_posSemidef_const_sub`). Conditional negativity, like
+positive semidefiniteness, passes to every reindexed sample
+(`CondNegSemidef.submatrix`, `condNegSemidef_defectMatrix_comp`).
 
 The sampled datum matters. On the square, conditional negativity at the
 essential two-point sample detects the submodular chamber exactly; on the
@@ -74,6 +80,11 @@ theorem defectMatrix_diag (K : ContextField R ℝ) (r : ι → R) (i : ι) :
     defectMatrix K r i i = 0 :=
   defect_self K (r i)
 
+/-- Subsampling a sample is reindexing its defect matrix. -/
+theorem defectMatrix_comp {κ : Type*} (K : ContextField R ℝ) (r : ι → R) (e : κ → ι) :
+    defectMatrix K (r ∘ e) = (defectMatrix K r).submatrix e e :=
+  rfl
+
 /-- The defect matrix is gauge-invariant: it consumes only the defect
 observable. -/
 theorem defectMatrix_eq_of_defectEquiv {K K' : ContextField R ℝ}
@@ -120,6 +131,54 @@ theorem posSemidef_neg_defectMatrix_iff [Fintype ι] [DecidableEq ι]
 nonpositive on centered vectors. -/
 def CondNegSemidef {ι : Type*} [Fintype ι] (M : Matrix ι ι ℝ) : Prop :=
   ∀ x : ι → ℝ, ∑ i, x i = 0 → dotProduct x (M.mulVec x) ≤ 0
+
+/-- On centered vectors the constant kernel has zero form, so `c·J − M`
+and `M` have opposite forms. -/
+theorem dotProduct_const_sub_mulVec_of_sum_eq_zero {ι : Type*} [Fintype ι]
+    (M : Matrix ι ι ℝ) (c : ℝ) {x : ι → ℝ} (hx : ∑ i, x i = 0) :
+    dotProduct x ((Matrix.of (fun _ _ => c) - M).mulVec x) = -dotProduct x (M.mulVec x) := by
+  have hJ : (Matrix.of fun _ _ => c : Matrix ι ι ℝ).mulVec x = 0 := by
+    funext i
+    simp [Matrix.mulVec, dotProduct, ← Finset.mul_sum, hx]
+  rw [Matrix.sub_mulVec, hJ, zero_sub, dotProduct_neg]
+
+/-- Positive semidefiniteness of `c·J − M` forces conditional
+negativity of `M`. -/
+theorem condNegSemidef_of_posSemidef_const_sub {ι : Type*} [Fintype ι]
+    {M : Matrix ι ι ℝ} (c : ℝ) (h : (Matrix.of (fun _ _ => c) - M).PosSemidef) :
+    CondNegSemidef M := fun x hx => by
+  have hq := h.dotProduct_mulVec_nonneg x
+  rw [star_trivial, dotProduct_const_sub_mulVec_of_sum_eq_zero M c hx] at hq
+  linarith
+
+/-- Conditional negativity passes to every reindexed sample, in
+particular to principal submatrices: a centered vector pushes forward to
+a centered vector with the same form. -/
+theorem CondNegSemidef.submatrix {ι κ : Type*} [Fintype ι] [Fintype κ]
+    {M : Matrix ι ι ℝ} (h : CondNegSemidef M) (e : κ → ι) :
+    CondNegSemidef (M.submatrix e e) := fun x hx => by
+  classical
+  set y : ι → ℝ := ∑ k, x k • Pi.single (e k) 1
+  have hy : ∑ i, y i = 0 := by
+    simp only [y, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+    rw [Finset.sum_comm]
+    simpa [Pi.single_apply] using hx
+  have hform : dotProduct y (M.mulVec y) = dotProduct x ((M.submatrix e e).mulVec x) := by
+    simp only [y, Matrix.mulVec_sum, Matrix.mulVec_smul, sum_dotProduct, dotProduct_sum,
+      smul_dotProduct, dotProduct_smul, single_dotProduct, smul_eq_mul, one_mul]
+    simp only [dotProduct, Matrix.mulVec, Matrix.submatrix_apply, Finset.mul_sum,
+      Pi.single_apply]
+    simp [mul_comm, mul_left_comm]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
+  exact hform ▸ h y hy
+
+/-- Conditional negativity of the defect matrix passes to every
+subsample. -/
+theorem condNegSemidef_defectMatrix_comp {κ : Type*} [Fintype ι] [Fintype κ]
+    {K : ContextField R ℝ} {r : ι → R} (h : CondNegSemidef (defectMatrix K r)) (e : κ → ι) :
+    CondNegSemidef (defectMatrix K (r ∘ e)) :=
+  h.submatrix e
 
 /-- The Gram kernel of `M` centered at a base index. -/
 noncomputable def centeredGram {ι : Type*} (M : Matrix ι ι ℝ) (i₀ : ι) : Matrix ι ι ℝ :=

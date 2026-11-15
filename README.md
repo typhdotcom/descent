@@ -236,7 +236,12 @@ exactly positive semidefiniteness of the centered Gram kernel. The
 sampled datum decides what this observable sees: on the essential
 two-point square sample, conditional negativity detects the submodular
 chamber exactly; on the full four-context sample it collapses to the
-chamber wall.
+chamber wall. For any kernel `M` and constant `c`, the forms of `c·J − M`
+and `M` are opposite on centered vectors, so positive semidefiniteness
+of `c·J − M` forces conditional negativity of `M`. Both conditional
+negativity and positive semidefiniteness pass to every subsample: the
+defect matrix of `r ∘ e` is the reindexed matrix, and a centered vector
+pushes forward to a centered vector with the same form.
 
 `Kernels.lean` derives the kernels that do carry metric geometry, and
 names their datum: they consume the field, not its defect observable.
@@ -389,6 +394,28 @@ pairwise observation suffices on distributive contexts; order 3 measures
 the valuation-visible distributivity-gap information, and can strictly
 refine pairwise observation; higher inclusion–exclusion orders add
 nothing beyond it, anywhere.
+
+The recurrence telescopes exactly when its corrections vanish. If the
+head of `d :: a :: l` meets the join of the rest only inside `a`
+(`supFam a l ⊓ d ≤ a`), the meet-translated subfamily is dominated by
+`a ⊓ d` and the distributivity-gap remainder is zero, so peeling `d`
+costs one pairwise defect. A family whose every entry satisfies this
+against its successors (`Telescopic`) has defect
+
+```text
+D(a₁, …, a_k) = Σ_j D(a_j, a_{j+1} ⊔ ⋯ ⊔ a_k)
+```
+
+on any lattice, and since the family defect is symmetric, any two
+telescopic presentations of one family give the same sum. Distributivity
+enters only to produce the hypothesis: with a bottom, a pairwise disjoint
+family telescopes in a distributive lattice. Without distributivity it
+does not: the diamond's atoms meet pairwise at the bottom, yet the
+height field's order-3 defect `1` is not its telescope `0`. On the
+arithmetic carrier disjointness is coprimality and a pairwise coprime
+family joins to its product, so every corrected order of a coprime
+family is a sum of pairwise defects of each entry against the product of
+the entries after it.
 
 The final observable is solved on the diamond, for every additive
 commutative group: `gauge3 Diamond A` is exactly the constant fields —

@@ -1,3 +1,4 @@
+import Descent.Core.Hierarchy
 import Descent.Core.Higher
 import Descent.Geometry.Kernels
 import Descent.Realization.Realizable
@@ -27,7 +28,10 @@ place with theorems the abstract level cannot see:
   their gcd. The new feature is that the offending field carries
   identically vanishing defect data: it is defect-equivalent to the zero
   field, which is realizable. No defect-only observation decides
-  realizability.
+  realizability;
+* disjointness is coprimality, so on a pairwise coprime family the
+  defect of every arity telescopes into pairwise defects of each entry
+  against the product of the entries after it.
 -/
 
 namespace Descent
@@ -404,6 +408,57 @@ theorem exists_defectEquiv_realizable_not_realizable :
       DefectEquiv K K' ∧ Realizable K ∧ ¬Realizable K' :=
   ⟨0, logDivisorCount, defectEquiv_zero_logDivisorCount, realizable_zero,
     not_realizable_logDivisorCount⟩
+
+/-! ### The coprime telescope -/
+
+/-- The trivial context `1` is the bottom of the divisibility order. -/
+instance : OrderBot Arith where
+  bot := of 1
+  bot_le a := one_dvd (num a)
+
+theorem num_bot : (num ⊥ : ℕ) = 1 :=
+  rfl
+
+/-- Disjointness is coprimality. -/
+theorem disjoint_iff_coprime {a b : Arith} :
+    Disjoint a b ↔ Nat.Coprime (num a) (num b) := by
+  rw [disjoint_iff]
+  constructor
+  · intro h
+    have h' := congrArg (fun c => (num c : ℕ)) h
+    simpa only [num_inf, num_bot] using h'
+  · intro h
+    have h' : (num (a ⊓ b) : ℕ) = (num ⊥ : ℕ) := by rw [num_inf, num_bot]; exact h
+    exact PNat.eq h'
+
+/-- A pairwise coprime family joins to its product. -/
+theorem num_supFam_of_pairwise_coprime {d : Arith} {l : List Arith}
+    (h : (d :: l).Pairwise fun a b => Nat.Coprime (num a) (num b)) :
+    (num (supFam d l) : ℕ) = (num d : ℕ) * (l.map fun a => (num a : ℕ)).prod := by
+  induction l with
+  | nil => simp
+  | cons a l ih =>
+    have hd := List.pairwise_cons.mp h
+    have ha := List.pairwise_cons.mp hd.2
+    have hcop : Nat.Coprime (num a) (num (supFam d l)) := by
+      rw [ih (List.pairwise_cons.mpr ⟨fun x hx => hd.1 x (List.mem_cons_of_mem a hx), ha.2⟩)]
+      refine Nat.Coprime.mul_right (hd.1 a (List.mem_cons_self ..)).symm ?_
+      refine Nat.coprime_list_prod_right_iff.mpr fun n hn => ?_
+      obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hn
+      exact ha.1 x hx
+    rw [supFam_cons, num_sup, hcop.lcm_eq_mul,
+      ih (List.pairwise_cons.mpr ⟨fun x hx => hd.1 x (List.mem_cons_of_mem a hx), ha.2⟩),
+      List.map_cons, List.prod_cons]
+    ring
+
+/-- The coprime telescope: on a pairwise coprime family the defect of
+every arity is the sum of pairwise defects of each entry against the
+product of the entries after it, in any order. -/
+theorem defectFam_eq_telescope_of_pairwise_coprime {A : Type*} [AddCommGroup A]
+    (K : ContextField Arith A) {d : Arith} {l : List Arith}
+    (h : (d :: l).Pairwise fun a b => Nat.Coprime (num a) (num b)) :
+    defectFam K d l = telescope K d l :=
+  defectFam_eq_telescope_of_pairwise_disjoint K (h.imp disjoint_iff_coprime.mpr)
 
 end Arith
 

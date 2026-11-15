@@ -86,6 +86,16 @@ height field is a pairwise valuation with order-3 defect `1` at the atom
 triple. -/
 theorem defect3_height : defect3 height x y z = 1 := by decide
 
+/-- Pairwise disjointness does not telescope without distributivity: the
+atoms meet pairwise at the bottom, yet the height field's order-3 defect
+is not its telescope. -/
+theorem defectFam_height_ne_telescope :
+    x ⊓ y = bot ∧ x ⊓ z = bot ∧ y ⊓ z = bot ∧
+      defectFam height z [y, x] ≠ telescope height z [y, x] := by
+  refine ⟨by decide, by decide, by decide, ?_⟩
+  rw [defectFam_triple, defect3_height, telescope_cons, telescope_cons, telescope_nil]
+  decide
+
 /-- The height field is defect-equivalent to zero. -/
 theorem defectEquiv_height_zero :
     DefectEquiv height (0 : ContextField Diamond ℤ) := by

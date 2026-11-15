@@ -20,6 +20,17 @@ every field in `gauge3` has vanishing defect at every arity
 (`defectFam_eq_zero_of_mem_gauge3`), and the gauge of the whole hierarchy
 is the order-≤3 gauge (`gaugeFam_eq_gauge3`): order 3 is the final
 refinement of defect observation, on every lattice and every target.
+
+When each entry meets the join of the entries after it only inside the
+next one (`Telescopic`), both correction terms of the recurrence vanish
+and the family defect is the telescope of pairwise defects
+(`defectFam_eq_telescope`)
+
+    D(a₁, …, a_k) = Σ_j D(a_j, a_{j+1} ⊔ ⋯ ⊔ a_k),
+
+independent of the presentation (`telescope_perm`). Pairwise disjoint
+families telescope in distributive lattices
+(`telescopic_of_pairwise_disjoint`).
 -/
 
 namespace Descent
@@ -268,6 +279,100 @@ theorem defectFam_of_perm_of_le (K : ContextField R A) {a b c : R}
     {m l : List R} (h : a ≤ b) (hp : (c :: m).Perm (a :: b :: l)) :
     defectFam K c m = defectFam K b l :=
   (defectFam_perm K hp).trans (defectFam_of_le K h l)
+
+/-! ### Telescoping -/
+
+/-- The telescope of the family `d :: l`: each entry's pairwise defect
+against the join of the entries after it. -/
+def telescope (K : ContextField R A) : R → List R → A
+  | _, [] => 0
+  | d, a :: l => telescope K a l + defect K (supFam a l) d
+
+@[simp]
+theorem telescope_nil (K : ContextField R A) (d : R) : telescope K d [] = 0 :=
+  rfl
+
+theorem telescope_cons (K : ContextField R A) (d a : R) (l : List R) :
+    telescope K d (a :: l) = telescope K a l + defect K (supFam a l) d :=
+  rfl
+
+/-- The peeling step without remainder: when the head meets the join of
+the rest only inside the next entry, both correction terms of
+`defectFam_cons` vanish. -/
+theorem defectFam_cons_of_inf_le (K : ContextField R A) {d a : R} {l : List R}
+    (h : supFam a l ⊓ d ≤ a) :
+    defectFam K d (a :: l) = defectFam K a l + defect K (supFam a l) d := by
+  have hmeet : supFam a l ⊓ d = a ⊓ d :=
+    le_antisymm (le_inf h inf_le_right)
+      (inf_le_inf_right d (le_supFam (List.mem_cons_self ..)))
+  have hdom : ∀ x ∈ l.map (· ⊓ d), x ≤ a ⊓ d := by
+    intro x hx
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+    rw [← hmeet]
+    exact inf_le_inf_right d (le_supFam (List.mem_cons_of_mem a hy))
+  rw [defectFam_cons, defectFam_of_forall_le hdom, supFam_of_forall_le hdom, hmeet]
+  abel
+
+/-- A family telescopes when every entry meets the join of the entries
+after it only inside the next one. -/
+def Telescopic : R → List R → Prop
+  | _, [] => True
+  | d, a :: l => supFam a l ⊓ d ≤ a ∧ Telescopic a l
+
+/-- The telescope: on a telescopic family the defect of every arity is
+the sum of pairwise defects of each entry against the join of the
+entries after it. No distributivity is assumed. -/
+theorem defectFam_eq_telescope (K : ContextField R A) {d : R} {l : List R}
+    (h : Telescopic d l) : defectFam K d l = telescope K d l := by
+  induction l generalizing d with
+  | nil => simp
+  | cons a l ih =>
+    rw [defectFam_cons_of_inf_le K h.1, ih h.2, telescope_cons]
+
+/-- The telescope does not see the presentation: two telescopic
+presentations of one family have the same telescope. -/
+theorem telescope_perm (K : ContextField R A) {d d' : R} {l l' : List R}
+    (hp : (d :: l).Perm (d' :: l')) (h : Telescopic d l) (h' : Telescopic d' l') :
+    telescope K d l = telescope K d' l' := by
+  rw [← defectFam_eq_telescope K h, ← defectFam_eq_telescope K h', defectFam_perm K hp]
+
+/-- In a distributive lattice a family disjoint from `d` joins to an
+element disjoint from `d`. -/
+theorem disjoint_supFam {R : Type*} [DistribLattice R] [OrderBot R] {d a : R} {l : List R}
+    (h : ∀ x ∈ a :: l, Disjoint x d) : Disjoint (supFam a l) d := by
+  induction l with
+  | nil => exact h a (List.mem_cons_self ..)
+  | cons b l ih =>
+    rw [supFam_cons]
+    exact (h b (List.mem_cons_of_mem a (List.mem_cons_self ..))).sup_left
+      (ih fun x hx => h x (by
+        rcases List.mem_cons.mp hx with rfl | hx'
+        · exact List.mem_cons_self ..
+        · exact List.mem_cons_of_mem a (List.mem_cons_of_mem b hx')))
+
+/-- In a distributive lattice a pairwise disjoint family telescopes. -/
+theorem telescopic_of_pairwise_disjoint {R : Type*} [DistribLattice R] [OrderBot R]
+    {d : R} {l : List R} (h : (d :: l).Pairwise Disjoint) : Telescopic d l := by
+  induction l generalizing d with
+  | nil => trivial
+  | cons a l ih =>
+    have hd := List.pairwise_cons.mp h
+    refine ⟨?_, ih hd.2⟩
+    rw [(disjoint_supFam fun x hx => (hd.1 x hx).symm).eq_bot]
+    exact bot_le
+
+/-- In a distributive lattice the defect of a pairwise disjoint family
+telescopes, in any order. -/
+theorem defectFam_eq_telescope_of_pairwise_disjoint {R : Type*} [DistribLattice R]
+    [OrderBot R] (K : ContextField R A) {d : R} {l : List R}
+    (h : (d :: l).Pairwise Disjoint) : defectFam K d l = telescope K d l :=
+  defectFam_eq_telescope K (telescopic_of_pairwise_disjoint h)
+
+theorem telescope_perm_of_pairwise_disjoint {R : Type*} [DistribLattice R] [OrderBot R]
+    (K : ContextField R A) {d d' : R} {l l' : List R} (hp : (d :: l).Perm (d' :: l'))
+    (h : (d :: l).Pairwise Disjoint) : telescope K d l = telescope K d' l' :=
+  telescope_perm K hp (telescopic_of_pairwise_disjoint h)
+    (telescopic_of_pairwise_disjoint ((hp.pairwise_iff fun hxy => hxy.symm).mp h))
 
 /-! ### Naturality -/
 
