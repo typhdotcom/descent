@@ -54,7 +54,7 @@ theorem ContextField.isValuation_const (c : A) : IsValuation (ContextField.const
 def DefectEquiv (K K' : ContextField R A) : Prop :=
   defect K = defect K'
 
-/-- The gauge statement of §5: equal defects means differing by a valuation. -/
+/-- The gauge statement: equal defects means differing by a valuation. -/
 theorem defectEquiv_iff_sub_isValuation {K K' : ContextField R A} :
     DefectEquiv K K' ↔ IsValuation (K - K') := by
   rw [isValuation_iff_defect_eq_zero]

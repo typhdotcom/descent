@@ -3,8 +3,8 @@
 A Lean 4 formalization of defect, reconstruction, and realizability.
 
 The question is how much of a system can be reconstructed from the ways its
-partial descriptions fail to compose exactly. `PROPOSAL.md` states the research
-program; this file describes only what is built.
+partial descriptions fail to compose exactly. This file describes what is
+built.
 
 ## The object
 
@@ -296,7 +296,7 @@ the abstract level:
 
 ## Order separation
 
-The Q4 program, in `Descent/Core/Higher.lean` and
+The higher-interaction program, in `Descent/Core/Higher.lean` and
 `Descent/Models/Diamond.lean`, with additions to the chain and arithmetic
 models:
 
@@ -592,22 +592,22 @@ nu tasks.nu check   # nix flake check
 `direnv allow` puts `elan` on the path; the toolchain in `lean-toolchain`
 installs on first use.
 
-## First edition
+## Status
 
-`PROPOSAL.md` §20's ladder M0–M7 is built, and its §21 program ladder
-is closed: Q1 and Q3 by the diamond classification and sparse
-reconstruction, Q4 by the hierarchy's saturation at order 3, Q5 by the
-finite Gibbs boundary and the algebraic envelope, Q8 by observational
-equivalence and incidence blindness, Q9 by the restriction realization
-and the two recognition theorems, and Q10 by the extension profile's
-finite inverse theorem. Q2 and Q6 are answered exactly on the solved
-carriers and remain open in general. Q7 records a precise partial
-universality boundary — the core defect, gauge, cube, and hierarchy
-layers are carrier-free, the incidence bookkeeping is about finite
-maps, and the recognition theorems consume finite restriction systems
-with real-valued `logCard` results — and remains open beyond it.
-`PROPOSAL.md` records the built status of every milestone and question
-in place. Every
-load-bearing claim in this file is a typed example in
-`Descent/Status.lean`, and the closure audit found no claim without its
-theorem. No new mathematical program is open.
+The planned program is built: the milestones M0–M7 above, then order
+separation, the diamond code system, observational equivalence, and the
+extension profile. Three questions remain open in general:
+
+- **Reconstruction.** The weakest restricted pairwise datum with the same
+  kernel as complete defect observation is classified on the square, the
+  chain, and the diamond; a carrier-general minimality theory is not built.
+- **Definiteness.** Which defect data define PSD, CND, metric, or embedding
+  structure is answered by the chamber map of the kernel geometry; beyond
+  those exact statements the question is open.
+- **Universality.** The core defect, gauge, cube, and hierarchy layers are
+  carrier-free, the incidence bookkeeping is about finite maps, and the
+  recognition theorems consume finite restriction systems with real-valued
+  `logCard` results; no universality audit is built beyond that boundary.
+
+Every load-bearing claim in this file is a typed example in
+`Descent/Status.lean`.

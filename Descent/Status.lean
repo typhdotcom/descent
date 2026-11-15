@@ -792,7 +792,7 @@ example :
       DefectEquiv K K' ∧ Realizable K ∧ ¬Realizable K' :=
   Arith.exists_defectEquiv_realizable_not_realizable
 
-/-! ## Order separation (Q4)
+/-! ## Order separation
 
 The claims below correspond to the "Order separation" section of
 `README.md`.
@@ -947,7 +947,7 @@ example :
         defect3 K (Arith.of 2) (Arith.of 3) (Arith.of 5) ≠ 0 :=
   Arith.exists_defect_eq_zero_defect3_ne_zero
 
-/-! ## Order 4 (Q4, continued)
+/-! ## Order 4
 
 The claims below correspond to the order-4 paragraph of the "Order
 separation" section of `README.md`.
@@ -1073,7 +1073,7 @@ example (K : ContextField Arith ℝ) :
         + defect K (Arith.of 30) (Arith.of 7) :=
   Arith.defect4_two_three_five_seven K
 
-/-! ## The full hierarchy (Q4, concluded)
+/-! ## The full hierarchy
 
 The claims below correspond to the closing paragraph of the "Order
 separation" section of `README.md`.
@@ -1394,7 +1394,7 @@ example : IsPositiveValuation Diamond.countField :=
 example : Diamond.logCountField = logField Diamond.countField :=
   Diamond.logCountField_eq_logField
 
-/-! ## The diamond code system (Q9)
+/-! ## The diamond code system
 
 The claims below correspond to the restriction paragraph of the "Order
 separation" section of `README.md`.
@@ -1666,7 +1666,7 @@ example :
       = Real.log (8 / 3) :=
   Diamond.defect3_logCard_xyz
 
-/-! ## Observational equivalence and incidence blindness (Q8)
+/-! ## Observational equivalence and incidence blindness
 
 The claims below correspond to the incidence paragraphs of the "Order
 separation" section of `README.md`.
@@ -1849,7 +1849,7 @@ example : Function.Injective (Diamond.codeSystem.compare Diamond.x Diamond.y) :=
 example : ¬Function.Injective (Diamond.codeSystem2.compare Diamond.x Diamond.y) :=
   Diamond.not_injective_compare2_xy
 
-/-! ## The extension profile (Q10)
+/-! ## The extension profile
 
 The claims below correspond to the extension-profile paragraphs of the
 "Order separation" section of `README.md`.
